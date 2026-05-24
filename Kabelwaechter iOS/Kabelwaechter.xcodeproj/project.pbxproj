@@ -1,0 +1,1305 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E337E3DB2FC33A990039D356 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E337E3DA2FC33A990039D356 /* NetworkExtension.framework */; };
+		E337E3E32FC33A990039D356 /* KabelwaechterNEtvOS.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E337E3D82FC33A990039D356 /* KabelwaechterNEtvOS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E337E3EB2FC33EED0039D356 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = E337E3EA2FC33EED0039D356 /* KabelwaechterCore */; };
+		E337E3ED2FC33F1D0039D356 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = E337E3EC2FC33F1D0039D356 /* KabelwaechterCore */; };
+		E337E3EF2FC33F2B0039D356 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = E337E3EE2FC33F2B0039D356 /* KabelwaechterCore */; };
+		E3CCC1662FC342680045F7FD /* WireGuardKit in Frameworks */ = {isa = PBXBuildFile; productRef = E3CCC1652FC342680045F7FD /* WireGuardKit */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E337E3872FC3383E0039D356 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E337E3742FC3383C0039D356;
+			remoteInfo = "Kabelwaechter iOS";
+		};
+		E337E3912FC3383E0039D356 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E337E3742FC3383C0039D356;
+			remoteInfo = "Kabelwaechter iOS";
+		};
+		E337E3B92FC339820039D356 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E337E3A72FC339800039D356;
+			remoteInfo = "Kabelwaechter tvOS";
+		};
+		E337E3C32FC339820039D356 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E337E3A72FC339800039D356;
+			remoteInfo = "Kabelwaechter tvOS";
+		};
+		E337E3E12FC33A990039D356 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E337E3D72FC33A990039D356;
+			remoteInfo = KabelwaechterNEtvOS;
+		};
+		E3CCC16B2FC3443A0045F7FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E3CCC1672FC343580045F7FD;
+			remoteInfo = WireguardGoBridgetvOS;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E337E3E82FC33A990039D356 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				E337E3E32FC33A990039D356 /* KabelwaechterNEtvOS.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		E337E3752FC3383C0039D356 /* Kabelwaechter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kabelwaechter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E337E3862FC3383E0039D356 /* KabelwaechterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KabelwaechterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E337E3902FC3383E0039D356 /* KabelwaechterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KabelwaechterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E337E3A82FC339800039D356 /* Kabelwaechter tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kabelwaechter tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E337E3B82FC339820039D356 /* Kabelwaechter tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Kabelwaechter tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E337E3C22FC339820039D356 /* Kabelwaechter tvOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Kabelwaechter tvOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E337E3D82FC33A990039D356 /* KabelwaechterNEtvOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KabelwaechterNEtvOS.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E337E3DA2FC33A990039D356 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E337E3982FC3383E0039D356 /* Exceptions for "Kabelwaechter iOS" folder in "Kabelwaechter" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E337E3742FC3383C0039D356 /* Kabelwaechter */;
+		};
+		E337E3CA2FC339820039D356 /* Exceptions for "Kabelwaechter tvOS" folder in "Kabelwaechter tvOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E337E3A72FC339800039D356 /* Kabelwaechter tvOS */;
+		};
+		E337E3E72FC33A990039D356 /* Exceptions for "KabelwaechterNEtvOS" folder in "KabelwaechterNEtvOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E337E3D72FC33A990039D356 /* KabelwaechterNEtvOS */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E337E3772FC3383C0039D356 /* Kabelwaechter iOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E337E3982FC3383E0039D356 /* Exceptions for "Kabelwaechter iOS" folder in "Kabelwaechter" target */,
+			);
+			path = "Kabelwaechter iOS";
+			sourceTree = "<group>";
+		};
+		E337E3892FC3383E0039D356 /* Kabelwaechter iOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kabelwaechter iOSTests";
+			sourceTree = "<group>";
+		};
+		E337E3932FC3383E0039D356 /* Kabelwaechter iOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kabelwaechter iOSUITests";
+			sourceTree = "<group>";
+		};
+		E337E3A92FC339800039D356 /* Kabelwaechter tvOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E337E3CA2FC339820039D356 /* Exceptions for "Kabelwaechter tvOS" folder in "Kabelwaechter tvOS" target */,
+			);
+			path = "Kabelwaechter tvOS";
+			sourceTree = "<group>";
+		};
+		E337E3BB2FC339820039D356 /* Kabelwaechter tvOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kabelwaechter tvOSTests";
+			sourceTree = "<group>";
+		};
+		E337E3C52FC339820039D356 /* Kabelwaechter tvOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kabelwaechter tvOSUITests";
+			sourceTree = "<group>";
+		};
+		E337E3DC2FC33A990039D356 /* KabelwaechterNEtvOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E337E3E72FC33A990039D356 /* Exceptions for "KabelwaechterNEtvOS" folder in "KabelwaechterNEtvOS" target */,
+			);
+			path = KabelwaechterNEtvOS;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E337E3722FC3383C0039D356 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E337E3EB2FC33EED0039D356 /* KabelwaechterCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3832FC3383E0039D356 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E38D2FC3383E0039D356 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3A52FC339800039D356 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E337E3ED2FC33F1D0039D356 /* KabelwaechterCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3B52FC339820039D356 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3BF2FC339820039D356 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3D52FC33A990039D356 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E337E3EF2FC33F2B0039D356 /* KabelwaechterCore in Frameworks */,
+				E337E3DB2FC33A990039D356 /* NetworkExtension.framework in Frameworks */,
+				E3CCC1662FC342680045F7FD /* WireGuardKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E337E36C2FC3383C0039D356 = {
+			isa = PBXGroup;
+			children = (
+				E337E3772FC3383C0039D356 /* Kabelwaechter iOS */,
+				E337E3892FC3383E0039D356 /* Kabelwaechter iOSTests */,
+				E337E3932FC3383E0039D356 /* Kabelwaechter iOSUITests */,
+				E337E3A92FC339800039D356 /* Kabelwaechter tvOS */,
+				E337E3BB2FC339820039D356 /* Kabelwaechter tvOSTests */,
+				E337E3C52FC339820039D356 /* Kabelwaechter tvOSUITests */,
+				E337E3DC2FC33A990039D356 /* KabelwaechterNEtvOS */,
+				E337E3D92FC33A990039D356 /* Frameworks */,
+				E337E3762FC3383C0039D356 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E337E3762FC3383C0039D356 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E337E3752FC3383C0039D356 /* Kabelwaechter.app */,
+				E337E3862FC3383E0039D356 /* KabelwaechterTests.xctest */,
+				E337E3902FC3383E0039D356 /* KabelwaechterUITests.xctest */,
+				E337E3A82FC339800039D356 /* Kabelwaechter tvOS.app */,
+				E337E3B82FC339820039D356 /* Kabelwaechter tvOSTests.xctest */,
+				E337E3C22FC339820039D356 /* Kabelwaechter tvOSUITests.xctest */,
+				E337E3D82FC33A990039D356 /* KabelwaechterNEtvOS.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E337E3D92FC33A990039D356 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E337E3DA2FC33A990039D356 /* NetworkExtension.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		E3CCC1672FC343580045F7FD /* WireguardGoBridgetvOS */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin /usr/bin/make $(ACTION) PLATFORM_NAME=iphoneos";
+			buildConfigurationList = E3CCC1682FC343580045F7FD /* Build configuration list for PBXLegacyTarget "WireguardGoBridgetvOS" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/env;
+			buildWorkingDirectory = "$(BUILD_DIR)/../../SourcePackages/checkouts/wireguard-apple-tvos/Sources/WireGuardKitGo";
+			dependencies = (
+			);
+			name = WireguardGoBridgetvOS;
+			packageProductDependencies = (
+			);
+			passBuildSettingsInEnvironment = 1;
+			productName = WireguardGoBridgetvOS;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXNativeTarget section */
+		E337E3742FC3383C0039D356 /* Kabelwaechter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E337E3992FC3383E0039D356 /* Build configuration list for PBXNativeTarget "Kabelwaechter" */;
+			buildPhases = (
+				E337E3712FC3383C0039D356 /* Sources */,
+				E337E3722FC3383C0039D356 /* Frameworks */,
+				E337E3732FC3383C0039D356 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E337E3772FC3383C0039D356 /* Kabelwaechter iOS */,
+			);
+			name = Kabelwaechter;
+			packageProductDependencies = (
+				E337E3EA2FC33EED0039D356 /* KabelwaechterCore */,
+			);
+			productName = "Kabelwaechter iOS";
+			productReference = E337E3752FC3383C0039D356 /* Kabelwaechter.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E337E3852FC3383E0039D356 /* KabelwaechterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E337E39E2FC3383E0039D356 /* Build configuration list for PBXNativeTarget "KabelwaechterTests" */;
+			buildPhases = (
+				E337E3822FC3383E0039D356 /* Sources */,
+				E337E3832FC3383E0039D356 /* Frameworks */,
+				E337E3842FC3383E0039D356 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E337E3882FC3383E0039D356 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E337E3892FC3383E0039D356 /* Kabelwaechter iOSTests */,
+			);
+			name = KabelwaechterTests;
+			packageProductDependencies = (
+			);
+			productName = "Kabelwaechter iOSTests";
+			productReference = E337E3862FC3383E0039D356 /* KabelwaechterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E337E38F2FC3383E0039D356 /* KabelwaechterUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E337E3A12FC3383E0039D356 /* Build configuration list for PBXNativeTarget "KabelwaechterUITests" */;
+			buildPhases = (
+				E337E38C2FC3383E0039D356 /* Sources */,
+				E337E38D2FC3383E0039D356 /* Frameworks */,
+				E337E38E2FC3383E0039D356 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E337E3922FC3383E0039D356 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E337E3932FC3383E0039D356 /* Kabelwaechter iOSUITests */,
+			);
+			name = KabelwaechterUITests;
+			packageProductDependencies = (
+			);
+			productName = "Kabelwaechter iOSUITests";
+			productReference = E337E3902FC3383E0039D356 /* KabelwaechterUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		E337E3A72FC339800039D356 /* Kabelwaechter tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E337E3CB2FC339820039D356 /* Build configuration list for PBXNativeTarget "Kabelwaechter tvOS" */;
+			buildPhases = (
+				E337E3A42FC339800039D356 /* Sources */,
+				E337E3A52FC339800039D356 /* Frameworks */,
+				E337E3A62FC339800039D356 /* Resources */,
+				E337E3E82FC33A990039D356 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E337E3E22FC33A990039D356 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E337E3A92FC339800039D356 /* Kabelwaechter tvOS */,
+			);
+			name = "Kabelwaechter tvOS";
+			packageProductDependencies = (
+				E337E3EC2FC33F1D0039D356 /* KabelwaechterCore */,
+			);
+			productName = "Kabelwaechter tvOS";
+			productReference = E337E3A82FC339800039D356 /* Kabelwaechter tvOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E337E3B72FC339820039D356 /* Kabelwaechter tvOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E337E3CE2FC339820039D356 /* Build configuration list for PBXNativeTarget "Kabelwaechter tvOSTests" */;
+			buildPhases = (
+				E337E3B42FC339820039D356 /* Sources */,
+				E337E3B52FC339820039D356 /* Frameworks */,
+				E337E3B62FC339820039D356 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E337E3BA2FC339820039D356 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E337E3BB2FC339820039D356 /* Kabelwaechter tvOSTests */,
+			);
+			name = "Kabelwaechter tvOSTests";
+			packageProductDependencies = (
+			);
+			productName = "Kabelwaechter tvOSTests";
+			productReference = E337E3B82FC339820039D356 /* Kabelwaechter tvOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E337E3C12FC339820039D356 /* Kabelwaechter tvOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E337E3D12FC339820039D356 /* Build configuration list for PBXNativeTarget "Kabelwaechter tvOSUITests" */;
+			buildPhases = (
+				E337E3BE2FC339820039D356 /* Sources */,
+				E337E3BF2FC339820039D356 /* Frameworks */,
+				E337E3C02FC339820039D356 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E337E3C42FC339820039D356 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E337E3C52FC339820039D356 /* Kabelwaechter tvOSUITests */,
+			);
+			name = "Kabelwaechter tvOSUITests";
+			packageProductDependencies = (
+			);
+			productName = "Kabelwaechter tvOSUITests";
+			productReference = E337E3C22FC339820039D356 /* Kabelwaechter tvOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		E337E3D72FC33A990039D356 /* KabelwaechterNEtvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E337E3E42FC33A990039D356 /* Build configuration list for PBXNativeTarget "KabelwaechterNEtvOS" */;
+			buildPhases = (
+				E337E3D42FC33A990039D356 /* Sources */,
+				E337E3D52FC33A990039D356 /* Frameworks */,
+				E337E3D62FC33A990039D356 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E3CCC16C2FC3443A0045F7FD /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E337E3DC2FC33A990039D356 /* KabelwaechterNEtvOS */,
+			);
+			name = KabelwaechterNEtvOS;
+			packageProductDependencies = (
+				E337E3EE2FC33F2B0039D356 /* KabelwaechterCore */,
+				E3CCC1652FC342680045F7FD /* WireGuardKit */,
+			);
+			productName = KabelwaechterNEtvOS;
+			productReference = E337E3D82FC33A990039D356 /* KabelwaechterNEtvOS.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E337E36D2FC3383C0039D356 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					E337E3742FC3383C0039D356 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					E337E3852FC3383E0039D356 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = E337E3742FC3383C0039D356;
+					};
+					E337E38F2FC3383E0039D356 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = E337E3742FC3383C0039D356;
+					};
+					E337E3A72FC339800039D356 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					E337E3B72FC339820039D356 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = E337E3A72FC339800039D356;
+					};
+					E337E3C12FC339820039D356 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = E337E3A72FC339800039D356;
+					};
+					E337E3D72FC33A990039D356 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					E3CCC1672FC343580045F7FD = {
+						CreatedOnToolsVersion = 26.3;
+					};
+				};
+			};
+			buildConfigurationList = E337E3702FC3383C0039D356 /* Build configuration list for PBXProject "Kabelwaechter" */;
+			developmentRegion = de;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				de,
+				en,
+				Base,
+			);
+			mainGroup = E337E36C2FC3383C0039D356;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "../KabelwaechterCore" */,
+				E3CCC1642FC342680045F7FD /* XCRemoteSwiftPackageReference "wireguard-apple-tvos" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E337E3762FC3383C0039D356 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E337E3742FC3383C0039D356 /* Kabelwaechter */,
+				E337E3852FC3383E0039D356 /* KabelwaechterTests */,
+				E337E38F2FC3383E0039D356 /* KabelwaechterUITests */,
+				E337E3A72FC339800039D356 /* Kabelwaechter tvOS */,
+				E337E3B72FC339820039D356 /* Kabelwaechter tvOSTests */,
+				E337E3C12FC339820039D356 /* Kabelwaechter tvOSUITests */,
+				E337E3D72FC33A990039D356 /* KabelwaechterNEtvOS */,
+				E3CCC1672FC343580045F7FD /* WireguardGoBridgetvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E337E3732FC3383C0039D356 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3842FC3383E0039D356 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E38E2FC3383E0039D356 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3A62FC339800039D356 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3B62FC339820039D356 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3C02FC339820039D356 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3D62FC33A990039D356 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E337E3712FC3383C0039D356 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3822FC3383E0039D356 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E38C2FC3383E0039D356 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3A42FC339800039D356 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3B42FC339820039D356 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3BE2FC339820039D356 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E337E3D42FC33A990039D356 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E337E3882FC3383E0039D356 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E337E3742FC3383C0039D356 /* Kabelwaechter */;
+			targetProxy = E337E3872FC3383E0039D356 /* PBXContainerItemProxy */;
+		};
+		E337E3922FC3383E0039D356 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E337E3742FC3383C0039D356 /* Kabelwaechter */;
+			targetProxy = E337E3912FC3383E0039D356 /* PBXContainerItemProxy */;
+		};
+		E337E3BA2FC339820039D356 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E337E3A72FC339800039D356 /* Kabelwaechter tvOS */;
+			targetProxy = E337E3B92FC339820039D356 /* PBXContainerItemProxy */;
+		};
+		E337E3C42FC339820039D356 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E337E3A72FC339800039D356 /* Kabelwaechter tvOS */;
+			targetProxy = E337E3C32FC339820039D356 /* PBXContainerItemProxy */;
+		};
+		E337E3E22FC33A990039D356 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E337E3D72FC33A990039D356 /* KabelwaechterNEtvOS */;
+			targetProxy = E337E3E12FC33A990039D356 /* PBXContainerItemProxy */;
+		};
+		E3CCC16C2FC3443A0045F7FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E3CCC1672FC343580045F7FD /* WireguardGoBridgetvOS */;
+			targetProxy = E3CCC16B2FC3443A0045F7FD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		E337E39A2FC3383E0039D356 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Kabelwaechter iOS/Kabelwaechter_iOS.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Kabelwaechter iOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Kabelwaechter Setup";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E337E39B2FC3383E0039D356 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Kabelwaechter iOS/Kabelwaechter_iOS.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Kabelwaechter iOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Kabelwaechter Setup";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E337E39C2FC3383E0039D356 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		E337E39D2FC3383E0039D356 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E337E39F2FC3383E0039D356 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.jankaluza.kabelwaechter.Kabelwaechter-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kabelwaechter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kabelwaechter";
+			};
+			name = Debug;
+		};
+		E337E3A02FC3383E0039D356 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.jankaluza.kabelwaechter.Kabelwaechter-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kabelwaechter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kabelwaechter";
+			};
+			name = Release;
+		};
+		E337E3A22FC3383E0039D356 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.jankaluza.kabelwaechter.Kabelwaechter-iOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Kabelwaechter iOS";
+			};
+			name = Debug;
+		};
+		E337E3A32FC3383E0039D356 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.jankaluza.kabelwaechter.Kabelwaechter-iOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Kabelwaechter iOS";
+			};
+			name = Release;
+		};
+		E337E3CC2FC339820039D356 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Kabelwaechter tvOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Kabelwaechter;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.tv;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
+			};
+			name = Debug;
+		};
+		E337E3CD2FC339820039D356 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Kabelwaechter tvOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Kabelwaechter;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.tv;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
+			};
+			name = Release;
+		};
+		E337E3CF2FC339820039D356 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.jankaluza.kabelwaechter.Kabelwaechter-tvOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kabelwaechter tvOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kabelwaechter tvOS";
+				TVOS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Debug;
+		};
+		E337E3D02FC339820039D356 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.jankaluza.kabelwaechter.Kabelwaechter-tvOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kabelwaechter tvOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kabelwaechter tvOS";
+				TVOS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Release;
+		};
+		E337E3D22FC339820039D356 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.tv;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = "Kabelwaechter tvOS";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
+			};
+			name = Debug;
+		};
+		E337E3D32FC339820039D356 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.tv;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = "Kabelwaechter tvOS";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
+			};
+			name = Release;
+		};
+		E337E3E52FC33A990039D356 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = KabelwaechterNEtvOS/KabelwaechterNEtvOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KabelwaechterNEtvOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KabelwaechterNEtvOS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.tv.networkextension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
+			};
+			name = Debug;
+		};
+		E337E3E62FC33A990039D356 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = KabelwaechterNEtvOS/KabelwaechterNEtvOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KabelwaechterNEtvOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KabelwaechterNEtvOS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.tv.networkextension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
+			};
+			name = Release;
+		};
+		E3CCC1692FC343580045F7FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E3CCC16A2FC343580045F7FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E337E3702FC3383C0039D356 /* Build configuration list for PBXProject "Kabelwaechter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E337E39C2FC3383E0039D356 /* Debug */,
+				E337E39D2FC3383E0039D356 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E337E3992FC3383E0039D356 /* Build configuration list for PBXNativeTarget "Kabelwaechter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E337E39A2FC3383E0039D356 /* Debug */,
+				E337E39B2FC3383E0039D356 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E337E39E2FC3383E0039D356 /* Build configuration list for PBXNativeTarget "KabelwaechterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E337E39F2FC3383E0039D356 /* Debug */,
+				E337E3A02FC3383E0039D356 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E337E3A12FC3383E0039D356 /* Build configuration list for PBXNativeTarget "KabelwaechterUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E337E3A22FC3383E0039D356 /* Debug */,
+				E337E3A32FC3383E0039D356 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E337E3CB2FC339820039D356 /* Build configuration list for PBXNativeTarget "Kabelwaechter tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E337E3CC2FC339820039D356 /* Debug */,
+				E337E3CD2FC339820039D356 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E337E3CE2FC339820039D356 /* Build configuration list for PBXNativeTarget "Kabelwaechter tvOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E337E3CF2FC339820039D356 /* Debug */,
+				E337E3D02FC339820039D356 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E337E3D12FC339820039D356 /* Build configuration list for PBXNativeTarget "Kabelwaechter tvOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E337E3D22FC339820039D356 /* Debug */,
+				E337E3D32FC339820039D356 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E337E3E42FC33A990039D356 /* Build configuration list for PBXNativeTarget "KabelwaechterNEtvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E337E3E52FC33A990039D356 /* Debug */,
+				E337E3E62FC33A990039D356 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3CCC1682FC343580045F7FD /* Build configuration list for PBXLegacyTarget "WireguardGoBridgetvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3CCC1692FC343580045F7FD /* Debug */,
+				E3CCC16A2FC343580045F7FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "../KabelwaechterCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../KabelwaechterCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E3CCC1642FC342680045F7FD /* XCRemoteSwiftPackageReference "wireguard-apple-tvos" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JxxKal/wireguard-apple-tvos";
+			requirement = {
+				kind = revision;
+				revision = dacb0cfc382a026e04f96f3dd0a8533b402848ab;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E337E3EA2FC33EED0039D356 /* KabelwaechterCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KabelwaechterCore;
+		};
+		E337E3EC2FC33F1D0039D356 /* KabelwaechterCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "../KabelwaechterCore" */;
+			productName = KabelwaechterCore;
+		};
+		E337E3EE2FC33F2B0039D356 /* KabelwaechterCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "../KabelwaechterCore" */;
+			productName = KabelwaechterCore;
+		};
+		E3CCC1652FC342680045F7FD /* WireGuardKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E3CCC1642FC342680045F7FD /* XCRemoteSwiftPackageReference "wireguard-apple-tvos" */;
+			productName = WireGuardKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = E337E36D2FC3383C0039D356 /* Project object */;
+}

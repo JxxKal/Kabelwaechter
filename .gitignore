@@ -67,3 +67,11 @@ GoogleService-Info.plist
 
 # Logs
 *.log
+
+# Lokaler Arbeits-Plan (lebt im Wiki, nicht im Repo)
+Plan.md
+
+# Wiki.js Sync — Token ist API-Admin, Scripts referenzieren LAN-IP
+.wiki-token
+scripts/
+

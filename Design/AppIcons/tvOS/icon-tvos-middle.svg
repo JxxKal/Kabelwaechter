@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <title>Kabelwächter — tvOS Icon Middle Layer</title>
+  <defs>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4"></feGaussianBlur>
+    </filter>
+  </defs>
+  <g fill="none" stroke="#00d4ff" filter="url(#softGlow)">
+    <circle cx="960" cy="540" r="400" stroke-opacity="0.30" stroke-width="3"></circle>
+    <circle cx="960" cy="540" r="320" stroke-opacity="0.45" stroke-width="3.5"></circle>
+    <circle cx="960" cy="540" r="248" stroke-opacity="0.60" stroke-width="4"></circle>
+    <circle cx="960" cy="540" r="186" stroke-opacity="0.75" stroke-width="4.5"></circle>
+  </g>
+</svg>

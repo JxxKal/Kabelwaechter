@@ -1,0 +1,23 @@
+{
+  "sourceLanguage" : "de",
+  "strings" : {
+    "NSCameraUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird genutzt, um QR-Codes von WireGuard-Konfigurationen einzulesen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used to scan QR codes containing WireGuard configurations."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

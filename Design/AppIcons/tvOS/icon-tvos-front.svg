@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <title>Kabelwächter — tvOS Icon Front Layer</title>
+  <defs>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00ff9d" stop-opacity="0.95"></stop>
+      <stop offset="35%" stop-color="#00d4ff" stop-opacity="0.45"></stop>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"></stop>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10"></feGaussianBlur>
+    </filter>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4"></feGaussianBlur>
+    </filter>
+  </defs>
+  <circle cx="960" cy="540" r="280" fill="url(#core)"></circle>
+  <g fill="none" stroke="#00d4ff" filter="url(#softGlow)">
+    <circle cx="960" cy="540" r="132" stroke-opacity="0.85" stroke-width="5"></circle>
+    <circle cx="960" cy="540" r="86" stroke-opacity="0.95" stroke-width="5.5"></circle>
+  </g>
+  <circle cx="960" cy="540" r="50" fill="none" stroke="#00ff9d" stroke-width="6" filter="url(#softGlow)" opacity="0.95"></circle>
+  <g filter="url(#glow)">
+    <circle cx="960" cy="540" r="26" fill="#00ff9d"></circle>
+  </g>
+  <circle cx="960" cy="540" r="12" fill="#e6f3ff"></circle>
+</svg>

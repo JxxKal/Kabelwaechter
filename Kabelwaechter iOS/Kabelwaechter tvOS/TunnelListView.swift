@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreData
 import KabelwaechterPersistence
 
 /// tvOS-Tunnel-Liste. Apple-TV-spezifisch: keine Swipe-Gesten, größere
@@ -21,6 +22,14 @@ struct TunnelListView: View {
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button {
+                                reload()
+                            } label: {
+                                Label("Aktualisieren", systemImage: "arrow.clockwise")
+                                    .foregroundStyle(DesignTokens.accentPrimary)
+                            }
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
                                 showingAddSheet = true
                             } label: {
                                 Label("Tunnel hinzufügen", systemImage: "plus")
@@ -38,6 +47,12 @@ struct TunnelListView: View {
         }
         .preferredColorScheme(.dark)
         .task { reload() }
+        // CloudKit-Sync liefert Template-Änderungen asynchron in den
+        // ModelContext — ohne dieses Reload würde ein vom iPhone
+        // synchronisierter Tunnel erst beim nächsten View-Erscheinen auftauchen.
+        .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
+            reload()
+        }
     }
 
     @ViewBuilder

@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreData
 import KabelwaechterPersistence
 
 /// Hauptansicht der Companion-App: Liste aller Tunnel, plus Aktionen für
@@ -37,6 +38,12 @@ struct TunnelListView: View {
         }
         .preferredColorScheme(.dark)
         .task { reload() }
+        // CloudKit-Sync liefert Änderungen asynchron — ohne dieses Reload
+        // erschiene ein auf dem Apple TV (oder einem zweiten iPhone)
+        // angelegter Tunnel erst beim nächsten View-Erscheinen.
+        .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
+            reload()
+        }
     }
 
     @ViewBuilder

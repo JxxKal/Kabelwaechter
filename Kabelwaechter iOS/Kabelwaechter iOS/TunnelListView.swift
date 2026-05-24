@@ -19,7 +19,6 @@ struct TunnelListView: View {
 
                 content
                     .navigationTitle("Tunnel")
-                    .navigationBarTitleDisplayMode(.large)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button {

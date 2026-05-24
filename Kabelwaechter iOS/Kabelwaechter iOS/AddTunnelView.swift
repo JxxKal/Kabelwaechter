@@ -34,7 +34,6 @@ struct AddTunnelView: View {
                 }
             }
             .navigationTitle("Tunnel hinzufügen")
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Abbrechen") { dismiss() }

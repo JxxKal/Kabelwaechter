@@ -50,7 +50,6 @@ struct TunnelDetailView: View {
                 .padding(20)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.dark)
         .task { reload() }
         .alert("Tunnel löschen?", isPresented: $confirmingDelete) {

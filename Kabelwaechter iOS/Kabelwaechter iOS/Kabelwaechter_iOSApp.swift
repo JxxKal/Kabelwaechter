@@ -47,6 +47,13 @@ struct Kabelwaechter_iOSApp: App {
     @MainActor
     private func bootstrap() async {
         guard environment == nil, initError == nil else { return }
+        // Demo-Modus für Smoke-Tests: `--demo` als Launch-Argument verwendet
+        // die InMemory-Sample-Repository (vor-befüllt). Production geht den
+        // normalen makeProduction-Pfad.
+        if ProcessInfo.processInfo.arguments.contains("--demo") {
+            environment = CompanionAppEnvironment.makePreview()
+            return
+        }
         do {
             environment = try CompanionAppEnvironment.makeProduction()
         } catch {

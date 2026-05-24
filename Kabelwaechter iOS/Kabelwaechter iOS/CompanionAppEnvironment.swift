@@ -28,10 +28,16 @@ final class CompanionAppEnvironment {
     /// Production-Setup: zwei SwiftData-ModelContainer (Cloud + Local),
     /// echter Security-Framework-Keychain (ohne accessGroup — iOS hat in
     /// Phase 1 keine NE, also kein Sharing nötig).
+    ///
+    /// CloudKit-Verhalten folgt Decision #12 (P2 — iCloud-optional):
+    /// auf dem Simulator ohne signed entitlements oder ohne iCloud-Account
+    /// würde die CoreData/CloudKit-Mirroring-Initialisierung `os_crash`
+    /// auslösen — wir laufen dort lokal-only. Auf signed Builds mit
+    /// iCloud-Account sync't der Template-Store via Private-Database.
     @MainActor
     static func makeProduction() throws -> CompanionAppEnvironment {
         let templateContainer = try TunnelContainers.makeCloudTemplateContainer(
-            cloudKitContainerID: KabelwaechterConstants.iCloudContainerIdentifier
+            cloudKitContainerID: cloudKitContainerIDIfAvailable
         )
         let instanceContainer = try TunnelContainers.makeLocalInstanceContainer()
         let keychain = KeychainStore()
@@ -41,6 +47,21 @@ final class CompanionAppEnvironment {
             keychain: keychain
         )
         return CompanionAppEnvironment(repository: repo)
+    }
+
+    /// Liefert die iCloud-Container-ID nur dann, wenn CloudKit auf diesem
+    /// Build/Gerät überhaupt sicher initialisierbar ist:
+    /// - **Simulator**: nie (Sim-Builds ohne signed entitlements crashen
+    ///   in `PFCloudKitContainerProvider`).
+    /// - **Device**: nur wenn der User in iCloud signed-in ist
+    ///   (`FileManager.ubiquityIdentityToken != nil`).
+    private static var cloudKitContainerIDIfAvailable: String? {
+#if targetEnvironment(simulator)
+        return nil
+#else
+        guard FileManager.default.ubiquityIdentityToken != nil else { return nil }
+        return KabelwaechterConstants.iCloudContainerIdentifier
+#endif
     }
 
     /// Preview/Demo-Setup mit InMemory-Repository und ein paar Sample-Tunneln.

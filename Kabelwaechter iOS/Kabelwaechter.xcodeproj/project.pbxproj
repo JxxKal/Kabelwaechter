@@ -13,6 +13,7 @@
 		E337E3ED2FC33F1D0039D356 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = E337E3EC2FC33F1D0039D356 /* KabelwaechterCore */; };
 		E337E3EF2FC33F2B0039D356 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = E337E3EE2FC33F2B0039D356 /* KabelwaechterCore */; };
 		E337E3F12FC700010039D356 /* KabelwaechterPersistence in Frameworks */ = {isa = PBXBuildFile; productRef = E337E3F02FC700010039D356 /* KabelwaechterPersistence */; };
+		E337E3F32FC700020039D356 /* KabelwaechterPersistence in Frameworks */ = {isa = PBXBuildFile; productRef = E337E3F22FC700020039D356 /* KabelwaechterPersistence */; };
 		E3CCC1662FC342680045F7FD /* WireGuardKit in Frameworks */ = {isa = PBXBuildFile; productRef = E3CCC1652FC342680045F7FD /* WireGuardKit */; };
 /* End PBXBuildFile section */
 
@@ -186,6 +187,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E337E3ED2FC33F1D0039D356 /* KabelwaechterCore in Frameworks */,
+				E337E3F32FC700020039D356 /* KabelwaechterPersistence in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,6 +367,7 @@
 			name = "Kabelwaechter tvOS";
 			packageProductDependencies = (
 				E337E3EC2FC33F1D0039D356 /* KabelwaechterCore */,
+				E337E3F22FC700020039D356 /* KabelwaechterPersistence */,
 			);
 			productName = "Kabelwaechter tvOS";
 			productReference = E337E3A82FC339800039D356 /* Kabelwaechter tvOS.app */;
@@ -1298,6 +1301,11 @@
 			productName = KabelwaechterCore;
 		};
 		E337E3F02FC700010039D356 /* KabelwaechterPersistence */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "../KabelwaechterCore" */;
+			productName = KabelwaechterPersistence;
+		};
+		E337E3F22FC700020039D356 /* KabelwaechterPersistence */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "../KabelwaechterCore" */;
 			productName = KabelwaechterPersistence;

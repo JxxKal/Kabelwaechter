@@ -1,38 +1,93 @@
-//
-//  PacketTunnelProvider.swift
-//  KabelwaechterNEtvOS
-//
-//  Created by Jan Kaluza on 24.05.26.
-//
-
 import NetworkExtension
+import os.log
 import KabelwaechterCore
+import WireGuardKit
 
+/// Packet-Tunnel-Provider für die tvOS Network Extension.
+///
+/// Lifecycle:
+/// 1. App ruft `NETunnelProviderManager.connection.startVPNTunnel()` → System
+///    spawnt diese NE.
+/// 2. `startTunnel(options:completionHandler:)` wird gerufen mit unserem
+///    `providerConfiguration["wgQuickConfig"]: String` (vom `TunnelManager`
+///    serialisiert).
+/// 3. Wir parsen via Core, übersetzen zu WireGuardKit-Typen, starten den
+///    `WireGuardAdapter`.
 class PacketTunnelProvider: NEPacketTunnelProvider {
 
-    override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
-        NSLog("Kabelwaechter NE startet — NE Bundle-ID: \(KabelwaechterConstants.BundleIdentifiers.tvOSNetworkExtension)")
-        // Add code here to start the process of connecting the tunnel.
-    }
-    
-    override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
-        // Add code here to start the process of stopping the tunnel.
-        completionHandler()
-    }
-    
-    override func handleAppMessage(_ messageData: Data, completionHandler: ((Data?) -> Void)?) {
-        // Add code here to handle the message.
-        if let handler = completionHandler {
-            handler(messageData)
+    private lazy var adapter: WireGuardAdapter = {
+        WireGuardAdapter(with: self) { logLevel, message in
+            NSLog("[KabelwaechterNE] [%@] %@", String(describing: logLevel), message)
+        }
+    }()
+
+    override func startTunnel(options: [String: NSObject]?, completionHandler: @escaping (Error?) -> Void) {
+        NSLog("[KabelwaechterNE] startTunnel — Bundle-ID: %@", KabelwaechterConstants.BundleIdentifiers.tvOSNetworkExtension)
+
+        guard let proto = self.protocolConfiguration as? NETunnelProviderProtocol,
+              let providerConfig = proto.providerConfiguration,
+              let wgQuickString = providerConfig["wgQuickConfig"] as? String else {
+            NSLog("[KabelwaechterNE] kein wgQuickConfig in providerConfiguration")
+            completionHandler(StartError.missingProviderConfiguration)
+            return
+        }
+
+        let coreConfig: KabelwaechterCore.TunnelConfiguration
+        do {
+            coreConfig = try KabelwaechterCore.TunnelConfiguration(fromWgQuickConfig: wgQuickString)
+        } catch {
+            NSLog("[KabelwaechterNE] wgQuick-Parse fehlgeschlagen: %@", String(describing: error))
+            completionHandler(StartError.invalidWgQuickConfig(underlying: error))
+            return
+        }
+
+        let wgConfig: WireGuardKit.TunnelConfiguration
+        do {
+            wgConfig = try CoreToWireGuardKit.adapt(coreConfig)
+        } catch {
+            NSLog("[KabelwaechterNE] Core→WireGuardKit-Mapping fehlgeschlagen: %@", String(describing: error))
+            completionHandler(StartError.invalidConfiguration(underlying: error))
+            return
+        }
+
+        adapter.start(tunnelConfiguration: wgConfig) { error in
+            if let error {
+                NSLog("[KabelwaechterNE] WireGuardAdapter.start Fehler: %@", String(describing: error))
+                completionHandler(error)
+            } else {
+                NSLog("[KabelwaechterNE] Tunnel gestartet")
+                completionHandler(nil)
+            }
         }
     }
-    
+
+    override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
+        NSLog("[KabelwaechterNE] stopTunnel — Grund: %ld", reason.rawValue)
+        adapter.stop { error in
+            if let error {
+                NSLog("[KabelwaechterNE] WireGuardAdapter.stop Fehler: %@", String(describing: error))
+            }
+            completionHandler()
+        }
+    }
+
+    override func handleAppMessage(_ messageData: Data, completionHandler: ((Data?) -> Void)?) {
+        // Phase 3 nutzt diesen Pfad nicht — Status-Updates kommen via
+        // NEVPNStatusDidChange-Notification automatisch.
+        completionHandler?(nil)
+    }
+
     override func sleep(completionHandler: @escaping () -> Void) {
-        // Add code here to get ready to sleep.
         completionHandler()
     }
-    
-    override func wake() {
-        // Add code here to wake up.
+
+    override func wake() {}
+
+    // MARK: - Errors
+
+    enum StartError: Error {
+        case missingProviderConfiguration
+        case invalidWgQuickConfig(underlying: Error)
+        case invalidConfiguration(underlying: Error)
     }
 }

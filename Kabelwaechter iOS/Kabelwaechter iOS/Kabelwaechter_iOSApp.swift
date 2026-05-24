@@ -1,37 +1,56 @@
-//
-//  Kabelwaechter_iOSApp.swift
-//  Kabelwaechter iOS
-//
-//  Created by Jan Kaluza on 24.05.26.
-//
-
 import SwiftUI
-import SwiftData
 import KabelwaechterCore
 
 @main
 struct Kabelwaechter_iOSApp: App {
+
+    @State private var environment: CompanionAppEnvironment?
+    @State private var initError: String?
+
     init() {
         print("Kabelwaechter iOS startet — Bundle-Prefix: \(KabelwaechterConstants.BundleIdentifiers.prefix)")
     }
 
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Group {
+                if let environment {
+                    TunnelListView()
+                        .environment(environment)
+                } else if let initError {
+                    VStack(spacing: 16) {
+                        Image(systemName: "xmark.octagon")
+                            .font(.largeTitle)
+                            .foregroundStyle(.red)
+                        Text("Startfehler")
+                            .font(.headline)
+                            .foregroundStyle(DesignTokens.textPrimary)
+                        Text(initError)
+                            .font(.caption)
+                            .foregroundStyle(DesignTokens.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(DesignTokens.backgroundGradient.ignoresSafeArea())
+                } else {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(DesignTokens.backgroundGradient.ignoresSafeArea())
+                }
+            }
+            .preferredColorScheme(.dark)
+            .task { await bootstrap() }
         }
-        .modelContainer(sharedModelContainer)
+    }
+
+    @MainActor
+    private func bootstrap() async {
+        guard environment == nil, initError == nil else { return }
+        do {
+            environment = try CompanionAppEnvironment.makeProduction()
+        } catch {
+            initError = String(describing: error)
+        }
     }
 }

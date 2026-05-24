@@ -37,7 +37,7 @@ struct TunnelListView: View {
                             }
                         }
                     }
-                    .sheet(isPresented: $showingAddSheet, onDismiss: reload) {
+                    .fullScreenCover(isPresented: $showingAddSheet, onDismiss: reload) {
                         AddTunnelView()
                     }
                     .navigationDestination(item: $selectedTunnelID) { id in

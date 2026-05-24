@@ -59,11 +59,18 @@ final class TVAppEnvironment {
         return TVAppEnvironment(repository: repo)
     }
 
+    /// CloudKit-Container nur auf echten Geräten — der Simulator-Build ist
+    /// unsigniert (CODE_SIGNING_ALLOWED=NO), und ohne `icloud-services`-
+    /// Entitlement crasht `PFCloudKitContainerProvider` mit `os_crash`.
+    ///
+    /// **Nicht** auf `FileManager.ubiquityIdentityToken` gaten — das prüft
+    /// iCloud *Drive* und ist auf tvOS oft `nil`, obwohl iCloud/CloudKit
+    /// funktionieren. SwiftData+CloudKit verträgt einen fehlenden Account
+    /// auf signed Builds problemlos (queued bis Account da ist).
     private static var cloudKitContainerIDIfAvailable: String? {
 #if targetEnvironment(simulator)
         return nil
 #else
-        guard FileManager.default.ubiquityIdentityToken != nil else { return nil }
         return KabelwaechterConstants.iCloudContainerIdentifier
 #endif
     }

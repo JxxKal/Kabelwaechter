@@ -55,11 +55,15 @@ final class CompanionAppEnvironment {
     ///   in `PFCloudKitContainerProvider`).
     /// - **Device**: nur wenn der User in iCloud signed-in ist
     ///   (`FileManager.ubiquityIdentityToken != nil`).
+    /// CloudKit-Container nur auf echten Geräten — Simulator-Build ist
+    /// unsigniert und crasht ohne `icloud-services`-Entitlement. **Nicht**
+    /// auf `ubiquityIdentityToken` gaten (das ist iCloud Drive, nicht
+    /// CloudKit). SwiftData+CloudKit verträgt fehlenden Account auf signed
+    /// Builds.
     private static var cloudKitContainerIDIfAvailable: String? {
 #if targetEnvironment(simulator)
         return nil
 #else
-        guard FileManager.default.ubiquityIdentityToken != nil else { return nil }
         return KabelwaechterConstants.iCloudContainerIdentifier
 #endif
     }

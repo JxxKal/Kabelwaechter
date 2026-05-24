@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kabelwächter — Hi-Fi Design</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #f0eee9; overflow: hidden; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+    #root { width: 100%; height: 100%; }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    // Manual loader: Babel standalone doesn't preserve order between external
+    // and inline text/babel scripts, so we fetch+transform sequentially.
+    (async function loadAll() {
+      const files = [
+        'cyber-shared.jsx',
+        'ios-frame.jsx',
+        'design-canvas.jsx',
+        'tweaks-panel.jsx',
+        'v1-screens.jsx',
+        'v2-screens.jsx',
+        'app.jsx',
+      ];
+      const qs = window.location.search;
+      for (const f of files) {
+        const src = await fetch(f + qs).then((r) => r.text());
+        const out = Babel.transform(src, { presets: ['react'] }).code;
+        try { (new Function(out))(); }
+        catch (err) { console.error('Failed in ' + f + ':', err); throw err; }
+      }
+    })();
+  </script>
+</body>
+</html>

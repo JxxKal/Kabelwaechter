@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>Kabelwächter — Logo Mark</title>
+  <defs>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00ff9d" stop-opacity="0.9"></stop>
+      <stop offset="60%" stop-color="#00d4ff" stop-opacity="0.2"></stop>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+  <circle cx="128" cy="128" r="120" fill="url(#core)" opacity="0.6"></circle>
+  <g fill="none" stroke="#00d4ff">
+    <circle cx="128" cy="128" r="108" stroke-opacity="0.25" stroke-width="1"></circle>
+    <circle cx="128" cy="128" r="82" stroke-opacity="0.45" stroke-width="1.4"></circle>
+    <circle cx="128" cy="128" r="58" stroke-opacity="0.7" stroke-width="1.8"></circle>
+    <circle cx="128" cy="128" r="36" stroke-opacity="1" stroke-width="2.2"></circle>
+  </g>
+  <circle cx="128" cy="128" r="18" fill="none" stroke="#00ff9d" stroke-width="2.4"></circle>
+  <circle cx="128" cy="128" r="6" fill="#00ff9d"></circle>
+</svg>

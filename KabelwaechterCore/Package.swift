@@ -18,6 +18,10 @@ let package = Package(
         .library(
             name: "KabelwaechterPersistence",
             targets: ["KabelwaechterPersistence"]
+        ),
+        .library(
+            name: "KabelwaechterUI",
+            targets: ["KabelwaechterUI"]
         )
     ],
     targets: [
@@ -26,6 +30,9 @@ let package = Package(
             name: "KabelwaechterPersistence",
             dependencies: ["KabelwaechterCore"]
         ),
+        // Reines Präsentations-Designsystem (SwiftUI) — keine Core/Persistence-
+        // Abhängigkeit. Tokens, Modifiers, Primitives + Tunnel-Visualisierung.
+        .target(name: "KabelwaechterUI"),
         .testTarget(
             name: "KabelwaechterCoreTests",
             dependencies: ["KabelwaechterCore"]

@@ -1,11 +1,11 @@
 import SwiftUI
 import KabelwaechterPersistence
+import KabelwaechterUI
 
-/// tvOS-Variante des wg-quick-Imports. Vollbild + scrollbar, weil die
-/// Onscreen-Tastatur viel Platz frisst. Eine Bluetooth-Tastatur ist stark
-/// empfohlen — mit der Siri-Remote sind mehrzeilige base64-Keys eine Qual,
-/// und vor allem braucht die Config **echte Zeilenumbrüche**: ohne die
-/// landet alles in einer Zeile und der Parser wirft `invalidLine`.
+/// tvOS-Variante des wg-quick-Imports im Kabelwächter-Design. Vollbild +
+/// scrollbar, weil die Onscreen-Tastatur viel Platz frisst. Bluetooth-Tastatur
+/// empfohlen — die Config braucht echte Zeilenumbrüche zwischen [Interface],
+/// Schlüsseln und [Peer], sonst wirft der Parser `invalidLine`.
 struct AddTunnelView: View {
 
     @Environment(TVAppEnvironment.self) private var env
@@ -17,108 +17,92 @@ struct AddTunnelView: View {
     @State private var isImporting = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                DesignTokens.backgroundGradient.ignoresSafeArea()
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 28) {
-                        Text("Tunnel hinzufügen")
-                            .font(.largeTitle.bold())
-                            .foregroundStyle(DesignTokens.textPrimary)
+        ZStack {
+            CyberBackdrop(accent: .kwCyan, showScan: false) { Color.clear }
+                .ignoresSafeArea()
 
-                        Label("Normalerweise importierst du den Tunnel einmal in der iPhone-App — er erscheint dann via iCloud automatisch hier. Dieser manuelle Import ist für ein zweites Apple TV gedacht, das eine eigene Konfiguration braucht.",
-                              systemImage: "externaldrive.badge.icloud")
-                            .font(.callout)
-                            .foregroundStyle(DesignTokens.textSecondary)
-                            .padding(20)
-                            .background(DesignTokens.surfaceSecondary, in: RoundedRectangle(cornerRadius: 12))
+            ScrollView {
+                VStack(alignment: .leading, spacing: KW.Space.xl) {
+                    Text("[ TUNNEL HINZUFÜGEN ]").kwLabel()
 
-                        Label("Tipp: Bluetooth-Tastatur verbinden. Die Konfiguration braucht echte Zeilenumbrüche zwischen [Interface], den Schlüsseln und [Peer].",
-                              systemImage: "keyboard")
-                            .font(.callout)
-                            .foregroundStyle(DesignTokens.textSecondary)
-                            .padding(20)
-                            .background(DesignTokens.surfaceSecondary, in: RoundedRectangle(cornerRadius: 12))
+                    Text("Manueller Import")
+                        .font(KW.Font.titleTV)
+                        .foregroundStyle(Color.kwText)
 
-                        nameField
-                        configField
+                    infoPanel
+                    field(label: "Anzeige-Name", placeholder: "Heimnetz", text: $name, mono: false)
+                    field(label: "wg-quick-Konfiguration",
+                          placeholder: "[Interface]\nPrivateKey = …\nAddress = 10.0.0.2/32\n\n[Peer]\nPublicKey = …\nEndpoint = …:51820\nAllowedIPs = 0.0.0.0/0",
+                          text: $wgQuickText, mono: true, multiline: true)
 
-                        if let errorMessage {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Label("Import fehlgeschlagen", systemImage: "exclamationmark.triangle")
-                                    .font(.title3.weight(.semibold))
-                                    .foregroundStyle(.orange)
-                                Text(errorMessage)
-                                    .font(.system(.body, design: .monospaced))
-                                    .foregroundStyle(DesignTokens.textPrimary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(24)
-                            .background(.orange.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                        }
-
-                        HStack(spacing: 24) {
-                            Button("Abbrechen") { dismiss() }
-                                .buttonStyle(.bordered)
-                            Spacer()
-                            Button(isImporting ? "Speichert…" : "Speichern", action: importTunnel)
-                                .buttonStyle(.borderedProminent)
-                                .tint(DesignTokens.accentPrimary)
-                                .disabled(!canImport || isImporting)
-                        }
-                        .padding(.top, 8)
+                    if let errorMessage {
+                        errorPanel(errorMessage)
                     }
-                    .padding(60)
-                    .frame(maxWidth: 1400)
-                    .frame(maxWidth: .infinity)
+
+                    HStack(spacing: KW.Space.lg) {
+                        Button("Abbrechen") { dismiss() }
+                            .buttonStyle(KWButtonStyle(tone: .kwTextDim))
+                            .frame(width: 320)
+                        Button(isImporting ? "Speichert…" : "Speichern", action: importTunnel)
+                            .buttonStyle(KWButtonStyle(tone: .kwCyan, filled: true))
+                            .frame(maxWidth: .infinity)
+                            .disabled(!canImport || isImporting)
+                    }
                 }
+                .padding(KW.Space.page + KW.Space.lg)
+                .frame(maxWidth: 1500)
+                .frame(maxWidth: .infinity)
             }
         }
         .preferredColorScheme(.dark)
     }
 
-    private var nameField: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Anzeige-Name")
-                .font(.headline)
-                .foregroundStyle(DesignTokens.textTertiary)
-                .textCase(.uppercase)
-            TextField("Heimnetz", text: $name)
+    private var infoPanel: some View {
+        VStack(alignment: .leading, spacing: KW.Space.sm) {
+            Text("Normalerweise importierst du den Tunnel in der iPhone-App — er erscheint dann via iCloud automatisch hier. Dieser manuelle Import ist für ein zweites Apple TV mit eigener Konfiguration.")
+            Text("Tipp: Bluetooth-Tastatur verbinden. Die Config braucht echte Zeilenumbrüche zwischen [Interface], Schlüsseln und [Peer].")
+        }
+        .font(KW.Font.bodyTV)
+        .foregroundStyle(Color.kwTextDim)
+        .kwPanel()
+    }
+
+    private func field(label: String, placeholder: String, text: Binding<String>, mono: Bool, multiline: Bool = false) -> some View {
+        VStack(alignment: .leading, spacing: KW.Space.sm) {
+            Text(label).kwLabel()
+            TextField(placeholder, text: text, axis: multiline ? .vertical : .horizontal)
+                .lineLimit(multiline ? 10...28 : 1...1)
                 .textFieldStyle(.plain)
                 .autocorrectionDisabled()
-                .font(.title3)
-                .padding(20)
-                .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 12))
-                .foregroundStyle(DesignTokens.textPrimary)
+                .font(mono ? KW.Font.telemTV : KW.Font.bodyTV)
+                .foregroundStyle(Color.kwText)
+                .padding(KW.Space.lg)
+                .frame(minHeight: multiline ? 380 : nil, alignment: .topLeading)
+                .background(Color.kwBg2)
+                .overlay(Rectangle().stroke(Color.kwLineDim, lineWidth: KW.Border.hairline))
         }
     }
 
-    private var configField: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("wg-quick-Konfiguration")
-                .font(.headline)
-                .foregroundStyle(DesignTokens.textTertiary)
-                .textCase(.uppercase)
-            TextField(
-                "[Interface]\nPrivateKey = …\nAddress = 10.0.0.2/32\n\n[Peer]\nPublicKey = …\nEndpoint = …:51820\nAllowedIPs = 0.0.0.0/0",
-                text: $wgQuickText,
-                axis: .vertical
-            )
-            .lineLimit(12...30)
-            .textFieldStyle(.plain)
-            .autocorrectionDisabled()
-            .font(.system(.title3, design: .monospaced))
-            .padding(24)
-            .frame(minHeight: 420, alignment: .topLeading)
-            .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 12))
-            .foregroundStyle(DesignTokens.textPrimary)
+    private func errorPanel(_ message: String) -> some View {
+        VStack(alignment: .leading, spacing: KW.Space.sm) {
+            Text("[ IMPORT FEHLGESCHLAGEN ]")
+                .font(KW.Font.labelTV)
+                .tracking(2)
+                .foregroundStyle(Color.kwError)
+            Text(message)
+                .font(KW.Font.telemTV)
+                .foregroundStyle(Color.kwText)
+                .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(KW.Space.lg)
+        .background(Color.kwError.opacity(0.12))
+        .overlay(Rectangle().stroke(Color.kwError.opacity(0.5), lineWidth: KW.Border.hairline))
     }
 
     private var canImport: Bool {
-        let configReady = !wgQuickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        return configReady && !name.trimmingCharacters(in: .whitespaces).isEmpty
+        !wgQuickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !name.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     private func importTunnel() {

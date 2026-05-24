@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Kabelwächter — Brand & App Design Guide</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg0:#05080d; --bg1:#0a0f1a; --bg2:#0f1825; --bg3:#152135;
+    --grid:rgba(0,212,255,0.08);
+    --line:rgba(0,212,255,0.35); --lineDim:rgba(0,212,255,0.15);
+    --cyan:#00d4ff; --cyanSoft:#5be0ff;
+    --accent:#00ff9d; --warn:#ffb84d; --err:#ff4757;
+    --text:#e6f3ff; --textDim:rgba(230,243,255,0.55); --textFaint:rgba(230,243,255,0.32);
+    --mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,monospace;
+    --sans:Inter,"SF Pro Text",-apple-system,system-ui,sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg0);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px),
+      radial-gradient(ellipse at 50% 0%, var(--bg2) 0%, var(--bg1) 40%, var(--bg0) 100%);
+    background-size: 40px 40px, 40px 40px, auto;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+  .mono { font-family: var(--mono); }
+  .caps { text-transform: uppercase; letter-spacing: 0.14em; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(5,8,13,0.78); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--lineDim);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--textDim);
+  }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 44px; }
+  .topbar-inner .left { display: flex; gap: 22px; align-items: center; }
+  .topbar-inner .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: blip 2s ease-in-out infinite; }
+  .topbar-inner a { color: var(--textDim); text-decoration: none; padding: 4px 0; }
+  .topbar-inner a:hover { color: var(--cyan); }
+  @keyframes blip { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+  .hero { position: relative; padding: 96px 0 64px; overflow: hidden; }
+  .hero-tag {
+    display: inline-flex; gap: 10px; align-items: center;
+    padding: 6px 12px; border: 1px solid var(--line);
+    background: rgba(0,212,255,0.06);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--cyan);
+  }
+  .hero-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+  .hero h1 {
+    font-family: var(--mono); font-weight: 700; font-size: 80px; line-height: 0.95; letter-spacing: -0.01em;
+    margin: 22px 0 16px; color: var(--text);
+  }
+  .hero h1 .accent { color: var(--cyan); text-shadow: 0 0 24px rgba(0,212,255,0.4); }
+  .hero h1 .sub { font-size: 0.45em; color: var(--textDim); font-weight: 500; letter-spacing: 0.18em; display: block; margin-top: 8px; }
+  .hero-sub { font-size: 18px; color: var(--textDim); max-width: 720px; line-height: 1.55; }
+  .hero-meta {
+    margin-top: 36px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+    border-top: 1px solid var(--lineDim); padding-top: 18px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .hero-meta .label { color: var(--textFaint); display: block; margin-bottom: 4px; font-size: 10px; }
+  .hero-meta .val { color: var(--cyan); font-size: 13px; }
+  .hero-mark { position: absolute; right: -120px; top: -40px; width: 720px; opacity: 0.55; pointer-events: none; }
+
+  section { padding: 72px 0; border-top: 1px solid var(--lineDim); position: relative; }
+  .sec-head { display: flex; align-items: baseline; gap: 24px; margin-bottom: 36px; flex-wrap: wrap; }
+  .sec-no { font-family: var(--mono); font-size: 12px; color: var(--cyan); letter-spacing: 0.2em; }
+  .sec-title { font-family: var(--mono); font-weight: 700; font-size: 32px; letter-spacing: -0.01em; margin: 0; }
+  .sec-kicker { font-family: var(--mono); font-size: 11px; color: var(--textFaint); letter-spacing: 0.22em; text-transform: uppercase; margin-left: auto; }
+
+  .panel {
+    position: relative;
+    background: linear-gradient(180deg, rgba(15,24,37,0.7), rgba(10,15,26,0.7));
+    border: 1px solid var(--lineDim);
+  }
+  .panel.corner > .c { position: absolute; width: 12px; height: 12px; border-color: var(--cyan); border-style: solid; border-width: 0; }
+  .panel.corner > .c.tl { top: -1px; left: -1px; border-top-width: 1.5px; border-left-width: 1.5px; }
+  .panel.corner > .c.tr { top: -1px; right: -1px; border-top-width: 1.5px; border-right-width: 1.5px; }
+  .panel.corner > .c.bl { bottom: -1px; left: -1px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+  .panel.corner > .c.br { bottom: -1px; right: -1px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+  .panel-pad { padding: 24px; }
+
+  .swatch-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--textFaint); }
+
+  .logo-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 18px; }
+  .logo-cell { position: relative; padding: 32px; display: flex; align-items: center; justify-content: center; min-height: 220px; }
+  .logo-cell.dark { background: var(--bg1); }
+  .logo-cell.darker { background: var(--bg0); }
+  .logo-cell .label { position: absolute; top: 12px; left: 12px; }
+
+  .icon-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+  .icon-hero { aspect-ratio: 1; max-width: 520px; margin: auto; position: relative; border-radius: 88px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04); }
+  .icon-hero img { display: block; width: 100%; height: 100%; }
+  .icon-sizes { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; align-items: end; }
+  .icon-sizes .cell { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .icon-sizes img { display: block; border-radius: 22%; box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+  .icon-sizes .sz { font-family: var(--mono); font-size: 9px; color: var(--textFaint); letter-spacing: 0.16em; text-transform: uppercase; }
+
+  .tvos-stack { position: relative; aspect-ratio: 16/9; background: #000; border-radius: 6px; overflow: hidden; }
+  .tvos-stack img { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform 600ms cubic-bezier(.2,.7,.2,1); }
+  .tvos-stack:hover img.lyr-mid { transform: translate(8px, -6px); }
+  .tvos-stack:hover img.lyr-front { transform: translate(20px, -16px) scale(1.04); }
+
+  .colors-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .swatch { position: relative; aspect-ratio: 1.1; border: 1px solid var(--lineDim); display: flex; flex-direction: column; justify-content: space-between; padding: 14px; }
+  .swatch .name { font-family: var(--mono); font-size: 12px; color: var(--text); }
+  .swatch .hex { font-family: var(--mono); font-size: 11px; color: var(--textDim); letter-spacing: 0.08em; }
+  .swatch .role { font-family: var(--mono); font-size: 9px; color: var(--textFaint); letter-spacing: 0.18em; text-transform: uppercase; }
+  .swatch.on-light .name, .swatch.on-light .hex { color: #0a0f1a; }
+  .swatch.on-light .role { color: rgba(10,15,26,0.5); }
+
+  .type-row { display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 22px 0; border-bottom: 1px solid var(--lineDim); align-items: baseline; }
+  .type-row:last-child { border-bottom: 0; }
+  .type-row .meta { font-family: var(--mono); font-size: 10px; color: var(--textFaint); letter-spacing: 0.18em; text-transform: uppercase; }
+  .type-row .meta strong { display: block; color: var(--cyan); font-size: 11px; margin-bottom: 6px; }
+  .type-sample.display { font-family: var(--mono); font-weight: 700; font-size: 56px; line-height: 1; letter-spacing: -0.01em; }
+  .type-sample.h1 { font-family: var(--mono); font-weight: 700; font-size: 32px; line-height: 1.1; }
+  .type-sample.h2 { font-family: var(--mono); font-weight: 500; font-size: 22px; }
+  .type-sample.body { font-family: var(--sans); font-weight: 400; font-size: 16px; color: var(--textDim); max-width: 640px; }
+  .type-sample.tele { font-family: var(--mono); font-weight: 500; font-size: 13px; letter-spacing: 0.1em; }
+  .type-sample.label { font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--cyan); }
+
+  .glyph-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .glyph { aspect-ratio: 1; border: 1px solid var(--lineDim); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--cyan); background: rgba(0,212,255,0.03); }
+  .glyph svg { width: 28px; height: 28px; }
+  .glyph .gname { font-family: var(--mono); font-size: 9px; color: var(--textFaint); letter-spacing: 0.16em; text-transform: uppercase; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px; font-family: var(--mono); font-size: 10px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; border-radius: 2px;
+  }
+  .pill.cyan { color: var(--cyan); background: rgba(0,212,255,0.10); border: 1px solid rgba(0,212,255,0.45); }
+  .pill.green { color: var(--accent); background: rgba(0,255,157,0.10); border: 1px solid rgba(0,255,157,0.45); }
+  .pill.warn { color: var(--warn); background: rgba(255,184,77,0.10); border: 1px solid rgba(255,184,77,0.45); }
+  .pill.err { color: var(--err); background: rgba(255,71,87,0.10); border: 1px solid rgba(255,71,87,0.5); }
+  .pill.dim { color: var(--textDim); background: rgba(230,243,255,0.04); border: 1px solid rgba(230,243,255,0.12); }
+  .pill .dt { width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
+
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: all 200ms; border: 0; }
+  .btn-primary { background: var(--cyan); color: var(--bg0); }
+  .btn-primary:hover { background: var(--cyanSoft); box-shadow: 0 0 24px rgba(0,212,255,0.45); }
+  .btn-connect { background: var(--accent); color: var(--bg0); }
+  .btn-ghost { background: transparent; color: var(--cyan); border: 1px solid var(--line); }
+  .btn-ghost:hover { background: rgba(0,212,255,0.08); }
+  .btn-danger { background: transparent; color: var(--err); border: 1px solid var(--err); }
+
+  .code {
+    position: relative; background: var(--bg0); border: 1px solid var(--lineDim);
+    font-family: var(--mono); font-size: 12px; line-height: 1.7; padding: 20px 22px;
+    color: var(--text); overflow-x: auto; white-space: pre;
+    margin: 0;
+  }
+  .code .k { color: var(--cyan); }
+  .code .s { color: var(--accent); }
+  .code .c { color: var(--textFaint); }
+  .code .n { color: var(--warn); }
+  .code-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px; background: rgba(0,212,255,0.04); border: 1px solid var(--lineDim); border-bottom: 0;
+    font-family: var(--mono); font-size: 10px; color: var(--textDim); letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .code-head .copy { color: var(--cyan); cursor: pointer; user-select: none; }
+  .code-head .copy:hover { color: var(--cyanSoft); }
+
+  .tunnel-wrap { position: relative; aspect-ratio: 16/9; background: var(--bg0); overflow: hidden; border: 1px solid var(--lineDim); }
+  .tunnel-wrap svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  @keyframes ringSwell {
+    0% { transform: scale(0.4); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: scale(1.4); opacity: 0; }
+  }
+
+  .dodont { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .dodont .cell { padding: 22px; border: 1px solid var(--lineDim); position: relative; }
+  .dodont .cell.do { border-color: rgba(0,255,157,0.4); }
+  .dodont .cell.dont { border-color: rgba(255,71,87,0.4); }
+  .dodont .badge { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 8px; }
+  .dodont .do .badge { color: var(--accent); }
+  .dodont .dont .badge { color: var(--err); }
+  .dodont ul { margin: 0; padding-left: 18px; color: var(--textDim); font-size: 14px; line-height: 1.7; }
+
+  .dl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .dl-card {
+    position: relative; padding: 22px; border: 1px solid var(--lineDim);
+    display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: inherit;
+    background: linear-gradient(180deg, rgba(15,24,37,0.5), rgba(10,15,26,0.5));
+    transition: all 200ms;
+  }
+  .dl-card:hover { border-color: var(--line); background: linear-gradient(180deg, rgba(15,24,37,0.85), rgba(10,15,26,0.85)); transform: translateY(-2px); }
+  .dl-card .preview { aspect-ratio: 16/10; background: var(--bg0); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--lineDim); }
+  .dl-card .preview img { max-width: 75%; max-height: 75%; }
+  .dl-card .meta { display: flex; align-items: center; justify-content: space-between; }
+  .dl-card .name { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  .dl-card .filetag { font-family: var(--mono); font-size: 10px; color: var(--cyan); letter-spacing: 0.18em; }
+  .dl-card .desc { font-size: 12px; color: var(--textDim); margin: 0; }
+
+  footer { border-top: 1px solid var(--lineDim); padding: 36px 0 80px; margin-top: 48px; font-family: var(--mono); font-size: 11px; color: var(--textFaint); letter-spacing: 0.18em; text-transform: uppercase; }
+  footer .row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .stack > * + * { margin-top: 12px; }
+  .stack-lg > * + * { margin-top: 18px; }
+  .muted { color: var(--textDim); }
+  .faint { color: var(--textFaint); }
+  hr.div { border: 0; border-top: 1px solid var(--lineDim); margin: 28px 0; }
+
+  @media (max-width: 900px) {
+    .wrap { padding: 0 24px; }
+    .hero h1 { font-size: 52px; }
+    .hero-mark { display: none; }
+    .hero-meta { grid-template-columns: 1fr 1fr; }
+    .icon-grid, .logo-grid, .colors-grid, .row-2, .row-3, .dodont, .dl-grid { grid-template-columns: 1fr; }
+    .icon-sizes { grid-template-columns: repeat(3, 1fr); }
+    .glyph-grid { grid-template-columns: repeat(4, 1fr); }
+    .type-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="left">
+      <span style="display:inline-flex;gap:10px;align-items:center;color:var(--text);">
+        <span class="dot"></span> KBLW · BRAND v1.0
+      </span>
+      <a href="#logo">Logo</a>
+      <a href="#icon">Icon</a>
+      <a href="#color">Color</a>
+      <a href="#type">Type</a>
+      <a href="#icons">Icons</a>
+      <a href="#components">Components</a>
+      <a href="#xcode">Xcode</a>
+      <a href="#downloads">Downloads</a>
+    </div>
+    <div>REV · 2026.05.17</div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap" style="position:relative;z-index:2;">
+    <span class="hero-tag"><span class="dot"></span> Corporate Design System</span>
+    <h1>KABELW<span class="accent">Ä</span>CHTER<span class="sub">BRAND &amp; APP DESIGN GUIDE</span></h1>
+    <p class="hero-sub">A secure WireGuard tunnel companion for Apple TV and iOS. Cool, technical, signal-driven. This document defines the visual identity and ships every asset Xcode needs to build the app.</p>
+    <div class="hero-meta">
+      <div><span class="label">Platform</span><span class="val">tvOS · iOS · iPadOS</span></div>
+      <div><span class="label">Aesthetic</span><span class="val">Cool Cyber · Tunnel</span></div>
+      <div><span class="label">Primary Type</span><span class="val">JetBrains Mono / SF Mono</span></div>
+      <div><span class="label">Accent</span><span class="val">Cyan · Signal Green</span></div>
+    </div>
+  </div>
+  <img class="hero-mark" src="assets/logo-mark.svg" alt="" />
+</header>
+
+<section id="essence">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">01</span>
+      <h2 class="sec-title">Brand essence</h2>
+      <span class="sec-kicker">What the design communicates</span>
+    </div>
+    <div class="row-3">
+      <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:10px;">Voice</div>
+        <p class="muted" style="margin:0;">Precise, technical, calm. We name things by what they are. No exclamation marks, no fluff. Telemetry over copy.</p>
+      </div>
+      <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:10px;">Form</div>
+        <p class="muted" style="margin:0;">Concentric tunnel rings, perspective rays, fine grids, scan lines. Bright signal cores on deep navy. Mono type carries authority.</p>
+      </div>
+      <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:10px;">Feel</div>
+        <p class="muted" style="margin:0;">A radar console at 03:00. Quiet, alert, glowing. The interface watches the wire so you don't have to.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="logo">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">02</span>
+      <h2 class="sec-title">Logo system</h2>
+      <span class="sec-kicker">Mark · Wordmark · Lockup</span>
+    </div>
+    <div class="logo-grid">
+      <div class="panel corner logo-cell dark"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <span class="label swatch-meta">Lockup · Primary</span>
+        <img src="assets/lockup-horizontal.svg" alt="Kabelwächter horizontal lockup" style="width:100%; max-width:520px;"/>
+      </div>
+      <div class="panel corner logo-cell darker"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <span class="label swatch-meta">Mark · App / Favicon</span>
+        <img src="assets/logo-mark.svg" alt="Kabelwächter mark" style="width:170px;"/>
+      </div>
+      <div class="panel corner logo-cell dark"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <span class="label swatch-meta">Wordmark</span>
+        <img src="assets/wordmark.svg" alt="Kabelwächter wordmark" style="width:100%; max-width:380px;"/>
+      </div>
+    </div>
+
+    <hr class="div"/>
+
+    <div class="row-2" style="margin-top:18px;">
+      <div>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">Clear space</div>
+        <p class="muted" style="margin:0 0 14px;">Reserve at least <span class="mono" style="color:var(--text);">x = radius of the outer ring</span> on every side of the mark. Never crop, rotate, or skew the mark.</p>
+        <div class="panel corner panel-pad" style="display:flex; align-items:center; justify-content:center; min-height:240px; background:var(--bg0);">
+          <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+          <div style="position:relative; display:inline-block;">
+            <img src="assets/logo-mark.svg" alt="" style="display:block; width:140px; height:140px;"/>
+            <div style="position:absolute; inset:-46px; border:1px dashed rgba(0,212,255,0.35);"></div>
+            <div style="position:absolute; top:-46px; left:50%; transform:translate(-50%,-100%); font-family:var(--mono); font-size:10px; color:var(--cyan); letter-spacing:0.18em;">X</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">Minimum size</div>
+        <p class="muted" style="margin:0 0 14px;">Mark: <span class="mono" style="color:var(--text);">24 px</span> on screen, <span class="mono" style="color:var(--text);">10 mm</span> in print. Below this threshold the inner reticle fuses into the rings.</p>
+        <div class="panel corner panel-pad" style="display:flex; align-items:end; justify-content:space-around; min-height:240px; background:var(--bg0); gap:30px;">
+          <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <img src="assets/logo-mark.svg" alt="" style="width:96px;"/>
+            <span class="swatch-meta">96 px</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <img src="assets/logo-mark.svg" alt="" style="width:48px;"/>
+            <span class="swatch-meta">48 px</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <img src="assets/logo-mark.svg" alt="" style="width:24px;"/>
+            <span class="swatch-meta">24 px · min</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="icon">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">03</span>
+      <h2 class="sec-title">App icon</h2>
+      <span class="sec-kicker">iOS · tvOS layered · Asset Catalog</span>
+    </div>
+
+    <div class="icon-grid">
+      <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">iOS · 1024×1024 master</div>
+        <div class="icon-hero">
+          <img src="assets/icon-1024.svg" alt="Kabelwächter app icon" />
+        </div>
+        <p class="muted" style="margin-top:18px; font-size:13px;">The squircle mask is applied by iOS — design at full square. The bright signal core sits at exact center; the icon stays recognizable at 29 pt (Settings).</p>
+      </div>
+
+      <div class="stack-lg">
+        <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+          <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">tvOS · Layered parallax</div>
+          <div class="tvos-stack">
+            <img class="lyr-back" src="assets/icon-tvos-back.svg" alt="" />
+            <img class="lyr-mid" src="assets/icon-tvos-middle.svg" alt="" />
+            <img class="lyr-front" src="assets/icon-tvos-front.svg" alt="" />
+          </div>
+          <p class="muted faint mono" style="margin-top:10px; font-size:10px; letter-spacing:0.16em; text-transform:uppercase;">Hover to preview parallax · 3 layers · 1920×1080</p>
+        </div>
+
+        <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+          <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">Size grid</div>
+          <div class="icon-sizes">
+            <div class="cell"><img src="assets/icon-1024.svg" style="width:80px; height:80px;"/><span class="sz">1024 · Store</span></div>
+            <div class="cell"><img src="assets/icon-1024.svg" style="width:60px; height:60px;"/><span class="sz">180 · iPhone</span></div>
+            <div class="cell"><img src="assets/icon-1024.svg" style="width:48px; height:48px;"/><span class="sz">120 · iPad</span></div>
+            <div class="cell"><img src="assets/icon-1024.svg" style="width:36px; height:36px;"/><span class="sz">87 · Spot.</span></div>
+            <div class="cell"><img src="assets/icon-1024.svg" style="width:28px; height:28px;"/><span class="sz">58 · Set.</span></div>
+            <div class="cell"><img src="assets/icon-1024.svg" style="width:20px; height:20px;"/><span class="sz">29 · Min</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="color">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">04</span>
+      <h2 class="sec-title">Color palette</h2>
+      <span class="sec-kicker">Tokens · Hex · Swift</span>
+    </div>
+
+    <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">Surfaces</div>
+    <div class="colors-grid">
+      <div class="swatch" style="background:#05080d;"><span class="role">surface · 00</span><div><div class="name">bg0</div><div class="hex">#05080D</div></div></div>
+      <div class="swatch" style="background:#0a0f1a;"><span class="role">surface · 10</span><div><div class="name">bg1</div><div class="hex">#0A0F1A</div></div></div>
+      <div class="swatch" style="background:#0f1825;"><span class="role">surface · 20</span><div><div class="name">bg2</div><div class="hex">#0F1825</div></div></div>
+      <div class="swatch" style="background:#152135;"><span class="role">surface · 30</span><div><div class="name">bg3</div><div class="hex">#152135</div></div></div>
+    </div>
+
+    <div class="caps mono" style="color:var(--cyan); font-size:11px; margin:28px 0 14px;">Signal</div>
+    <div class="colors-grid">
+      <div class="swatch on-light" style="background:#00d4ff;"><span class="role">accent · primary</span><div><div class="name">cyan</div><div class="hex">#00D4FF</div></div></div>
+      <div class="swatch on-light" style="background:#00ff9d;"><span class="role">accent · connected</span><div><div class="name">signal</div><div class="hex">#00FF9D</div></div></div>
+      <div class="swatch on-light" style="background:#ffb84d;"><span class="role">status · warn</span><div><div class="name">warn</div><div class="hex">#FFB84D</div></div></div>
+      <div class="swatch" style="background:#ff4757;"><span class="role">status · error</span><div><div class="name">error</div><div class="hex">#FF4757</div></div></div>
+    </div>
+
+    <div class="caps mono" style="color:var(--cyan); font-size:11px; margin:28px 0 14px;">Text &amp; lines</div>
+    <div class="colors-grid">
+      <div class="swatch on-light" style="background:#e6f3ff;"><span class="role">text · primary</span><div><div class="name">text</div><div class="hex">#E6F3FF</div></div></div>
+      <div class="swatch on-light" style="background:rgba(230,243,255,0.55);"><span class="role">text · dim</span><div><div class="name">textDim</div><div class="hex">55% α</div></div></div>
+      <div class="swatch on-light" style="background:rgba(230,243,255,0.32);"><span class="role">text · faint</span><div><div class="name">textFaint</div><div class="hex">32% α</div></div></div>
+      <div class="swatch" style="background:rgba(0,212,255,0.35); border:1px solid var(--line);"><span class="role">line · default</span><div><div class="name">line</div><div class="hex">cyan · 35% α</div></div></div>
+    </div>
+
+    <div style="margin-top:32px;">
+      <div class="code-head">
+        <span>Color+Kabelwaechter.swift · Brand tokens</span>
+        <span class="copy" data-copy="swift-color">Copy</span>
+      </div>
+      <pre class="code" id="swift-color"><span class="c">// Color+Kabelwaechter.swift</span>
+<span class="k">import</span> SwiftUI
+
+<span class="k">extension</span> Color {
+    <span class="c">// Surfaces</span>
+    <span class="k">static let</span> kwBg0   = Color(hex: <span class="s">0x05080D</span>)
+    <span class="k">static let</span> kwBg1   = Color(hex: <span class="s">0x0A0F1A</span>)
+    <span class="k">static let</span> kwBg2   = Color(hex: <span class="s">0x0F1825</span>)
+    <span class="k">static let</span> kwBg3   = Color(hex: <span class="s">0x152135</span>)
+
+    <span class="c">// Signal</span>
+    <span class="k">static let</span> kwCyan   = Color(hex: <span class="s">0x00D4FF</span>)
+    <span class="k">static let</span> kwSignal = Color(hex: <span class="s">0x00FF9D</span>)  <span class="c">// connected</span>
+    <span class="k">static let</span> kwWarn   = Color(hex: <span class="s">0xFFB84D</span>)
+    <span class="k">static let</span> kwError  = Color(hex: <span class="s">0xFF4757</span>)
+
+    <span class="c">// Text</span>
+    <span class="k">static let</span> kwText      = Color(hex: <span class="s">0xE6F3FF</span>)
+    <span class="k">static let</span> kwTextDim   = Color(hex: <span class="s">0xE6F3FF</span>, opacity: <span class="n">0.55</span>)
+    <span class="k">static let</span> kwTextFaint = Color(hex: <span class="s">0xE6F3FF</span>, opacity: <span class="n">0.32</span>)
+
+    <span class="c">// Lines</span>
+    <span class="k">static let</span> kwLine    = Color(hex: <span class="s">0x00D4FF</span>, opacity: <span class="n">0.35</span>)
+    <span class="k">static let</span> kwLineDim = Color(hex: <span class="s">0x00D4FF</span>, opacity: <span class="n">0.15</span>)
+    <span class="k">static let</span> kwGrid    = Color(hex: <span class="s">0x00D4FF</span>, opacity: <span class="n">0.08</span>)
+}
+
+<span class="k">extension</span> Color {
+    <span class="k">init</span>(hex: <span class="k">UInt</span>, opacity: <span class="k">Double</span> = <span class="n">1.0</span>) {
+        <span class="k">self</span>.<span class="k">init</span>(
+            .sRGB,
+            red:   <span class="k">Double</span>((hex &gt;&gt; <span class="n">16</span>) &amp; <span class="n">0xFF</span>) / <span class="n">255</span>,
+            green: <span class="k">Double</span>((hex &gt;&gt; <span class="n">8</span>)  &amp; <span class="n">0xFF</span>) / <span class="n">255</span>,
+            blue:  <span class="k">Double</span>( hex        &amp; <span class="n">0xFF</span>) / <span class="n">255</span>,
+            opacity: opacity
+        )
+    }
+}</pre>
+    </div>
+  </div>
+</section>
+
+<section id="type">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">05</span>
+      <h2 class="sec-title">Typography</h2>
+      <span class="sec-kicker">SF Mono · SF Pro Text</span>
+    </div>
+
+    <p class="muted" style="max-width:760px;">Mono carries the brand. <span class="mono" style="color:var(--text);">SF Mono</span> ships with every Apple OS and is the production typeface in Xcode — JetBrains Mono is the web mirror. Use sans (<span class="mono" style="color:var(--text);">SF Pro Text</span>) only for long-form body copy where mono would tire the eye.</p>
+
+    <div class="panel corner" style="margin-top:24px;"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+      <div style="padding: 8px 28px;">
+        <div class="type-row">
+          <div class="meta"><strong>Display / Hero</strong>SF Mono Bold · 56–80 pt<br/>Tracking -1%</div>
+          <div class="type-sample display">KABELWÄCHTER</div>
+        </div>
+        <div class="type-row">
+          <div class="meta"><strong>H1 / Title</strong>SF Mono Bold · 28–32 pt</div>
+          <div class="type-sample h1">SECURE TUNNEL ACTIVE</div>
+        </div>
+        <div class="type-row">
+          <div class="meta"><strong>H2 / Subtitle</strong>SF Mono Medium · 20–24 pt</div>
+          <div class="type-sample h2">Berlin Gateway · 10.0.0.1</div>
+        </div>
+        <div class="type-row">
+          <div class="meta"><strong>Label / Tag</strong>SF Mono Medium · 11 pt<br/>Tracking +22%, UPPERCASE</div>
+          <div class="type-sample label">STATUS · HANDSHAKE OK</div>
+        </div>
+        <div class="type-row">
+          <div class="meta"><strong>Telemetry</strong>SF Mono Regular · 12–14 pt<br/>Numerals tabular</div>
+          <div class="type-sample tele">↑ 12.4 MB/s    ↓ 84.1 MB/s    RTT 14 ms    UPTIME 04:17:23</div>
+        </div>
+        <div class="type-row">
+          <div class="meta"><strong>Body</strong>SF Pro Text Regular · 15–16 pt</div>
+          <div class="type-sample body">Use sans only where readability matters more than tone — long help text, EULAs, error explanations. Keep mono for everything that feels like an instrument reading.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <div class="code-head">
+        <span>Font+Kabelwaechter.swift · Type roles</span>
+        <span class="copy" data-copy="swift-font">Copy</span>
+      </div>
+      <pre class="code" id="swift-font"><span class="c">// Font+Kabelwaechter.swift</span>
+<span class="k">import</span> SwiftUI
+
+<span class="k">extension</span> Font {
+    <span class="k">static let</span> kwDisplay = Font.system(size: <span class="n">56</span>, weight: .bold,    design: .monospaced)
+    <span class="k">static let</span> kwTitle   = Font.system(size: <span class="n">32</span>, weight: .bold,    design: .monospaced)
+    <span class="k">static let</span> kwH2      = Font.system(size: <span class="n">22</span>, weight: .medium,  design: .monospaced)
+    <span class="k">static let</span> kwLabel   = Font.system(size: <span class="n">11</span>, weight: .medium,  design: .monospaced)
+    <span class="k">static let</span> kwTelem   = Font.system(size: <span class="n">13</span>, weight: .regular, design: .monospaced)
+    <span class="k">static let</span> kwBody    = Font.system(size: <span class="n">15</span>, weight: .regular)
+    <span class="k">static let</span> kwBodySm  = Font.system(size: <span class="n">13</span>, weight: .regular)
+}
+
+<span class="c">// Reusable label modifier</span>
+<span class="k">struct</span> KWLabel: ViewModifier {
+    <span class="k">func</span> body(content: Content) -&gt; <span class="k">some</span> View {
+        content
+            .font(.kwLabel)
+            .tracking(<span class="n">2.2</span>)
+            .textCase(.uppercase)
+            .foregroundStyle(Color.kwCyan)
+    }
+}</pre>
+    </div>
+  </div>
+</section>
+
+<section id="icons">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">06</span>
+      <h2 class="sec-title">Iconography</h2>
+      <span class="sec-kicker">SF Symbols + mono-stroke set</span>
+    </div>
+    <p class="muted" style="max-width:760px; margin-bottom: 24px;">Prefer <span class="mono" style="color:var(--text);">SF Symbols</span> set to weight <em>regular</em>, scale <em>medium</em>. Custom glyphs follow a single 1.5 px stroke at 24×24, square caps and joins.</p>
+
+    <div class="glyph-grid">
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3Z"/></svg><span class="gname">shield</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9"/><path d="M5.5 7.5a8 8 0 1 0 13 0"/></svg><span class="gname">power</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M20 14v3M14 20h3M20 20v.01"/></svg><span class="gname">qr</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 4.2 6 4.2 9s-1.4 6-4.2 9c-2.8-3-4.2-6-4.2-9s1.4-6 4.2-9Z"/></svg><span class="gname">globe</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg><span class="gname">tx</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg><span class="gname">rx</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span class="gname">add</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg><span class="gname">chevron</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 0 0-2.1-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2.1 1.2l-2.3-.9-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-.9a7 7 0 0 0 2.1 1.2L10 21h4l.5-2.6a7 7 0 0 0 2.1-1.2l2.3.9 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg><span class="gname">gear</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v5M12 18v.01"/></svg><span class="gname">warn</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg><span class="gname">handshake</span></div>
+      <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="1"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span class="gname">lock</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="components">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">07</span>
+      <h2 class="sec-title">Components</h2>
+      <span class="sec-kicker">Status · Buttons · Cards · Tunnel</span>
+    </div>
+
+    <div class="row-2">
+      <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:18px;">Status pills</div>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          <span class="pill green"><span class="dt"></span> Connected</span>
+          <span class="pill warn"><span class="dt"></span> Handshake</span>
+          <span class="pill err"><span class="dt"></span> Error</span>
+          <span class="pill cyan"><span class="dt"></span> Paired</span>
+          <span class="pill dim">Idle</span>
+        </div>
+        <hr class="div"/>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">Anatomy</div>
+        <p class="muted mono" style="font-size:12px; margin:0;">3 / 9 px padding · 1 px border · 2 px radius · 5 px dot · uppercase, +0.1em tracking.</p>
+      </div>
+
+      <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:18px;">Buttons</div>
+        <div style="display:flex; flex-wrap:wrap; gap:12px;">
+          <button class="btn btn-connect">Connect</button>
+          <button class="btn btn-primary">Pair Device</button>
+          <button class="btn btn-ghost">Cancel</button>
+          <button class="btn btn-danger">Disconnect</button>
+        </div>
+        <hr class="div"/>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">Anatomy</div>
+        <p class="muted mono" style="font-size:12px; margin:0;">12 / 22 px padding · 12 pt mono semibold · +0.18em tracking · 0 radius · hover: glow 24 px.</p>
+      </div>
+    </div>
+
+    <div class="row-2" style="margin-top:18px;">
+      <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:18px;">Tunnel list · row</div>
+        <div style="border:1px solid var(--lineDim); padding:18px; display:flex; align-items:center; gap:16px;">
+          <div style="width:44px; height:44px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--cyan);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 4.2 6 4.2 9s-1.4 6-4.2 9c-2.8-3-4.2-6-4.2-9s1.4-6 4.2-9Z"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div class="mono" style="font-size:14px; color:var(--text);">Berlin Gateway</div>
+            <div class="mono faint" style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase;">10.0.0.1:51820 · WG-MAIN</div>
+          </div>
+          <span class="pill green"><span class="dt"></span> Active</span>
+        </div>
+        <div style="border:1px solid var(--lineDim); padding:18px; display:flex; align-items:center; gap:16px; margin-top:10px;">
+          <div style="width:44px; height:44px; border:1px solid var(--lineDim); display:flex; align-items:center; justify-content:center; color:var(--textDim);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 4.2 6 4.2 9s-1.4 6-4.2 9c-2.8-3-4.2-6-4.2-9s1.4-6 4.2-9Z"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div class="mono" style="font-size:14px; color:var(--text);">Home Lab</div>
+            <div class="mono faint" style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase;">192.168.1.1:51820 · WG-HOME</div>
+          </div>
+          <span class="pill dim">Idle</span>
+        </div>
+      </div>
+
+      <div class="panel corner panel-pad"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:18px;">Tunnel motif · hero</div>
+        <div class="tunnel-wrap">
+          <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="t-core" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#00ff9d" stop-opacity="0.55"/>
+                <stop offset="40%" stop-color="#00d4ff" stop-opacity="0.12"/>
+                <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="400" cy="225" r="200" fill="url(#t-core)"/>
+            <g stroke="#00d4ff" stroke-width="0.6" opacity="0.4">
+              <line x1="400" y1="225" x2="0" y2="0"/><line x1="400" y1="225" x2="800" y2="0"/>
+              <line x1="400" y1="225" x2="0" y2="450"/><line x1="400" y1="225" x2="800" y2="450"/>
+              <line x1="400" y1="225" x2="400" y2="0"/><line x1="400" y1="225" x2="800" y2="225"/>
+              <line x1="400" y1="225" x2="400" y2="450"/><line x1="400" y1="225" x2="0" y2="225"/>
+            </g>
+            <g fill="none" stroke="#00ff9d" stroke-width="1.4">
+              <circle cx="400" cy="225" r="40" stroke-opacity="0.95" style="animation: ringSwell 4s ease-out infinite; transform-origin: 400px 225px;"/>
+              <circle cx="400" cy="225" r="40" stroke-opacity="0.95" style="animation: ringSwell 4s ease-out infinite -1s; transform-origin: 400px 225px;"/>
+              <circle cx="400" cy="225" r="40" stroke-opacity="0.95" style="animation: ringSwell 4s ease-out infinite -2s; transform-origin: 400px 225px;"/>
+              <circle cx="400" cy="225" r="40" stroke-opacity="0.95" style="animation: ringSwell 4s ease-out infinite -3s; transform-origin: 400px 225px;"/>
+            </g>
+            <circle cx="400" cy="225" r="5" fill="#00ff9d"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;">
+      <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">Spacing &amp; geometry</div>
+      <div class="row-3">
+        <div class="panel panel-pad" style="border:1px solid var(--lineDim);">
+          <div class="mono" style="color:var(--text); font-size:14px;">Grid</div>
+          <p class="muted mono" style="margin:6px 0 0; font-size:12px;">8 px base · 4 px subdivisions · 40 px page rhythm.</p>
+        </div>
+        <div class="panel panel-pad" style="border:1px solid var(--lineDim);">
+          <div class="mono" style="color:var(--text); font-size:14px;">Radii</div>
+          <p class="muted mono" style="margin:6px 0 0; font-size:12px;">0 · 2 · 6 px. Never soft-rounded. Squared corners read as instrumentation.</p>
+        </div>
+        <div class="panel panel-pad" style="border:1px solid var(--lineDim);">
+          <div class="mono" style="color:var(--text); font-size:14px;">Borders</div>
+          <p class="muted mono" style="margin:6px 0 0; font-size:12px;">1 px hairline cyan @ 15% / 35% α. Corner brackets for emphasis.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dodont">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">08</span>
+      <h2 class="sec-title">Do &amp; don't</h2>
+      <span class="sec-kicker">Brand guardrails</span>
+    </div>
+    <div class="dodont">
+      <div class="cell do">
+        <div class="badge"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;"></span> DO</div>
+        <ul>
+          <li>Place the tunnel mark on deep navy — let the core glow read as the brightest point in the frame.</li>
+          <li>Use mono for any number, status, identifier, or label. Always.</li>
+          <li>Reserve <span class="mono" style="color:var(--accent);">#00FF9D</span> exclusively for the "connected / live" state.</li>
+          <li>Keep generous negative space. The interface should breathe like a console.</li>
+          <li>Anchor key surfaces with corner brackets — they signal "selected" without filling space.</li>
+        </ul>
+      </div>
+      <div class="cell dont">
+        <div class="badge"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;"></span> DON'T</div>
+        <ul>
+          <li>Use signal green as decoration — it must always mean "connected".</li>
+          <li>Apply gradients beyond the core radial glow. No purple→pink, no cyber clichés.</li>
+          <li>Mix rounded-soft corners or drop shadows into chrome — flat hairlines only.</li>
+          <li>Use sans-serif for status, telemetry, or identifiers. Mono is the brand voice.</li>
+          <li>Recolor the app icon or place it on a non-square canvas. Always export from the master SVG.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="xcode">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">09</span>
+      <h2 class="sec-title">Xcode integration</h2>
+      <span class="sec-kicker">Asset Catalog · Tokens · Setup</span>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">Asset Catalog layout</div>
+        <pre class="code"><span class="c">// Assets.xcassets</span>
+Kabelwaechter/
+├── Assets.xcassets/
+│   ├── AppIcon.appiconset/         <span class="c">// iOS · iPad</span>
+│   │   ├── icon-1024.png           <span class="n">1024×1024</span>
+│   │   ├── icon-180.png            <span class="n">180×180</span>
+│   │   ├── icon-167.png            <span class="n">167×167</span>
+│   │   ├── icon-152.png            <span class="n">152×152</span>
+│   │   ├── icon-120.png            <span class="n">120×120</span>
+│   │   ├── icon-87.png             <span class="n">87×87</span>
+│   │   ├── icon-80.png             <span class="n">80×80</span>
+│   │   ├── icon-76.png             <span class="n">76×76</span>
+│   │   ├── icon-60.png             <span class="n">60×60</span>
+│   │   ├── icon-58.png             <span class="n">58×58</span>
+│   │   ├── icon-40.png             <span class="n">40×40</span>
+│   │   ├── icon-29.png             <span class="n">29×29</span>
+│   │   └── icon-20.png             <span class="n">20×20</span>
+│   ├── tvAppIcon.brandassets/      <span class="c">// tvOS layered</span>
+│   │   ├── App Icon - App Store.imagestack/
+│   │   ├── App Icon.imagestack/
+│   │   │   ├── Back.imagestacklayer
+│   │   │   ├── Middle.imagestacklayer
+│   │   │   └── Front.imagestacklayer
+│   │   └── Top Shelf Image.imageset/
+│   └── Colors/
+│       ├── kwCyan.colorset         <span class="c">// #00D4FF</span>
+│       ├── kwSignal.colorset       <span class="c">// #00FF9D</span>
+│       ├── kwBg0.colorset          <span class="c">// #05080D</span>
+│       └── ...
+└── Theme/
+    ├── Color+Kabelwaechter.swift
+    └── Font+Kabelwaechter.swift</pre>
+      </div>
+      <div>
+        <div class="caps mono" style="color:var(--cyan); font-size:11px; margin-bottom:14px;">Setup checklist</div>
+        <ol class="muted" style="padding-left:20px; line-height:1.9;">
+          <li>Drag <span class="mono" style="color:var(--text);">icon-1024.svg</span> into an <span class="mono" style="color:var(--text);">AppIcon.appiconset</span> — export PNG at each required size, or let Xcode 14+ scale from the single 1024.</li>
+          <li>For tvOS, create an <span class="mono" style="color:var(--text);">imagestack</span> with three <span class="mono" style="color:var(--text);">imagestacklayer</span> folders. Drop <span class="mono" style="color:var(--text);">icon-tvos-back.svg</span> → Back, <span class="mono" style="color:var(--text);">…-middle.svg</span> → Middle, <span class="mono" style="color:var(--text);">…-front.svg</span> → Front.</li>
+          <li>Add <span class="mono" style="color:var(--text);">Color+Kabelwaechter.swift</span> and <span class="mono" style="color:var(--text);">Font+Kabelwaechter.swift</span> to a <span class="mono" style="color:var(--text);">Theme</span> group.</li>
+          <li>Set <span class="mono" style="color:var(--text);">UIUserInterfaceStyle = Dark</span> in Info.plist — the brand is dark-only.</li>
+          <li>Use SF Mono via <span class="mono" style="color:var(--text);">.monospaced</span> design — no font file shipping required.</li>
+          <li>Reference WireGuard kit via <span class="mono" style="color:var(--text);">NetworkExtension</span> · <span class="mono" style="color:var(--text);">NEPacketTunnelProvider</span>.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <div class="code-head">
+        <span>Example · Connect button (SwiftUI)</span>
+        <span class="copy" data-copy="swift-button">Copy</span>
+      </div>
+      <pre class="code" id="swift-button"><span class="k">struct</span> KWConnectButton: View {
+    <span class="k">let</span> isConnected: <span class="k">Bool</span>
+    <span class="k">let</span> action: () -&gt; <span class="k">Void</span>
+
+    <span class="k">var</span> body: <span class="k">some</span> View {
+        Button(action: action) {
+            HStack(spacing: <span class="n">10</span>) {
+                Image(systemName: isConnected ? <span class="s">"bolt.slash.fill"</span> : <span class="s">"bolt.fill"</span>)
+                Text(isConnected ? <span class="s">"DISCONNECT"</span> : <span class="s">"CONNECT"</span>)
+                    .tracking(<span class="n">2.2</span>)
+            }
+            .font(.kwLabel.weight(.semibold))
+            .padding(.horizontal, <span class="n">22</span>).padding(.vertical, <span class="n">14</span>)
+            .foregroundStyle(Color.kwBg0)
+            .background(isConnected ? Color.kwError : Color.kwSignal)
+            .shadow(color: (isConnected ? Color.kwError : Color.kwSignal).opacity(<span class="n">0.45</span>),
+                    radius: <span class="n">18</span>)
+        }
+        .buttonStyle(.plain)
+    }
+}</pre>
+    </div>
+  </div>
+</section>
+
+<section id="downloads">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">10</span>
+      <h2 class="sec-title">Asset downloads</h2>
+      <span class="sec-kicker">Right-click → Save · or drag into Xcode</span>
+    </div>
+
+    <div class="dl-grid">
+      <a class="dl-card" href="assets/icon-1024.svg" download>
+        <div class="preview" style="background:#000;"><img src="assets/icon-1024.svg" alt=""/></div>
+        <p class="desc">iOS / iPadOS app icon · scalable master. Export PNGs at required sizes from Xcode.</p>
+        <div class="meta"><span class="name">icon-1024.svg</span><span class="filetag">SVG ↓</span></div>
+      </a>
+      <a class="dl-card" href="assets/icon-tvos-back.svg" download>
+        <div class="preview" style="background:#000;"><img src="assets/icon-tvos-back.svg" alt="" style="max-width:95%;"/></div>
+        <p class="desc">tvOS layered icon · back layer (grid + perspective field). 1920×1080.</p>
+        <div class="meta"><span class="name">icon-tvos-back.svg</span><span class="filetag">SVG ↓</span></div>
+      </a>
+      <a class="dl-card" href="assets/icon-tvos-middle.svg" download>
+        <div class="preview" style="background:#000;"><img src="assets/icon-tvos-middle.svg" alt="" style="max-width:95%;"/></div>
+        <p class="desc">tvOS layered icon · middle layer (outer cyan rings).</p>
+        <div class="meta"><span class="name">icon-tvos-middle.svg</span><span class="filetag">SVG ↓</span></div>
+      </a>
+      <a class="dl-card" href="assets/icon-tvos-front.svg" download>
+        <div class="preview" style="background:#000;"><img src="assets/icon-tvos-front.svg" alt="" style="max-width:95%;"/></div>
+        <p class="desc">tvOS layered icon · front layer (signal core + inner reticle).</p>
+        <div class="meta"><span class="name">icon-tvos-front.svg</span><span class="filetag">SVG ↓</span></div>
+      </a>
+      <a class="dl-card" href="assets/logo-mark.svg" download>
+        <div class="preview"><img src="assets/logo-mark.svg" alt=""/></div>
+        <p class="desc">Standalone mark · for splash, watch face, favicons.</p>
+        <div class="meta"><span class="name">logo-mark.svg</span><span class="filetag">SVG ↓</span></div>
+      </a>
+      <a class="dl-card" href="assets/wordmark.svg" download>
+        <div class="preview"><img src="assets/wordmark.svg" alt="" style="max-width:90%;"/></div>
+        <p class="desc">KABELWÄCHTER wordmark · SF Mono Bold 56 pt, +2 tracking.</p>
+        <div class="meta"><span class="name">wordmark.svg</span><span class="filetag">SVG ↓</span></div>
+      </a>
+      <a class="dl-card" href="assets/lockup-horizontal.svg" download>
+        <div class="preview"><img src="assets/lockup-horizontal.svg" alt="" style="max-width:95%;"/></div>
+        <p class="desc">Horizontal lockup with tagline. For onboarding splash &amp; marketing surfaces.</p>
+        <div class="meta"><span class="name">lockup-horizontal.svg</span><span class="filetag">SVG ↓</span></div>
+      </a>
+      <div class="dl-card" style="cursor:default;">
+        <div class="preview" style="background:linear-gradient(135deg,#0a0f1a,#152135);">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.4"><path d="M12 3v12M5 12l7 7 7-7M5 21h14"/></svg>
+        </div>
+        <p class="desc">Bulk download — use the side-panel to grab the full <span class="mono" style="color:var(--cyan);">assets/</span> folder as a ZIP.</p>
+        <div class="meta"><span class="name">assets/ · all files</span><span class="filetag">FOLDER</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap row">
+    <div>KABELWÄCHTER · Brand Guide · v1.0</div>
+    <div style="display:flex; gap:18px;">
+      <span>Rev 2026.05.17</span>
+      <span style="color:var(--cyan);">Built for tvOS · iOS · iPadOS</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.copy[data-copy]').forEach(el => {
+    el.addEventListener('click', async () => {
+      const id = el.getAttribute('data-copy');
+      const block = document.getElementById(id);
+      if (!block) return;
+      try {
+        await navigator.clipboard.writeText(block.innerText);
+        const t = el.textContent;
+        el.textContent = 'Copied ✓';
+        setTimeout(() => { el.textContent = t; }, 1400);
+      } catch (e) {}
+    });
+  });
+
+  document.querySelectorAll('.topbar a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) { e.preventDefault(); window.scrollTo({ top: target.offsetTop - 50, behavior: 'smooth' }); }
+    });
+  });
+</script>
+
+</body>
+</html>

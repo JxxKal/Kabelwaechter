@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		64B0FE015ED20F3B34D97847 /* KabelwaechterUI in Frameworks */ = {isa = PBXBuildFile; productRef = C13E77571A0B803CCDE9F059 /* KabelwaechterUI */; };
+		DAA5D1FCE804DFCD1C7DDDD2 /* KabelwaechterUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6B900F218F0F6D2D7482FCFF /* KabelwaechterUI */; };
 		E337E3DB2FC33A990039D356 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E337E3DA2FC33A990039D356 /* NetworkExtension.framework */; };
 		E337E3E32FC33A990039D356 /* KabelwaechterNEtvOS.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E337E3D82FC33A990039D356 /* KabelwaechterNEtvOS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E337E3EB2FC33EED0039D356 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = E337E3EA2FC33EED0039D356 /* KabelwaechterCore */; };
@@ -165,6 +167,7 @@
 			files = (
 				E337E3EB2FC33EED0039D356 /* KabelwaechterCore in Frameworks */,
 				E337E3F12FC700010039D356 /* KabelwaechterPersistence in Frameworks */,
+				DAA5D1FCE804DFCD1C7DDDD2 /* KabelwaechterUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +191,7 @@
 			files = (
 				E337E3ED2FC33F1D0039D356 /* KabelwaechterCore in Frameworks */,
 				E337E3F32FC700020039D356 /* KabelwaechterPersistence in Frameworks */,
+				64B0FE015ED20F3B34D97847 /* KabelwaechterUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,8 +273,6 @@
 			dependencies = (
 			);
 			name = WireguardGoBridgetvOS;
-			packageProductDependencies = (
-			);
 			passBuildSettingsInEnvironment = 1;
 			productName = WireguardGoBridgetvOS;
 		};
@@ -296,6 +298,7 @@
 			packageProductDependencies = (
 				E337E3EA2FC33EED0039D356 /* KabelwaechterCore */,
 				E337E3F02FC700010039D356 /* KabelwaechterPersistence */,
+				6B900F218F0F6D2D7482FCFF /* KabelwaechterUI */,
 			);
 			productName = "Kabelwaechter iOS";
 			productReference = E337E3752FC3383C0039D356 /* Kabelwaechter.app */;
@@ -318,8 +321,6 @@
 				E337E3892FC3383E0039D356 /* Kabelwaechter iOSTests */,
 			);
 			name = KabelwaechterTests;
-			packageProductDependencies = (
-			);
 			productName = "Kabelwaechter iOSTests";
 			productReference = E337E3862FC3383E0039D356 /* KabelwaechterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -341,8 +342,6 @@
 				E337E3932FC3383E0039D356 /* Kabelwaechter iOSUITests */,
 			);
 			name = KabelwaechterUITests;
-			packageProductDependencies = (
-			);
 			productName = "Kabelwaechter iOSUITests";
 			productReference = E337E3902FC3383E0039D356 /* KabelwaechterUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -368,6 +367,7 @@
 			packageProductDependencies = (
 				E337E3EC2FC33F1D0039D356 /* KabelwaechterCore */,
 				E337E3F22FC700020039D356 /* KabelwaechterPersistence */,
+				C13E77571A0B803CCDE9F059 /* KabelwaechterUI */,
 			);
 			productName = "Kabelwaechter tvOS";
 			productReference = E337E3A82FC339800039D356 /* Kabelwaechter tvOS.app */;
@@ -390,8 +390,6 @@
 				E337E3BB2FC339820039D356 /* Kabelwaechter tvOSTests */,
 			);
 			name = "Kabelwaechter tvOSTests";
-			packageProductDependencies = (
-			);
 			productName = "Kabelwaechter tvOSTests";
 			productReference = E337E3B82FC339820039D356 /* Kabelwaechter tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -413,8 +411,6 @@
 				E337E3C52FC339820039D356 /* Kabelwaechter tvOSUITests */,
 			);
 			name = "Kabelwaechter tvOSUITests";
-			packageProductDependencies = (
-			);
 			productName = "Kabelwaechter tvOSUITests";
 			productReference = E337E3C22FC339820039D356 /* Kabelwaechter tvOSUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -1288,6 +1284,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6B900F218F0F6D2D7482FCFF /* KabelwaechterUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "../KabelwaechterCore" */;
+			productName = KabelwaechterUI;
+		};
+		C13E77571A0B803CCDE9F059 /* KabelwaechterUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "../KabelwaechterCore" */;
+			productName = KabelwaechterUI;
+		};
 		E337E3EA2FC33EED0039D356 /* KabelwaechterCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = KabelwaechterCore;

@@ -1,0 +1,1166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Kabelwächter — Xcode Handoff</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg0:#05080d; --bg1:#0a0f1a; --bg2:#0f1825; --bg3:#152135;
+    --grid:rgba(0,212,255,0.08);
+    --line:rgba(0,212,255,0.35); --lineDim:rgba(0,212,255,0.15);
+    --cyan:#00d4ff; --cyanSoft:#5be0ff;
+    --accent:#00ff9d; --warn:#ffb84d; --err:#ff4757;
+    --text:#e6f3ff; --textDim:rgba(230,243,255,0.55); --textFaint:rgba(230,243,255,0.32);
+    --mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,monospace;
+    --sans:Inter,"SF Pro Text",-apple-system,system-ui,sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg0); color: var(--text);
+    font-family: var(--sans); font-size: 15px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px),
+      radial-gradient(ellipse at 50% 0%, var(--bg2) 0%, var(--bg1) 40%, var(--bg0) 100%);
+    background-size: 40px 40px, 40px 40px, auto;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 48px; }
+  .mono { font-family: var(--mono); }
+  .caps { text-transform: uppercase; letter-spacing: 0.14em; }
+
+  /* ── topbar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(5,8,13,0.82); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--lineDim);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--textDim);
+  }
+  .topbar .inner { display:flex; align-items:center; justify-content:space-between; height:44px; }
+  .topbar .left { display:flex; gap:22px; align-items:center; }
+  .topbar a { color: var(--textDim); text-decoration:none; }
+  .topbar a:hover { color: var(--cyan); }
+  .blip { width:6px; height:6px; border-radius:50%; background: var(--accent);
+          box-shadow: 0 0 8px var(--accent); animation: blip 2s ease-in-out infinite; }
+  @keyframes blip { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+  /* ── hero ── */
+  .hero { position:relative; padding: 88px 0 60px; }
+  .hero-tag { display:inline-flex; gap:10px; align-items:center;
+    padding: 6px 12px; border: 1px solid var(--line);
+    background: rgba(0,212,255,0.06); color: var(--cyan);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; }
+  .hero-tag .dot { width:6px; height:6px; border-radius:50%; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+  .hero h1 {
+    font-family: var(--mono); font-weight: 700; font-size: 64px; line-height: 0.96;
+    letter-spacing: -0.01em; margin: 22px 0 16px;
+  }
+  .hero h1 .swift { color: var(--cyan); text-shadow: 0 0 24px rgba(0,212,255,0.45); }
+  .hero h1 .sub { display:block; font-size: 0.34em; color: var(--textDim);
+    font-weight: 500; letter-spacing: 0.18em; margin-top: 10px; }
+  .hero-sub { color: var(--textDim); font-size: 17px; max-width: 760px; }
+  .hero-meta { margin-top: 32px; display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; border-top: 1px solid var(--lineDim); padding-top: 18px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; }
+  .hero-meta .lbl { color: var(--textFaint); font-size: 10px; display:block; margin-bottom: 4px; }
+  .hero-meta .v { color: var(--cyan); font-size: 13px; }
+
+  /* ── sections ── */
+  section { padding: 72px 0; border-top: 1px solid var(--lineDim); position: relative; }
+  .sec-head { display:flex; align-items:baseline; gap: 24px; margin-bottom: 36px; flex-wrap:wrap; }
+  .sec-no { font-family: var(--mono); font-size: 12px; color: var(--cyan); letter-spacing: 0.2em; }
+  .sec-title { font-family: var(--mono); font-weight: 700; font-size: 32px; letter-spacing: -0.01em; margin: 0; }
+  .sec-kicker { font-family: var(--mono); font-size: 11px; color: var(--textFaint);
+    letter-spacing: 0.22em; text-transform: uppercase; margin-left: auto; }
+
+  /* ── panels ── */
+  .panel { position: relative;
+    background: linear-gradient(180deg, rgba(15,24,37,0.7), rgba(10,15,26,0.7));
+    border: 1px solid var(--lineDim); }
+  .panel.corner > .c { position:absolute; width:12px; height:12px; border-color: var(--cyan); border-style: solid; border-width:0; }
+  .panel.corner > .c.tl { top:-1px; left:-1px; border-top-width:1.5px; border-left-width:1.5px; }
+  .panel.corner > .c.tr { top:-1px; right:-1px; border-top-width:1.5px; border-right-width:1.5px; }
+  .panel.corner > .c.bl { bottom:-1px; left:-1px; border-bottom-width:1.5px; border-left-width:1.5px; }
+  .panel.corner > .c.br { bottom:-1px; right:-1px; border-bottom-width:1.5px; border-right-width:1.5px; }
+  .pad { padding: 24px; }
+  .label { font-family: var(--mono); font-size: 11px; color: var(--cyan);
+    letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 14px; }
+  .label.faint { color: var(--textFaint); }
+
+  /* ── token rows ── */
+  .row-2 { display:grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .row-3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .row-2.tight, .row-3.tight { gap: 14px; }
+
+  .token-row { display:grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--lineDim); margin-bottom: 14px; }
+  .token-row .visual { padding: 22px; border-right: 1px solid var(--lineDim); position: relative; }
+  .token-row .code   { padding: 22px; font-family: var(--mono); font-size: 12px;
+    line-height: 1.7; background: var(--bg0); white-space: pre; overflow-x: auto; }
+  .token-row .code .k { color: var(--cyan); }
+  .token-row .code .s { color: var(--accent); }
+  .token-row .code .c { color: var(--textFaint); }
+  .token-row .code .n { color: var(--warn); }
+
+  /* ── color swatches ── */
+  .swatches { display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .sw { aspect-ratio: 1.4; border: 1px solid var(--lineDim); padding: 14px; display:flex; flex-direction:column; justify-content:space-between; position: relative; }
+  .sw .name { font-family: var(--mono); font-size: 12px; }
+  .sw .hex  { font-family: var(--mono); font-size: 10px; color: var(--textDim); }
+  .sw .role { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--textFaint); }
+  .sw.on-light .name { color: #0a0f1a; }
+  .sw.on-light .hex  { color: rgba(10,15,26,0.65); }
+  .sw.on-light .role { color: rgba(10,15,26,0.5); }
+  .sw .ref { position: absolute; top: 8px; right: 10px;
+    font-family: var(--mono); font-size: 9px; color: var(--textFaint); letter-spacing: 0.16em; }
+  .sw.on-light .ref { color: rgba(10,15,26,0.55); }
+
+  /* ── type rows ── */
+  .type-row { display:grid; grid-template-columns: 220px 1fr 1fr; gap: 24px;
+    padding: 22px 0; border-bottom: 1px solid var(--lineDim); align-items:baseline; }
+  .type-row:last-child { border-bottom: 0; }
+  .type-row .meta { font-family: var(--mono); font-size: 10px; color: var(--textFaint);
+    letter-spacing: 0.18em; text-transform: uppercase; }
+  .type-row .meta strong { display:block; color: var(--cyan); font-size: 11px; margin-bottom: 6px; }
+  .type-row .sample { color: var(--text); }
+  .type-row .ios   { font-family: var(--mono); }
+  .type-row .tv    { font-family: var(--mono); }
+  .type-row.t-display .sample { font-size: 36px; line-height: 1; font-weight: 700; letter-spacing: -0.01em; }
+  .type-row.t-title   .sample { font-size: 28px; line-height: 1.1; font-weight: 700; }
+  .type-row.t-h2      .sample { font-size: 20px; font-weight: 500; }
+  .type-row.t-label   .sample { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--cyan); font-weight: 500; }
+  .type-row.t-telem   .sample { font-size: 13px; letter-spacing: 0.1em; font-weight: 500; }
+  .type-row.t-body    .sample { font-family: var(--sans); font-size: 15px; color: var(--textDim); }
+
+  /* ── numeric scale visualization ── */
+  .scale-grid { display:grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+  .scale-cell { aspect-ratio: 1; border: 1px dashed var(--lineDim); position: relative;
+    display:flex; align-items:flex-end; justify-content:flex-start;
+    font-family: var(--mono); font-size: 10px; color: var(--textDim);
+    padding: 6px; background: rgba(0,212,255,0.02); }
+  .scale-cell .bar { position:absolute; left:0; bottom:0; background: var(--cyan); height: 4px; }
+  .scale-cell .v { color: var(--cyan); font-weight: 600; }
+  .scale-cell .nm { color: var(--textFaint); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; }
+
+  /* ── tree ── */
+  .tree { font-family: var(--mono); font-size: 12px; line-height: 1.8;
+    color: var(--text); white-space: pre; overflow-x: auto;
+    background: var(--bg0); border: 1px solid var(--lineDim); padding: 22px; }
+  .tree .c { color: var(--textFaint); }
+  .tree .k { color: var(--cyan); }
+  .tree .s { color: var(--accent); }
+  .tree .n { color: var(--warn); }
+
+  /* ── screen mapping ── */
+  .screen-card { display:grid; grid-template-columns: 1.05fr 1fr; gap: 0;
+    border: 1px solid var(--lineDim); margin-bottom: 22px; position: relative; }
+  .screen-card .preview { background: var(--bg0); padding: 24px; border-right: 1px solid var(--lineDim); position: relative; min-height: 360px; }
+  .screen-card .preview h3 { margin: 0 0 16px; font-family: var(--mono); font-size: 12px;
+    color: var(--cyan); letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; }
+  .screen-card .tree-wrap { padding: 24px; }
+  .screen-card .tree-wrap h3 { margin: 0 0 16px; font-family: var(--mono); font-size: 12px;
+    color: var(--cyan); letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; }
+  .screen-card .tree { padding: 14px 16px; font-size: 11.5px; line-height: 1.85; }
+
+  /* ── mini frames ── */
+  .atv-frame { aspect-ratio: 16/9; background:#000; border-radius: 4px;
+    border: 1px solid var(--lineDim); position: relative; overflow: hidden; }
+  .ios-frame { width: 230px; aspect-ratio: 390/844; background: var(--bg0);
+    border-radius: 28px; border: 8px solid #1a1f2c; margin: 0 auto; position: relative;
+    overflow: hidden; box-shadow: 0 16px 50px rgba(0,0,0,0.5); }
+  .ios-frame::before { content:""; position:absolute; top:8px; left:50%;
+    transform: translateX(-50%); width: 90px; height: 22px; background:#000; border-radius: 14px; z-index: 10; }
+
+  /* connection rings */
+  .rings { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+  .rings svg { width:75%; height:75%; }
+  @keyframes ringSwell { 0% { transform: scale(0.4); opacity:0; } 12% { opacity:1; } 100% { transform: scale(1.4); opacity:0; } }
+
+  /* status pill (preview) */
+  .pill { display:inline-flex; align-items:center; gap:6px;
+    padding: 3px 9px; font-family: var(--mono); font-size: 10px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; border-radius: 2px; }
+  .pill.green { color: var(--accent); background: rgba(0,255,157,0.10); border: 1px solid rgba(0,255,157,0.45); }
+  .pill.cyan  { color: var(--cyan);   background: rgba(0,212,255,0.10); border: 1px solid rgba(0,212,255,0.45); }
+  .pill.warn  { color: var(--warn);   background: rgba(255,184,77,0.10); border: 1px solid rgba(255,184,77,0.45); }
+  .pill.dim   { color: var(--textDim);background: rgba(230,243,255,0.04); border: 1px solid rgba(230,243,255,0.12); }
+  .pill .dt { width:5px; height:5px; border-radius:50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
+
+  /* code block */
+  .code-head {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 8px 14px; background: rgba(0,212,255,0.04);
+    border: 1px solid var(--lineDim); border-bottom: 0;
+    font-family: var(--mono); font-size: 10px; color: var(--textDim);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .code-head .copy { color: var(--cyan); cursor: pointer; user-select: none; }
+  .code-head .copy:hover { color: var(--cyanSoft); }
+  pre.code {
+    position: relative; background: var(--bg0); border: 1px solid var(--lineDim);
+    font-family: var(--mono); font-size: 12px; line-height: 1.7;
+    padding: 20px 22px; color: var(--text); overflow-x: auto; white-space: pre; margin: 0;
+  }
+  pre.code .k { color: var(--cyan); }
+  pre.code .s { color: var(--accent); }
+  pre.code .c { color: var(--textFaint); }
+  pre.code .n { color: var(--warn); }
+  pre.code .y { color: #c0a4ff; }
+
+  /* checklist */
+  .check { display:grid; grid-template-columns: auto 1fr; gap: 12px 16px; align-items:start; }
+  .check .num { font-family: var(--mono); font-size: 11px; color: var(--cyan);
+    border: 1px solid var(--line); padding: 3px 8px; letter-spacing: 0.18em; min-width: 40px; text-align:center; }
+  .check p { margin: 0; color: var(--textDim); font-size: 14px; line-height: 1.6; }
+  .check p code { color: var(--text); font-family: var(--mono); font-size: 13px;
+    background: rgba(0,212,255,0.06); padding: 1px 6px; }
+
+  /* arrow column markers between visual and code */
+  .arrow { font-family: var(--mono); color: var(--cyan); }
+
+  footer { border-top: 1px solid var(--lineDim); padding: 36px 0 80px;
+    margin-top: 48px; font-family: var(--mono); font-size: 11px;
+    color: var(--textFaint); letter-spacing: 0.18em; text-transform: uppercase; }
+  footer .frow { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+
+  @media (max-width: 1000px) {
+    .wrap { padding: 0 24px; }
+    .hero h1 { font-size: 44px; }
+    .hero-meta { grid-template-columns: 1fr 1fr; }
+    .row-2, .row-3, .swatches, .token-row, .screen-card { grid-template-columns: 1fr !important; }
+    .scale-grid { grid-template-columns: repeat(4, 1fr); }
+    .type-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap inner">
+    <div class="left">
+      <span style="display:inline-flex;gap:10px;align-items:center;color:var(--text);">
+        <span class="blip"></span> KBLW · XCODE HANDOFF v1.0
+      </span>
+      <a href="#package">Package</a>
+      <a href="#colors">Colors</a>
+      <a href="#type">Type</a>
+      <a href="#spacing">Spacing</a>
+      <a href="#screens">Screens</a>
+      <a href="#components">Components</a>
+      <a href="#setup">Setup</a>
+    </div>
+    <div>REV · 2026.05.25</div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="hero-tag"><span class="dot"></span> Hi-Fi → Xcode</span>
+    <h1>BRAND → <span class="swift">SWIFT</span><span class="sub">DESIGN TOKEN HANDOFF · iOS · tvOS</span></h1>
+    <p class="hero-sub">Every token from the Brand Guide expressed as Swift code. Every Hi-Fi screen mapped to its SwiftUI component tree. Drop the <span class="mono" style="color:var(--cyan);">xcode-handoff/</span> folder into your Xcode workspace and you have a working theme layer before you write a single view.</p>
+    <div class="hero-meta">
+      <div><span class="lbl">Targets</span><span class="v">iOS · iPadOS · tvOS</span></div>
+      <div><span class="lbl">Theme module</span><span class="v">KabelwaechterUI</span></div>
+      <div><span class="lbl">Tokens</span><span class="v">15 colors · 13 type roles</span></div>
+      <div><span class="lbl">Type design</span><span class="v">.monospaced (SF Mono)</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ───────────────────────────────── PACKAGE ───────────────────────────────── -->
+<section id="package">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">01</span>
+      <h2 class="sec-title">Package layout</h2>
+      <span class="sec-kicker">Shared Swift Package · iOS + tvOS</span>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <div class="label">Project tree</div>
+        <pre class="tree"><span class="c">// xcode-handoff/ — ready to drop into your workspace</span>
+<span class="k">Kabelwaechter.xcworkspace</span>
+├── KabelwaechterUI/                     <span class="c">// shared SwiftPM target</span>
+│   ├── Tokens.swift                     <span class="c">// colors · type · spacing · motion</span>
+│   ├── Modifiers.swift                  <span class="c">// .kwLabel() · .kwPanel() · .kwFocusRing()</span>
+│   ├── Primitives/
+│   │   ├── StatusPill.swift             <span class="c">// connection chip</span>
+│   │   └── CornerFrame.swift            <span class="c">// the cyan corner brackets</span>
+│   └── Colors.xcassets/
+│       └── KW/                          <span class="c">// namespaced — kw/cyan, kw/bg0, …</span>
+│           ├── cyan.colorset            <span class="s">#00D4FF</span>
+│           ├── signal.colorset          <span class="s">#00FF9D</span>
+│           ├── bg0.colorset             <span class="s">#05080D</span>
+│           └── <span class="c">12 more…</span>
+│
+├── Kabelwaechter-iOS/                   <span class="c">// app target</span>
+│   ├── Assets.xcassets/AppIcon.appiconset
+│   └── App.swift
+└── Kabelwaechter-tvOS/                  <span class="c">// app target</span>
+    ├── Assets.xcassets/tvAppIcon.brandassets
+    └── App.swift</pre>
+      </div>
+
+      <div>
+        <div class="label">Why a shared package?</div>
+        <div class="panel corner pad" style="margin-bottom: 16px;">
+          <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+          <p style="margin:0; color: var(--textDim); font-size: 14px;">
+            iOS and tvOS share <em>every</em> token. The only platform delta is the
+            type ramp (sofa distance ≈ 2.2× scale). Putting tokens in a Swift
+            Package means one edit propagates to both apps — no copy-paste drift.
+          </p>
+        </div>
+        <div class="label">Public API surface</div>
+        <pre class="tree"><span class="k">import</span> KabelwaechterUI
+
+<span class="c">// Colors</span>
+Color.kwBg0, .kwCyan, .kwSignal, .kwWarn, .kwError
+Color.kwText, .kwTextDim, .kwTextFaint
+Color.kwLine, .kwLineDim, .kwGrid
+
+<span class="c">// Type — adaptive to platform</span>
+KW.Font.titleAdaptive    <span class="c">// 32 pt iOS · 76 pt tvOS</span>
+KW.Font.labelAdaptive
+KW.Font.bodyAdaptive
+
+<span class="c">// Layout</span>
+KW.Space.xs … KW.Space.xxl
+KW.Radius.none, .xs, .sm
+KW.Border.hairline, .bracket
+
+<span class="c">// Modifiers</span>
+.kwLabel()         <span class="c">// uppercase mono caption</span>
+.kwPanel()         <span class="c">// translucent navy + hairline</span>
+.kwFocusRing(focused)
+
+<span class="c">// Primitives</span>
+StatusPill(state: .connected)
+CornerFrame(color: .kwCyan, animate: <span class="k">true</span>)</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────────── COLORS ───────────────────────────────── -->
+<section id="colors">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">02</span>
+      <h2 class="sec-title">Colors</h2>
+      <span class="sec-kicker">Swatch → SwiftUI Color → Asset Catalog</span>
+    </div>
+
+    <p style="color: var(--textDim); max-width: 760px; margin: 0 0 28px;">
+      Each token is exposed two ways: a <span class="mono" style="color:var(--cyan);">Color</span>
+      literal for inline use, and a named color in
+      <span class="mono" style="color:var(--cyan);">Colors.xcassets/KW/</span> for
+      designers to tweak without recompiling.
+    </p>
+
+    <div class="label">Surfaces</div>
+    <div class="swatches" style="margin-bottom: 28px;">
+      <div class="sw" style="background:#05080d;">
+        <span class="ref">.kwBg0</span>
+        <span class="role">surface · 00</span>
+        <div><div class="name">bg0</div><div class="hex">#05080D</div></div>
+      </div>
+      <div class="sw" style="background:#0a0f1a;">
+        <span class="ref">.kwBg1</span>
+        <span class="role">surface · 10</span>
+        <div><div class="name">bg1</div><div class="hex">#0A0F1A</div></div>
+      </div>
+      <div class="sw" style="background:#0f1825;">
+        <span class="ref">.kwBg2</span>
+        <span class="role">surface · 20</span>
+        <div><div class="name">bg2</div><div class="hex">#0F1825</div></div>
+      </div>
+      <div class="sw" style="background:#152135;">
+        <span class="ref">.kwBg3</span>
+        <span class="role">surface · 30 · focus fill</span>
+        <div><div class="name">bg3</div><div class="hex">#152135</div></div>
+      </div>
+    </div>
+
+    <div class="label">Signal — single-use semantic colors</div>
+    <div class="swatches" style="margin-bottom: 28px;">
+      <div class="sw on-light" style="background:#00d4ff;">
+        <span class="ref">.kwCyan</span>
+        <span class="role">accent · primary</span>
+        <div><div class="name">cyan</div><div class="hex">#00D4FF</div></div>
+      </div>
+      <div class="sw on-light" style="background:#00ff9d;">
+        <span class="ref">.kwSignal</span>
+        <span class="role">CONNECTED · reserved</span>
+        <div><div class="name">signal</div><div class="hex">#00FF9D</div></div>
+      </div>
+      <div class="sw on-light" style="background:#ffb84d;">
+        <span class="ref">.kwWarn</span>
+        <span class="role">handshake · warning</span>
+        <div><div class="name">warn</div><div class="hex">#FFB84D</div></div>
+      </div>
+      <div class="sw" style="background:#ff4757;">
+        <span class="ref">.kwError</span>
+        <span class="role">error · disconnect</span>
+        <div><div class="name">error</div><div class="hex">#FF4757</div></div>
+      </div>
+    </div>
+
+    <div class="label">Text &amp; lines</div>
+    <div class="swatches" style="margin-bottom: 36px;">
+      <div class="sw on-light" style="background:#e6f3ff;">
+        <span class="ref">.kwText</span>
+        <span class="role">text · primary</span>
+        <div><div class="name">text</div><div class="hex">#E6F3FF</div></div>
+      </div>
+      <div class="sw on-light" style="background:rgba(230,243,255,0.55);">
+        <span class="ref">.kwTextDim</span>
+        <span class="role">text · 55% α</span>
+        <div><div class="name">textDim</div><div class="hex">rgba 55%</div></div>
+      </div>
+      <div class="sw" style="background:rgba(0,212,255,0.35); border-color: var(--line);">
+        <span class="ref">.kwLine</span>
+        <span class="role">hairline · default</span>
+        <div><div class="name">line</div><div class="hex">cyan 35% α</div></div>
+      </div>
+      <div class="sw" style="background:rgba(0,212,255,0.15); border-color: var(--lineDim);">
+        <span class="ref">.kwLineDim</span>
+        <span class="role">hairline · subtle</span>
+        <div><div class="name">lineDim</div><div class="hex">cyan 15% α</div></div>
+      </div>
+    </div>
+
+    <!-- Side-by-side: token → Swift → JSON -->
+    <div class="label">Each token → 3 representations</div>
+    <div class="row-3 tight" style="margin-bottom: 12px;">
+      <div class="panel pad">
+        <div class="label faint" style="margin-bottom: 10px;">Brand Guide</div>
+        <div style="height: 60px; background: #00d4ff; border: 1px solid var(--lineDim);"></div>
+        <div class="mono" style="margin-top: 12px; font-size: 13px;">cyan · <span style="color:var(--cyan);">#00D4FF</span></div>
+        <div class="mono" style="font-size: 10px; color: var(--textFaint); letter-spacing: 0.16em; text-transform: uppercase; margin-top: 4px;">primary accent</div>
+      </div>
+      <div class="panel pad">
+        <div class="label faint" style="margin-bottom: 10px;">SwiftUI literal</div>
+<pre class="code" style="border: 0; padding: 8px 0; font-size: 11.5px;"><span class="k">extension</span> Color {
+  <span class="k">static let</span> kwCyan =
+    Color(hex: <span class="s">0x00D4FF</span>)
+}
+
+<span class="c">// Usage</span>
+Text(<span class="s">"…"</span>)
+  .foregroundStyle(Color.kwCyan)</pre>
+      </div>
+      <div class="panel pad">
+        <div class="label faint" style="margin-bottom: 10px;">Asset Catalog</div>
+<pre class="code" style="border: 0; padding: 8px 0; font-size: 11.5px;"><span class="c">// kw/cyan.colorset/Contents.json</span>
+{
+  <span class="s">"colors"</span>: [{
+    <span class="s">"color"</span>: {
+      <span class="s">"color-space"</span>: <span class="s">"srgb"</span>,
+      <span class="s">"components"</span>: {
+        <span class="s">"red"</span>:   <span class="s">"0x00"</span>,
+        <span class="s">"green"</span>: <span class="s">"0xD4"</span>,
+        <span class="s">"blue"</span>:  <span class="s">"0xFF"</span>,
+        <span class="s">"alpha"</span>: <span class="n">1.000</span>
+      }
+    }
+  }]
+}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────────── TYPE ───────────────────────────────── -->
+<section id="type">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">03</span>
+      <h2 class="sec-title">Type ramp</h2>
+      <span class="sec-kicker">iOS scale · tvOS scale · adaptive accessor</span>
+    </div>
+
+    <p style="color: var(--textDim); max-width: 760px; margin: 0 0 24px;">
+      SF Mono is the brand voice — no font files needed. Sizes ramp on tvOS by ~2.2× for sofa distance. Use
+      <span class="mono" style="color:var(--cyan);">KW.Font.titleAdaptive</span>
+      from shared code and the right scale is picked at compile time.
+    </p>
+
+    <div class="panel corner">
+      <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+      <div style="padding: 4px 28px;">
+        <div class="type-row t-display">
+          <div class="meta"><strong>Display / Hero</strong>SF Mono Bold<br/>iOS 56 · tvOS 124</div>
+          <div class="sample mono">KABELW</div>
+          <div class="meta ios mono" style="color: var(--text);">.font(KW.Font.display)<br/><span style="color: var(--textFaint);">.font(KW.Font.displayTV)</span></div>
+        </div>
+        <div class="type-row t-title">
+          <div class="meta"><strong>Title / H1</strong>SF Mono Bold<br/>iOS 32 · tvOS 76</div>
+          <div class="sample mono">TUNNEL ACTIVE</div>
+          <div class="meta ios mono" style="color: var(--text);">.font(KW.Font.title)<br/><span style="color: var(--textFaint);">.font(KW.Font.titleTV)</span></div>
+        </div>
+        <div class="type-row t-h2">
+          <div class="meta"><strong>Subtitle / H2</strong>SF Mono Medium<br/>iOS 22 · tvOS 48</div>
+          <div class="sample mono">Berlin Gateway · 10.0.0.1</div>
+          <div class="meta ios mono" style="color: var(--text);">.font(KW.Font.h2)<br/><span style="color: var(--textFaint);">.font(KW.Font.h2TV)</span></div>
+        </div>
+        <div class="type-row t-label">
+          <div class="meta"><strong>Label / Caps</strong>SF Mono Medium<br/>iOS 11 · tvOS 24<br/>+22% tracking</div>
+          <div class="sample mono">[ STATUS · HANDSHAKE OK ]</div>
+          <div class="meta ios mono" style="color: var(--text);">.kwLabel()<br/><span style="color: var(--textFaint);">// applies all three</span></div>
+        </div>
+        <div class="type-row t-telem">
+          <div class="meta"><strong>Telemetry</strong>SF Mono Regular<br/>iOS 13 · tvOS 28<br/>Tabular numerals</div>
+          <div class="sample mono" style="color: var(--accent);">↑ 12.4 MB/s · RTT 14 ms</div>
+          <div class="meta ios mono" style="color: var(--text);">.font(KW.Font.telem)<br/><span style="color: var(--textFaint);">.monospacedDigit()</span></div>
+        </div>
+        <div class="type-row t-body">
+          <div class="meta"><strong>Body</strong>SF Pro Text Regular<br/>iOS 15 · tvOS 32</div>
+          <div class="sample">Use sans only where readability matters more than tone — long help text, EULAs, error explanations.</div>
+          <div class="meta ios mono" style="color: var(--text);">.font(KW.Font.body)<br/><span style="color: var(--textFaint);">.font(KW.Font.bodyTV)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <div class="code-head">
+        <span>Tokens.swift · KW.Font</span>
+        <span class="copy" data-copy="swift-font">Copy</span>
+      </div>
+      <pre class="code" id="swift-font"><span class="k">public extension</span> KW.Font {
+    <span class="c">// iOS / shared ramp</span>
+    <span class="k">static let</span> display = Font.system(size: <span class="n">56</span>, weight: .bold,    design: .monospaced)
+    <span class="k">static let</span> title   = Font.system(size: <span class="n">32</span>, weight: .bold,    design: .monospaced)
+    <span class="k">static let</span> h2      = Font.system(size: <span class="n">22</span>, weight: .medium,  design: .monospaced)
+    <span class="k">static let</span> label   = Font.system(size: <span class="n">11</span>, weight: .medium,  design: .monospaced)
+    <span class="k">static let</span> telem   = Font.system(size: <span class="n">13</span>, weight: .regular, design: .monospaced)
+    <span class="k">static let</span> body    = Font.system(size: <span class="n">15</span>, weight: .regular)
+
+    <span class="c">// tvOS ramp (sofa distance, ~2.2× scale)</span>
+    <span class="k">static let</span> titleTV = Font.system(size: <span class="n">76</span>, weight: .bold,    design: .monospaced)
+    <span class="k">static let</span> labelTV = Font.system(size: <span class="n">24</span>, weight: .medium,  design: .monospaced)
+    <span class="k">static let</span> bodyTV  = Font.system(size: <span class="n">32</span>, weight: .regular)
+
+    <span class="c">// Adaptive — picks the right scale per platform</span>
+    <span class="k">static var</span> titleAdaptive: Font {
+        <span class="y">#if os(tvOS)</span>
+        <span class="k">return</span> titleTV
+        <span class="y">#else</span>
+        <span class="k">return</span> title
+        <span class="y">#endif</span>
+    }
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────── SPACING ─────────────────────────────── -->
+<section id="spacing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">04</span>
+      <h2 class="sec-title">Spacing, radii, motion</h2>
+      <span class="sec-kicker">8-pt grid · hard edges · 5 named animations</span>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <div class="label">KW.Space — 8 pt grid</div>
+        <div class="scale-grid">
+          <div class="scale-cell"><span class="bar" style="width: 10%;"></span><div><span class="nm">xxs</span><br/><span class="v">4</span></div></div>
+          <div class="scale-cell"><span class="bar" style="width: 20%;"></span><div><span class="nm">xs</span><br/><span class="v">8</span></div></div>
+          <div class="scale-cell"><span class="bar" style="width: 30%;"></span><div><span class="nm">sm</span><br/><span class="v">12</span></div></div>
+          <div class="scale-cell"><span class="bar" style="width: 40%;"></span><div><span class="nm">md</span><br/><span class="v">16</span></div></div>
+          <div class="scale-cell"><span class="bar" style="width: 55%;"></span><div><span class="nm">lg</span><br/><span class="v">24</span></div></div>
+          <div class="scale-cell"><span class="bar" style="width: 70%;"></span><div><span class="nm">xl</span><br/><span class="v">32</span></div></div>
+          <div class="scale-cell"><span class="bar" style="width: 85%;"></span><div><span class="nm">page</span><br/><span class="v">40</span></div></div>
+          <div class="scale-cell"><span class="bar" style="width: 100%;"></span><div><span class="nm">xxl</span><br/><span class="v">48</span></div></div>
+        </div>
+        <p class="mono" style="font-size: 11px; color: var(--textFaint); letter-spacing: 0.14em; margin-top: 14px;">
+          KW.SPACE.GUTTER → 24 iOS · 56 tvOS
+        </p>
+      </div>
+
+      <div>
+        <div class="label">KW.Radius — hard edges</div>
+        <div class="row-3" style="margin-bottom: 16px;">
+          <div style="text-align:center;">
+            <div style="height: 80px; background: var(--bg2); border: 1px solid var(--line); border-radius: 0;"></div>
+            <div class="mono" style="margin-top: 8px; font-size: 12px;">none · 0</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="height: 80px; background: var(--bg2); border: 1px solid var(--line); border-radius: 2px;"></div>
+            <div class="mono" style="margin-top: 8px; font-size: 12px;">xs · 2</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="height: 80px; background: var(--bg2); border: 1px solid var(--line); border-radius: 6px;"></div>
+            <div class="mono" style="margin-top: 8px; font-size: 12px;">sm · 6</div>
+          </div>
+        </div>
+        <p class="mono" style="font-size: 11px; color: var(--textFaint); letter-spacing: 0.14em;">
+          Anything larger is OFF-BRAND. Use CornerFrame brackets instead.
+        </p>
+
+        <div class="label" style="margin-top: 28px;">KW.Motion — 5 named curves</div>
+<pre class="code" style="font-size: 11.5px; padding: 14px 16px;"><span class="k">static let</span> blink   = .easeInOut(duration: <span class="n">1.4</span>).repeatForever()
+<span class="k">static let</span> pulse   = .easeInOut(duration: <span class="n">2.0</span>).repeatForever()
+<span class="k">static let</span> scan    = .linear(duration: <span class="n">3.5</span>).repeatForever()
+<span class="k">static let</span> snap    = .spring(response: <span class="n">0.32</span>, damping: <span class="n">0.78</span>)
+<span class="k">static let</span> connect = .easeOut(duration: <span class="n">1.1</span>)</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────── SCREENS ────────────────────────────── -->
+<section id="screens">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">05</span>
+      <h2 class="sec-title">Screen → SwiftUI mapping</h2>
+      <span class="sec-kicker">Hi-Fi designs ↔ component trees</span>
+    </div>
+
+    <p style="color: var(--textDim); max-width: 760px; margin: 0 0 28px;">
+      Each Hi-Fi screen on the left, the SwiftUI view tree it compiles to on the right.
+      Indentation = view nesting; the comments are the prop / state surface.
+    </p>
+
+    <!-- ATV Tunnel Overview -->
+    <div class="screen-card">
+      <div class="preview">
+        <h3>tvOS · Tunnel Overview</h3>
+        <div class="atv-frame">
+          <!-- backdrop -->
+          <div style="position:absolute; inset:0;
+            background:
+              radial-gradient(ellipse at 50% 45%, rgba(0,212,255,0.18) 0%, rgba(0,212,255,0.04) 30%, transparent 70%),
+              radial-gradient(ellipse at center, rgba(15,24,37,0.6) 0%, var(--bg0) 70%);"></div>
+          <!-- perspective rays -->
+          <svg style="position:absolute; inset:0; width:100%; height:100%;" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+            <g stroke="#00d4ff" stroke-width="0.6" opacity="0.3">
+              <line x1="400" y1="225" x2="0" y2="0"/><line x1="400" y1="225" x2="800" y2="0"/>
+              <line x1="400" y1="225" x2="0" y2="450"/><line x1="400" y1="225" x2="800" y2="450"/>
+              <line x1="400" y1="225" x2="400" y2="0"/><line x1="400" y1="225" x2="400" y2="450"/>
+              <line x1="400" y1="225" x2="0" y2="225"/><line x1="400" y1="225" x2="800" y2="225"/>
+            </g>
+            <g fill="none" stroke="#00ff9d" stroke-width="1.4">
+              <circle cx="400" cy="225" r="40" stroke-opacity="0.95" style="animation: ringSwell 4s ease-out infinite; transform-origin: 400px 225px;"/>
+              <circle cx="400" cy="225" r="40" stroke-opacity="0.95" style="animation: ringSwell 4s ease-out infinite -1.3s; transform-origin: 400px 225px;"/>
+              <circle cx="400" cy="225" r="40" stroke-opacity="0.95" style="animation: ringSwell 4s ease-out infinite -2.6s; transform-origin: 400px 225px;"/>
+            </g>
+            <circle cx="400" cy="225" r="4" fill="#00ff9d"/>
+          </svg>
+          <!-- header -->
+          <div style="position:absolute; top: 5%; left: 4%; right: 4%; display:flex; justify-content:space-between; align-items:center;">
+            <span class="mono" style="font-size: 9px; color: var(--cyan); letter-spacing: 0.22em;">KABELWÄCHTER · v1.0.2</span>
+            <span class="pill green"><span class="dt"></span>Tunnel Up</span>
+          </div>
+          <!-- center hud -->
+          <div style="position:absolute; left:50%; top:42%; transform: translate(-50%, -50%); text-align:center;">
+            <div class="mono" style="font-size: 9px; color: var(--accent); letter-spacing: 0.3em; margin-bottom: 6px;">ACTIVE PEER</div>
+            <div class="mono" style="font-size: 18px; font-weight: 700; color: var(--text);">Home · Berlin</div>
+            <div class="mono" style="font-size: 9px; color: var(--textDim); letter-spacing: 0.12em; margin-top: 4px;">VPN.HOME.DN · :51820</div>
+          </div>
+          <!-- card row -->
+          <div style="position:absolute; bottom: 6%; left: 4%; right: 4%; display:flex; gap: 6px;">
+            <div style="flex:1; padding: 6px; border: 1px solid var(--cyan); background: rgba(0,212,255,0.08);">
+              <div class="mono" style="font-size: 7px; color: var(--cyan); letter-spacing: 0.18em;">DE</div>
+              <div class="mono" style="font-size: 9px; color: var(--text); margin-top: 2px;">Home · Berlin</div>
+            </div>
+            <div style="flex:1; padding: 6px; border: 1px solid var(--lineDim);">
+              <div class="mono" style="font-size: 7px; color: var(--textFaint); letter-spacing: 0.18em;">DE</div>
+              <div class="mono" style="font-size: 9px; color: var(--textDim); margin-top: 2px;">Work · FRA</div>
+            </div>
+            <div style="flex:1; padding: 6px; border: 1px solid var(--lineDim);">
+              <div class="mono" style="font-size: 7px; color: var(--textFaint); letter-spacing: 0.18em;">US</div>
+              <div class="mono" style="font-size: 9px; color: var(--textDim); margin-top: 2px;">US-East</div>
+            </div>
+            <div style="flex:1; padding: 6px; border: 1px solid var(--lineDim);">
+              <div class="mono" style="font-size: 7px; color: var(--textFaint); letter-spacing: 0.18em;">JP</div>
+              <div class="mono" style="font-size: 9px; color: var(--textDim); margin-top: 2px;">Tokyo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tree-wrap">
+        <h3>SwiftUI tree</h3>
+<pre class="tree"><span class="k">struct</span> TunnelOverviewTV: View {
+  <span class="k">@StateObject var</span> vm = TunnelVM()
+  <span class="k">@FocusState var</span> focused: ID?
+
+  <span class="k">var</span> body: <span class="k">some</span> View {
+    ZStack {
+      KWBackdrop()                  <span class="c">// grid + radial</span>
+      TunnelViz(state: vm.state)    <span class="c">// rings + rays</span>
+
+      VStack {
+        HStack {                    <span class="c">// header</span>
+          Text(<span class="s">"KABELWÄCHTER · v1.0.2"</span>)
+            .kwLabel()
+          Spacer()
+          StatusPill(state: vm.state)
+        }
+        .padding(.top, KW.Space.safeTop)
+
+        Spacer()
+
+        VStack(spacing: KW.Space.md) {       <span class="c">// HUD</span>
+          Text(<span class="s">"ACTIVE PEER"</span>).kwLabel()
+          Text(vm.active.name)
+            .font(KW.Font.titleTV)
+          Text(vm.active.endpoint)
+            .font(KW.Font.telemTV)
+            .foregroundStyle(.kwTextDim)
+        }
+
+        Spacer()
+
+        HStack(spacing: KW.Space.sm) {       <span class="c">// card row</span>
+          <span class="k">ForEach</span>(vm.tunnels) { t <span class="k">in</span>
+            TunnelCard(tunnel: t,
+                       active: t.id == vm.active.id)
+              .focused($focused, equals: t.id)
+              .kwFocusRing(focused == t.id)
+          }
+        }
+      }
+      .padding(.horizontal, KW.Space.gutter)
+    }
+    .background(Color.kwBg0)
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- iOS Tunnel List -->
+    <div class="screen-card">
+      <div class="preview">
+        <h3>iOS · Tunnel List</h3>
+        <div class="ios-frame">
+          <!-- backdrop tunnel -->
+          <div style="position:absolute; top:0; left:0; right:0; height: 55%;
+            background:
+              radial-gradient(ellipse at 50% 30%, rgba(0,255,157,0.18) 0%, rgba(0,212,255,0.08) 30%, transparent 70%),
+              var(--bg0);"></div>
+          <svg style="position:absolute; top:0; left:0; right:0; height:55%; width:100%;" viewBox="0 0 390 460" preserveAspectRatio="xMidYMid slice">
+            <g fill="none" stroke="#00ff9d" stroke-width="1.2">
+              <circle cx="195" cy="180" r="30" stroke-opacity="0.9" style="animation: ringSwell 4s ease-out infinite; transform-origin: 195px 180px;"/>
+              <circle cx="195" cy="180" r="30" stroke-opacity="0.9" style="animation: ringSwell 4s ease-out infinite -1.5s; transform-origin: 195px 180px;"/>
+              <circle cx="195" cy="180" r="30" stroke-opacity="0.9" style="animation: ringSwell 4s ease-out infinite -3s; transform-origin: 195px 180px;"/>
+            </g>
+            <circle cx="195" cy="180" r="3" fill="#00ff9d"/>
+          </svg>
+          <!-- content -->
+          <div style="position:absolute; top: 50px; left: 16px; right: 16px;">
+            <div class="mono" style="font-size: 8px; color: var(--accent); letter-spacing: 0.22em;">[ KABELWÄCHTER ]</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 8px;">
+              <div class="mono" style="font-size: 22px; font-weight: 700; color: var(--text);">Tunnels</div>
+              <div style="display:flex; gap:5px;">
+                <div style="width: 24px; height: 24px; border: 1px solid var(--lineDim); background: rgba(0,212,255,0.08);"></div>
+                <div style="width: 24px; height: 24px; border: 1px solid var(--lineDim); background: rgba(0,212,255,0.08);"></div>
+              </div>
+            </div>
+          </div>
+          <!-- hero card -->
+          <div style="position:absolute; top: 130px; left: 16px; right: 16px;
+            padding: 12px;
+            background: rgba(15,24,37,0.7); backdrop-filter: blur(8px);
+            border: 1px solid var(--accent);">
+            <span class="pill green" style="font-size: 8px; padding: 2px 6px;"><span class="dt" style="width:4px;height:4px;"></span>Tunnel Up</span>
+            <div class="mono" style="font-size: 14px; font-weight: 700; color: var(--text); margin-top: 8px;">Home · Berlin</div>
+            <div class="mono" style="font-size: 8px; color: var(--textDim); margin-top: 2px;">vpn.home.dn:51820</div>
+            <div style="margin-top: 10px; padding: 8px; border: 1px solid var(--accent); color: var(--accent); text-align: center;" class="mono">
+              <span style="font-size: 9px; letter-spacing: 0.2em;">× DISCONNECT</span>
+            </div>
+          </div>
+          <!-- list -->
+          <div style="position:absolute; top: 285px; left: 16px; right: 16px;">
+            <div class="mono" style="font-size: 7px; color: var(--textFaint); letter-spacing: 0.2em; margin-bottom: 6px;">ALL TUNNELS · 4</div>
+            <div style="display:flex; flex-direction: column; gap: 4px;">
+              <div style="padding: 6px 8px; border: 1px solid var(--lineDim); display:flex; justify-content:space-between; align-items:center;">
+                <div class="mono" style="font-size: 10px; color: var(--text);">Work · Frankfurt</div>
+                <span style="width:5px; height:5px; border-radius:50%; background: var(--textFaint);"></span>
+              </div>
+              <div style="padding: 6px 8px; border: 1px solid var(--lineDim); display:flex; justify-content:space-between; align-items:center;">
+                <div class="mono" style="font-size: 10px; color: var(--text);">US-East</div>
+                <span style="width:5px; height:5px; border-radius:50%; background: var(--textFaint);"></span>
+              </div>
+              <div style="padding: 6px 8px; border: 1px solid var(--lineDim); display:flex; justify-content:space-between; align-items:center;">
+                <div class="mono" style="font-size: 10px; color: var(--text);">Tokyo Relay</div>
+                <span style="width:5px; height:5px; border-radius:50%; background: var(--textFaint);"></span>
+              </div>
+            </div>
+          </div>
+          <!-- send-to-ATV strip -->
+          <div style="position:absolute; bottom: 30px; left: 16px; right: 16px;
+            padding: 8px 10px; background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.4);
+            display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div class="mono" style="font-size: 7px; color: var(--cyan); letter-spacing: 0.2em;">PAIRED · 1</div>
+              <div class="mono" style="font-size: 9px; color: var(--text); margin-top: 1px;">Apple TV · Living Room</div>
+            </div>
+            <span class="mono" style="color: var(--cyan); font-size: 12px;">↑</span>
+          </div>
+        </div>
+      </div>
+      <div class="tree-wrap">
+        <h3>SwiftUI tree</h3>
+<pre class="tree"><span class="k">struct</span> TunnelListIOS: View {
+  <span class="k">@StateObject var</span> vm = TunnelVM()
+
+  <span class="k">var</span> body: <span class="k">some</span> View {
+    ZStack(alignment: .top) {
+      Color.kwBg0.ignoresSafeArea()
+
+      <span class="c">// faint tunnel hero behind cards</span>
+      TunnelViz(state: vm.active.state)
+        .frame(height: <span class="n">460</span>)
+        .opacity(<span class="n">0.45</span>)
+        .mask(LinearGradient(...))   <span class="c">// fades to bg</span>
+
+      ScrollView {
+        VStack(alignment: .leading,
+               spacing: KW.Space.lg) {
+
+          Text(<span class="s">"[ KABELWÄCHTER ]"</span>).kwLabel()
+          HStack {
+            Text(<span class="s">"Tunnels"</span>)
+              .font(.system(size: <span class="n">30</span>,
+                            weight: .bold))
+            Spacer()
+            IconButton(.qr)
+            IconButton(.plus)
+          }
+
+          ActiveTunnelHero(            <span class="c">// big card</span>
+            tunnel: vm.active,
+            onToggle: vm.toggle)
+            .kwPanel()
+
+          VStack(spacing: KW.Space.xs) {  <span class="c">// rest</span>
+            Text(<span class="s">"ALL TUNNELS · </span>\(vm.tunnels.count)<span class="s">"</span>)
+              .kwLabel()
+            <span class="k">ForEach</span>(vm.others) { t <span class="k">in</span>
+              TunnelRow(tunnel: t)
+                .onTapGesture { vm.select(t) }
+            }
+          }
+        }
+        .padding(KW.Space.lg)
+      }
+
+      PairedDeviceStrip()              <span class="c">// floating</span>
+        .frame(maxHeight: .infinity,
+               alignment: .bottom)
+        .padding(KW.Space.lg)
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- ATV Pairing -->
+    <div class="screen-card">
+      <div class="preview">
+        <h3>tvOS · QR Pairing</h3>
+        <div class="atv-frame">
+          <div style="position:absolute; inset:0;
+            background: radial-gradient(ellipse at center, rgba(15,24,37,0.6) 0%, var(--bg0) 80%);"></div>
+          <!-- top bar -->
+          <div style="position:absolute; top: 5%; left: 4%; right: 4%; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; gap: 6px; align-items:center;">
+              <div style="width: 14px; height: 14px; transform: rotate(45deg); border: 1.5px solid var(--cyan); position:relative;">
+                <div style="position:absolute; inset: 2px; border: 1px solid rgba(0,212,255,0.6);"></div>
+              </div>
+              <span class="mono" style="font-size: 10px; color: var(--text); font-weight: 600;">Kabelwächter</span>
+            </div>
+            <span class="pill cyan"><span class="dt"></span>Awaiting Pair</span>
+          </div>
+          <!-- QR + instructions -->
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap: 32px; padding: 0 12%;">
+            <div style="padding: 12px; background: rgba(10,15,26,0.85); border: 1px solid var(--line); position: relative;">
+              <span style="position:absolute; top:-1px; left:-1px; width: 8px; height: 8px; border-top: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent);"></span>
+              <span style="position:absolute; top:-1px; right:-1px; width: 8px; height: 8px; border-top: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent);"></span>
+              <span style="position:absolute; bottom:-1px; left:-1px; width: 8px; height: 8px; border-bottom: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent);"></span>
+              <span style="position:absolute; bottom:-1px; right:-1px; width: 8px; height: 8px; border-bottom: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent);"></span>
+              <div style="width: 80px; height: 80px; background: #e6f3ff; padding: 6px;">
+                <div style="width:100%; height:100%;
+                  background-image:
+                    repeating-linear-gradient(90deg, #0a0f1a 0, #0a0f1a 5px, transparent 5px, transparent 10px),
+                    repeating-linear-gradient(0deg, #0a0f1a 0, #0a0f1a 5px, transparent 5px, transparent 10px);"></div>
+              </div>
+              <div class="mono" style="font-size: 7px; color: var(--textDim); text-align:center; margin-top: 6px; letter-spacing: 0.16em;">SCAN.WITH.IPHONE</div>
+            </div>
+            <div style="max-width: 160px;">
+              <div class="mono" style="font-size: 8px; color: var(--cyan); letter-spacing: 0.22em;">[ SECURE PAIRING ]</div>
+              <div style="font-size: 16px; font-weight: 700; line-height: 1.05; margin-top: 6px; color: var(--text);">Link your iPhone to this Apple TV</div>
+            </div>
+          </div>
+          <!-- bottom code -->
+          <div style="position:absolute; bottom: 6%; left: 4%; right: 4%; display:flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+              <div class="mono" style="font-size: 7px; color: var(--textFaint); letter-spacing: 0.2em;">OR ENTER CODE</div>
+              <div class="mono" style="font-size: 14px; font-weight: 600; color: var(--accent); letter-spacing: 0.2em; margin-top: 2px;">4F · 7K · 9Q</div>
+            </div>
+            <div class="mono" style="font-size: 7px; color: var(--textFaint); letter-spacing: 0.14em; text-align: right;">
+              <div>HOST · 10.0.1.14:51820</div>
+              <div>EXPIRES IN 04:58</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tree-wrap">
+        <h3>SwiftUI tree</h3>
+<pre class="tree"><span class="k">struct</span> PairingTV: View {
+  <span class="k">@StateObject var</span> pair = PairingSession()
+
+  <span class="k">var</span> body: <span class="k">some</span> View {
+    ZStack {
+      KWBackdrop()
+      TunnelViz(state: .idle)
+        .opacity(<span class="n">0.4</span>)
+
+      VStack {
+        HStack {                    <span class="c">// top bar</span>
+          KWLogoMark()
+          Text(<span class="s">"Kabelwächter"</span>)
+            .font(KW.Font.h2TV)
+          Spacer()
+          StatusPill(state: .idle,
+                     label: <span class="s">"AWAITING PAIR"</span>)
+        }
+
+        Spacer()
+
+        HStack(spacing: KW.Space.xxl) {
+          ZStack {
+            CornerFrame(color: .kwSignal,
+                        animate: <span class="k">true</span>)
+            QRCodeView(token: pair.token)
+              .padding(KW.Space.xl)
+          }
+          .background(Color.kwBg1.opacity(<span class="n">0.85</span>))
+
+          VStack(alignment: .leading,
+                 spacing: KW.Space.md) {
+            Text(<span class="s">"[ SECURE PAIRING ]"</span>)
+              .kwLabel()
+            Text(<span class="s">"Link your iPhone\nto this Apple TV"</span>)
+              .font(KW.Font.titleTV)
+            StepList(items: pair.steps)
+          }
+        }
+
+        Spacer()
+
+        HStack(alignment: .bottom) {
+          FallbackCode(code: pair.code)
+          Spacer()
+          SessionMeta(host: pair.host,
+                      expiry: pair.expiry)
+        }
+      }
+      .padding(KW.Space.gutter)
+    }
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────── COMPONENTS ────────────────────────── -->
+<section id="components">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">06</span>
+      <h2 class="sec-title">Component snippets</h2>
+      <span class="sec-kicker">Drop-in SwiftUI primitives</span>
+    </div>
+
+    <div class="row-2">
+      <div class="panel corner pad">
+        <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="label">StatusPill · all four states</div>
+        <div style="display:flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+          <span class="pill green"><span class="dt"></span>Tunnel Up</span>
+          <span class="pill warn"><span class="dt"></span>Handshake</span>
+          <span class="pill" style="color: var(--err); background: rgba(255,71,87,0.10); border: 1px solid rgba(255,71,87,0.5);"><span class="dt"></span>Peer Unreachable</span>
+          <span class="pill dim">Standby</span>
+        </div>
+<pre class="code" style="font-size: 11.5px;">StatusPill(state: vm.state)
+  <span class="c">// state → color + label, animated dot when .connecting</span>
+
+<span class="c">// Or with a custom label:</span>
+StatusPill(state: .idle, label: <span class="s">"AWAITING PAIR"</span>)</pre>
+      </div>
+
+      <div class="panel corner pad">
+        <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="label">CornerFrame · selected / focused</div>
+        <div style="position: relative; height: 100px; margin-bottom: 20px;
+                    background: rgba(0,212,255,0.04); border: 1px dashed var(--lineDim);">
+          <span style="position:absolute; top:-1px; left:-1px; width: 16px; height: 16px; border-top: 1.5px solid var(--cyan); border-left: 1.5px solid var(--cyan);"></span>
+          <span style="position:absolute; top:-1px; right:-1px; width: 16px; height: 16px; border-top: 1.5px solid var(--cyan); border-right: 1.5px solid var(--cyan);"></span>
+          <span style="position:absolute; bottom:-1px; left:-1px; width: 16px; height: 16px; border-bottom: 1.5px solid var(--cyan); border-left: 1.5px solid var(--cyan);"></span>
+          <span style="position:absolute; bottom:-1px; right:-1px; width: 16px; height: 16px; border-bottom: 1.5px solid var(--cyan); border-right: 1.5px solid var(--cyan);"></span>
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;" class="mono" >
+            <span style="color: var(--textDim); font-size: 12px;">selected · focused</span>
+          </div>
+        </div>
+<pre class="code" style="font-size: 11.5px;">ZStack {
+  CornerFrame(color: .kwCyan, animate: isFocused)
+  TunnelRow(...)
+}</pre>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <div class="code-head">
+        <span>KWConnectButton · primary CTA</span>
+        <span class="copy" data-copy="swift-button">Copy</span>
+      </div>
+      <pre class="code" id="swift-button"><span class="k">struct</span> KWConnectButton: View {
+    <span class="k">let</span> state: KWConnectionState
+    <span class="k">let</span> action: () -&gt; <span class="k">Void</span>
+
+    <span class="k">var</span> body: <span class="k">some</span> View {
+        Button(action: action) {
+            HStack(spacing: KW.Space.sm) {
+                Image(systemName: state == .connected ? <span class="s">"bolt.slash.fill"</span> : <span class="s">"bolt.fill"</span>)
+                Text(state == .connected ? <span class="s">"DISCONNECT"</span> : <span class="s">"CONNECT"</span>)
+                    .tracking(<span class="n">2.2</span>)
+            }
+            .font(KW.Font.labelAdaptive.weight(.semibold))
+            .padding(.horizontal, KW.Space.lg)
+            .padding(.vertical, KW.Space.md - <span class="n">2</span>)
+            .foregroundStyle(Color.kwBg0)
+            .background(state == .connected ? Color.kwError : Color.kwSignal)
+            .shadow(color: (state == .connected ? Color.kwError : Color.kwSignal).opacity(<span class="n">0.45</span>),
+                    radius: KW.Glow.signal)
+        }
+        .buttonStyle(.plain)
+        .animation(KW.Motion.snap, value: state)
+    }
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────── SETUP ────────────────────────────── -->
+<section id="setup">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">07</span>
+      <h2 class="sec-title">Xcode setup checklist</h2>
+      <span class="sec-kicker">~10 minutes from clone to first preview</span>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <div class="check">
+          <span class="num">01</span>
+          <p>Create a new Xcode workspace. <code>File → New → Workspace</code>. Save as <code>Kabelwaechter.xcworkspace</code>.</p>
+
+          <span class="num">02</span>
+          <p>Add a <strong>Multiplatform Swift Package</strong> called <code>KabelwaechterUI</code> (Library, no executable).</p>
+
+          <span class="num">03</span>
+          <p>Copy <code>xcode-handoff/KabelwaechterUI/*</code> into <code>Sources/KabelwaechterUI/</code>. Drag <code>Colors.xcassets</code> into the same folder.</p>
+
+          <span class="num">04</span>
+          <p>In <code>Package.swift</code>, list the asset catalog as a resource:</p>
+        </div>
+<pre class="code" style="margin-top: 14px; font-size: 11.5px;"><span class="k">targets</span>: [
+  .target(
+    name: <span class="s">"KabelwaechterUI"</span>,
+    resources: [.process(<span class="s">"Colors.xcassets"</span>)]
+  )
+]</pre>
+      </div>
+
+      <div>
+        <div class="check">
+          <span class="num">05</span>
+          <p>Add two app targets: <code>Kabelwaechter-iOS</code> and <code>Kabelwaechter-tvOS</code>. Both depend on <code>KabelwaechterUI</code>.</p>
+
+          <span class="num">06</span>
+          <p>In each app target's <code>Info.plist</code>, set <code>UIUserInterfaceStyle = Dark</code>. The brand is dark-only.</p>
+
+          <span class="num">07</span>
+          <p>Drop the SVG icon files into <code>AppIcon.appiconset</code> (iOS) and a <code>tvAppIcon.brandassets</code> with three <code>imagestacklayer</code> folders (tvOS).</p>
+
+          <span class="num">08</span>
+          <p>Verify with a smoke test:</p>
+        </div>
+<pre class="code" style="margin-top: 14px; font-size: 11.5px;"><span class="k">import</span> SwiftUI
+<span class="k">import</span> KabelwaechterUI
+
+<span class="k">struct</span> ContentView: View {
+  <span class="k">var</span> body: <span class="k">some</span> View {
+    VStack(spacing: KW.Space.lg) {
+      Text(<span class="s">"[ KABELWÄCHTER ]"</span>).kwLabel()
+      StatusPill(state: .connected)
+    }
+    .padding(KW.Space.xl)
+    .background(Color.kwBg0)
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div style="margin-top: 36px;" class="panel corner pad">
+      <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+      <div class="label">Things you do NOT need</div>
+      <ul style="color: var(--textDim); margin: 0; padding-left: 18px; line-height: 1.8;">
+        <li>Custom font files — SF Mono ships with every Apple OS via <code style="color: var(--text); font-family: var(--mono); background: rgba(0,212,255,0.06); padding: 1px 6px;">design: .monospaced</code>.</li>
+        <li>A separate codebase per platform — every token, modifier, and primitive is platform-agnostic. Only the type ramp branches on <code style="color: var(--text); font-family: var(--mono); background: rgba(0,212,255,0.06); padding: 1px 6px;">#if os(tvOS)</code>.</li>
+        <li>Third-party theming libraries — the whole token layer is &lt; 300 lines of plain Swift.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap frow">
+    <div>KABELWÄCHTER · XCODE HANDOFF · v1.0</div>
+    <div style="display:flex; gap: 18px;">
+      <span>Rev 2026.05.25</span>
+      <span style="color: var(--cyan);">iOS · iPadOS · tvOS</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.copy[data-copy]').forEach(el => {
+    el.addEventListener('click', async () => {
+      const id = el.getAttribute('data-copy');
+      const block = document.getElementById(id);
+      if (!block) return;
+      try {
+        await navigator.clipboard.writeText(block.innerText);
+        const t = el.textContent;
+        el.textContent = 'Copied ✓';
+        setTimeout(() => { el.textContent = t; }, 1400);
+      } catch (e) {}
+    });
+  });
+  document.querySelectorAll('.topbar a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) { e.preventDefault(); window.scrollTo({ top: target.offsetTop - 50, behavior: 'smooth' }); }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,9 +1,13 @@
 import SwiftUI
 import CoreData
+import NetworkExtension
 import KabelwaechterPersistence
+import KabelwaechterUI
 
-/// tvOS-Tunnel-Liste. Apple-TV-spezifisch: keine Swipe-Gesten, größere
-/// Hit-Targets, Focus-Engine-Highlight via SwiftUI-Default.
+/// tvOS-Startseite im „Centered Hub"-Design (Variant A): die Tunnel-
+/// Visualisierung füllt den Hintergrund, der aktive Tunnel steht als Held
+/// mittig, alle Tunnel als fokussierbare Cards unten. Tippen öffnet den
+/// Connect-Screen (`TunnelDetailView`).
 struct TunnelListView: View {
 
     @Environment(TVAppEnvironment.self) private var env
@@ -12,98 +16,199 @@ struct TunnelListView: View {
     @State private var loadError: String?
     @State private var showingAddSheet = false
     @State private var selectedTunnelID: UUID?
+    @FocusState private var focusedCard: UUID?
 
     var body: some View {
         NavigationStack {
             ZStack {
-                DesignTokens.backgroundGradient.ignoresSafeArea()
-                content
-                    .navigationTitle("Kabelwächter")
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                reload()
-                            } label: {
-                                Label("Aktualisieren", systemImage: "arrow.clockwise")
-                                    .foregroundStyle(DesignTokens.accentPrimary)
-                            }
-                        }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                showingAddSheet = true
-                            } label: {
-                                Label("Tunnel hinzufügen", systemImage: "plus")
-                                    .foregroundStyle(DesignTokens.accentPrimary)
-                            }
-                        }
-                    }
-                    .fullScreenCover(isPresented: $showingAddSheet, onDismiss: reload) {
-                        AddTunnelView()
-                    }
-                    .navigationDestination(item: $selectedTunnelID) { id in
-                        TunnelDetailView(tunnelID: id)
-                    }
+                CyberBackdrop(accent: .kwCyan) {
+                    TunnelViz(state: heroState, intensity: tunnels.isEmpty ? 0.4 : 0.8)
+                }
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+
+                VStack(spacing: 0) {
+                    topBar
+                    Spacer()
+                    center
+                    Spacer()
+                    if !tunnels.isEmpty { cardRow }
+                }
+                .padding(KW.Space.gutter)
+                .padding(.vertical, KW.Space.safeTop)
+            }
+            .defaultFocus($focusedCard, tunnels.first?.id)
+            .navigationDestination(item: $selectedTunnelID) { id in
+                TunnelDetailView(tunnelID: id)
+            }
+            .fullScreenCover(isPresented: $showingAddSheet, onDismiss: reload) {
+                AddTunnelView()
             }
         }
         .preferredColorScheme(.dark)
-        .task { reload() }
-        // CloudKit-Sync liefert Template-Änderungen asynchron in den
-        // ModelContext — ohne dieses Reload würde ein vom iPhone
-        // synchronisierter Tunnel erst beim nächsten View-Erscheinen auftauchen.
+        .task {
+            reload()
+            try? await env.tunnelManager.refresh()
+        }
         .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
             reload()
         }
     }
 
-    @ViewBuilder
-    private var content: some View {
-        if let error = loadError {
-            VStack(spacing: 24) {
-                Image(systemName: "exclamationmark.triangle")
-                    .font(.system(size: 80))
-                    .foregroundStyle(.orange)
-                Text("Tunnel konnten nicht geladen werden")
-                    .font(.title2)
-                    .foregroundStyle(DesignTokens.textPrimary)
-                Text(error)
-                    .font(.body)
-                    .foregroundStyle(DesignTokens.textTertiary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 80)
-            }
-        } else if tunnels.isEmpty {
-            emptyState
-        } else {
-            grid
-        }
-    }
+    // MARK: - Top bar
 
-    private var emptyState: some View {
-        VStack(spacing: 32) {
-            Image(systemName: "shield.lefthalf.filled")
-                .font(.system(size: 160))
-                .foregroundStyle(DesignTokens.accentPrimary.opacity(0.8))
-            Text("Noch keine Tunnel")
-                .font(.system(.largeTitle, design: .monospaced).weight(.bold))
-                .foregroundStyle(DesignTokens.textPrimary)
-            Text("Tunnel werden via iCloud vom iPhone übertragen — oder manuell mit „Tunnel hinzufügen“ einlesen.")
-                .font(.title3)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(DesignTokens.textSecondary)
-                .padding(.horizontal, 120)
-        }
-    }
-
-    private var grid: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 480, maximum: 720), spacing: 32)], spacing: 32) {
-                ForEach(tunnels, id: \.id) { tunnel in
-                    TunnelCard(tunnel: tunnel) {
-                        selectedTunnelID = tunnel.id
-                    }
+    private var topBar: some View {
+        HStack(alignment: .center) {
+            HStack(spacing: KW.Space.md) {
+                KabelLogo(size: 40)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("[ KABELWÄCHTER ]").kwLabel()
+                    Text(tunnels.isEmpty ? "Keine Tunnel" : "\(tunnels.count) Tunnel · via iCloud")
+                        .font(KW.Font.telemTV)
+                        .foregroundStyle(Color.kwTextDim)
                 }
             }
-            .padding(40)
+            Spacer()
+            Button {
+                showingAddSheet = true
+            } label: {
+                Text("＋ Manuell")
+            }
+            .buttonStyle(KWButtonStyle(tone: .kwCyan))
+            .frame(width: 320)
+        }
+    }
+
+    // MARK: - Center
+
+    @ViewBuilder
+    private var center: some View {
+        if let loadError {
+            VStack(spacing: KW.Space.md) {
+                Text("[ FEHLER ]").kwLabel()
+                Text(loadError)
+                    .font(KW.Font.telemTV)
+                    .foregroundStyle(Color.kwError)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 900)
+            }
+        } else if tunnels.isEmpty {
+            VStack(spacing: KW.Space.lg) {
+                Text("[ NOCH KEINE TUNNEL ]").kwLabel()
+                Text("Tunnel hinzufügen")
+                    .font(KW.Font.titleTV)
+                    .foregroundStyle(Color.kwText)
+                Text("Importiere einen Tunnel einmal in der iPhone-App — er erscheint via iCloud automatisch hier. Oder lies ihn manuell ein.")
+                    .font(KW.Font.bodyTV)
+                    .foregroundStyle(Color.kwTextDim)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 1000)
+            }
+        } else if let active = activeTunnel {
+            VStack(spacing: KW.Space.lg) {
+                Text("ACTIVE PEER")
+                    .font(KW.Font.labelTV)
+                    .tracking(6)
+                    .foregroundStyle(Color.kwSignal)
+                Text(active.name)
+                    .font(KW.Font.displayTV)
+                    .foregroundStyle(Color.kwText)
+                    .shadow(color: Color.kwSignal.opacity(0.4), radius: KW.Glow.textShadow)
+                Text(active.serverEndpoint.uppercased())
+                    .font(KW.Font.telemTV)
+                    .tracking(2)
+                    .foregroundStyle(Color.kwTextDim)
+            }
+        } else {
+            VStack(spacing: KW.Space.md) {
+                Text("STANDBY")
+                    .font(KW.Font.labelTV)
+                    .tracking(6)
+                    .foregroundStyle(Color.kwCyan)
+                Text("Tunnel wählen")
+                    .font(KW.Font.titleTV)
+                    .foregroundStyle(Color.kwText)
+            }
+        }
+    }
+
+    // MARK: - Card row
+
+    private var cardRow: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: KW.Space.lg) {
+                ForEach(tunnels, id: \.id) { tunnel in
+                    Button {
+                        selectedTunnelID = tunnel.id
+                    } label: {
+                        card(for: tunnel)
+                    }
+                    .buttonStyle(KWCardButtonStyle(
+                        accent: .kwCyan,
+                        highlighted: connectionState(for: tunnel.id) == .connected
+                    ))
+                    .frame(width: 420)
+                    .focused($focusedCard, equals: tunnel.id)
+                }
+            }
+            .padding(.vertical, KW.Space.sm)
+            .padding(.horizontal, 4)
+        }
+        .frame(height: 240)
+        .focusSection()
+    }
+
+    private func card(for tunnel: TunnelView) -> some View {
+        let state = connectionState(for: tunnel.id)
+        return VStack(alignment: .leading, spacing: KW.Space.sm) {
+            HStack {
+                Text(tunnel.isConfiguredHere ? "TUNNEL" : "SYNC…")
+                    .font(KW.Font.labelTV)
+                    .tracking(2)
+                    .foregroundStyle(Color.kwTextFaint)
+                Spacer()
+                Circle()
+                    .fill(state.color)
+                    .frame(width: 12, height: 12)
+                    .shadow(color: state == .idle ? .clear : state.color, radius: 6)
+            }
+            Text(tunnel.name.isEmpty ? "Unbenannt" : tunnel.name)
+                .font(KW.Font.h2TV)
+                .foregroundStyle(Color.kwText)
+                .lineLimit(1)
+            Text(tunnel.serverEndpoint)
+                .font(KW.Font.telemTV)
+                .foregroundStyle(Color.kwTextFaint)
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+    }
+
+    // MARK: - Helpers
+
+    /// Der gerade verbundene Tunnel (für den zentralen Helden), falls einer.
+    private var activeTunnel: TunnelView? {
+        tunnels.first { connectionState(for: $0.id) == .connected }
+    }
+
+    /// Viz-Zustand des Hintergrunds: verbunden > verbindet > idle.
+    private var heroState: KWConnectionState {
+        var sawConnecting = false
+        for t in tunnels {
+            switch connectionState(for: t.id) {
+            case .connected: return .connected
+            case .connecting: sawConnecting = true
+            default: break
+            }
+        }
+        return sawConnecting ? .connecting : .idle
+    }
+
+    private func connectionState(for id: UUID) -> KWConnectionState {
+        switch env.tunnelManager.status(forTunnelID: id) {
+        case .connected:                 return .connected
+        case .connecting, .reasserting:  return .connecting
+        default:                         return .idle
         }
     }
 
@@ -114,44 +219,6 @@ struct TunnelListView: View {
         } catch {
             loadError = String(describing: error)
         }
-    }
-}
-
-private struct TunnelCard: View {
-    let tunnel: TunnelView
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 24) {
-                statusDot
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(tunnel.name.isEmpty ? "Unbenannt" : tunnel.name)
-                        .font(DesignTokens.brandFont)
-                        .foregroundStyle(DesignTokens.textPrimary)
-                    Text(tunnel.serverEndpoint)
-                        .font(.body)
-                        .foregroundStyle(DesignTokens.textSecondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(DesignTokens.textTertiary)
-            }
-            .padding(28)
-            .frame(maxWidth: .infinity)
-            .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 16))
-        }
-        .buttonStyle(.card)
-    }
-
-    private var statusDot: some View {
-        Circle()
-            .fill(tunnel.isConfiguredHere ? DesignTokens.accentSuccess : DesignTokens.textTertiary)
-            .frame(width: 18, height: 18)
-            .shadow(color: tunnel.isConfiguredHere ? DesignTokens.accentSuccess.opacity(0.7) : .clear,
-                    radius: 8)
     }
 }
 

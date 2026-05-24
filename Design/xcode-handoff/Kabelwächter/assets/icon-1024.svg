@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Kabelwächter — App Icon 1024</title>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0f1f33"></stop>
+      <stop offset="55%" stop-color="#0a0f1a"></stop>
+      <stop offset="100%" stop-color="#02040a"></stop>
+    </radialGradient>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00ff9d" stop-opacity="0.95"></stop>
+      <stop offset="35%" stop-color="#00d4ff" stop-opacity="0.45"></stop>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"></stop>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10"></feGaussianBlur>
+    </filter>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4"></feGaussianBlur>
+    </filter>
+  </defs>
+
+  
+  <rect width="1024" height="1024" fill="url(#bg)"></rect>
+
+  
+  <g opacity="0.08" stroke="#00d4ff" stroke-width="1">
+    <g>
+      <line x1="0" y1="128" x2="1024" y2="128"></line>
+      <line x1="0" y1="256" x2="1024" y2="256"></line>
+      <line x1="0" y1="384" x2="1024" y2="384"></line>
+      <line x1="0" y1="512" x2="1024" y2="512"></line>
+      <line x1="0" y1="640" x2="1024" y2="640"></line>
+      <line x1="0" y1="768" x2="1024" y2="768"></line>
+      <line x1="0" y1="896" x2="1024" y2="896"></line>
+    </g>
+    <g>
+      <line x1="128" y1="0" x2="128" y2="1024"></line>
+      <line x1="256" y1="0" x2="256" y2="1024"></line>
+      <line x1="384" y1="0" x2="384" y2="1024"></line>
+      <line x1="512" y1="0" x2="512" y2="1024"></line>
+      <line x1="640" y1="0" x2="640" y2="1024"></line>
+      <line x1="768" y1="0" x2="768" y2="1024"></line>
+      <line x1="896" y1="0" x2="896" y2="1024"></line>
+    </g>
+  </g>
+
+  
+  <g stroke="#00d4ff" stroke-width="1.4" opacity="0.35">
+    <line x1="512" y1="512" x2="0" y2="0"></line>
+    <line x1="512" y1="512" x2="1024" y2="0"></line>
+    <line x1="512" y1="512" x2="0" y2="1024"></line>
+    <line x1="512" y1="512" x2="1024" y2="1024"></line>
+    <line x1="512" y1="512" x2="512" y2="0"></line>
+    <line x1="512" y1="512" x2="1024" y2="512"></line>
+    <line x1="512" y1="512" x2="512" y2="1024"></line>
+    <line x1="512" y1="512" x2="0" y2="512"></line>
+  </g>
+
+  
+  <circle cx="512" cy="512" r="420" fill="url(#core)"></circle>
+
+  
+  <g fill="none" stroke="#00d4ff" filter="url(#softGlow)">
+    <circle cx="512" cy="512" r="400" stroke-opacity="0.18" stroke-width="2"></circle>
+    <circle cx="512" cy="512" r="320" stroke-opacity="0.28" stroke-width="2.5"></circle>
+    <circle cx="512" cy="512" r="248" stroke-opacity="0.42" stroke-width="3"></circle>
+    <circle cx="512" cy="512" r="186" stroke-opacity="0.58" stroke-width="3.5"></circle>
+    <circle cx="512" cy="512" r="132" stroke-opacity="0.75" stroke-width="4"></circle>
+    <circle cx="512" cy="512" r="86" stroke-opacity="0.9" stroke-width="4.5"></circle>
+  </g>
+
+  
+  <circle cx="512" cy="512" r="50" fill="none" stroke="#00ff9d" stroke-width="5" filter="url(#softGlow)" opacity="0.95"></circle>
+
+  
+  <g filter="url(#glow)">
+    <circle cx="512" cy="512" r="22" fill="#00ff9d"></circle>
+  </g>
+  <circle cx="512" cy="512" r="10" fill="#e6f3ff"></circle>
+
+  
+  <rect x="0" y="470" width="1024" height="2" fill="#00d4ff" opacity="0.15"></rect>
+
+  
+  <g font-family="JetBrains Mono, SF Mono, monospace" font-size="22" fill="#00d4ff" opacity="0.55" letter-spacing="4">
+    <text x="64" y="960">KBLW</text>
+    <text x="888" y="960" text-anchor="start">v1</text>
+  </g>
+</svg>

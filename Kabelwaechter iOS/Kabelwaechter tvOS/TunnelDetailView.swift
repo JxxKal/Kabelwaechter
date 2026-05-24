@@ -2,10 +2,11 @@ import SwiftUI
 import NetworkExtension
 import KabelwaechterCore
 import KabelwaechterPersistence
+import KabelwaechterUI
 
-/// Detailansicht eines Tunnels auf tvOS — inkl. großem Connect/Disconnect-
-/// Button. Connect-Wiring (NEVPNManager) kommt in 3.2; hier ist die
-/// Button-Aktion noch ein no-op.
+/// Detailansicht eines Tunnels auf tvOS im „Centered Hub"-Design (Variant A):
+/// die Tunnel-Visualisierung füllt den Hintergrund, der aktive Peer + Status
+/// stehen mittig, darunter der große Connect-Button.
 struct TunnelDetailView: View {
 
     @Environment(TVAppEnvironment.self) private var env
@@ -20,38 +21,24 @@ struct TunnelDetailView: View {
     @State private var connectError: String?
 
     var body: some View {
-        ZStack {
-            DesignTokens.backgroundGradient.ignoresSafeArea()
+        let status = env.tunnelManager.status(forTunnelID: tunnelID) ?? .invalid
+        let vizState = connectError != nil ? .error : Self.vizState(for: status)
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 40) {
-                    header
-                    connectControl
-                    if let fullConfig {
-                        section("Server") {
-                            row("Endpoint", value: fullConfig.peers.first?.endpoint?.stringRepresentation ?? "—")
-                            row("Public Key", value: fullConfig.peers.first?.publicKey.base64EncodedString() ?? "—", truncate: true)
-                            row("AllowedIPs", value: fullConfig.peers.first?.allowedIPs.map { $0.stringRepresentation }.joined(separator: ", ") ?? "—")
-                            if let keepalive = fullConfig.peers.first?.persistentKeepAlive {
-                                row("Keepalive", value: "\(keepalive)s")
-                            }
-                        }
-                        section("Interface (dieses Apple TV)") {
-                            row("Adresse", value: fullConfig.interface.addresses.map { $0.stringRepresentation }.joined(separator: ", "))
-                            row("DNS", value: fullConfig.interface.dns.map { $0.stringRepresentation }.joined(separator: ", "))
-                            if let mtu = fullConfig.interface.mtu {
-                                row("MTU", value: "\(mtu)")
-                            }
-                        }
-                    } else if tunnel?.isConfiguredHere == false {
-                        notConfiguredBanner
-                    }
-                    deleteButton
-                }
-                .padding(60)
-                .frame(maxWidth: 1200, alignment: .leading)
-                .frame(maxWidth: .infinity)
+        ZStack {
+            CyberBackdrop(accent: .kwCyan) {
+                TunnelViz(state: vizState, intensity: tunnel?.isConfiguredHere == true ? 1.0 : 0.5)
             }
+            .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                topBar(status: status)
+                Spacer()
+                centerHUD(status: status, vizState: vizState)
+                Spacer()
+                bottomControls(status: status)
+            }
+            .padding(KW.Space.gutter)
+            .padding(.vertical, KW.Space.safeTop)
         }
         .preferredColorScheme(.dark)
         .task { reload() }
@@ -59,50 +46,106 @@ struct TunnelDetailView: View {
             Button("Löschen", role: .destructive, action: deleteTunnel)
             Button("Abbrechen", role: .cancel) {}
         } message: {
-            Text("Wird auf allen iCloud-Geräten entfernt und der Private Key aus dem Schlüsselbund gelöscht.")
+            Text("Wird auf allen iCloud-Geräten entfernt.")
         }
     }
 
-    // MARK: - Subviews
+    // MARK: - Top bar
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(tunnel?.name ?? "Lädt…")
-                .font(.system(.largeTitle, design: .monospaced).weight(.bold))
-                .foregroundStyle(DesignTokens.textPrimary)
-            if let endpoint = tunnel?.serverEndpoint, !endpoint.isEmpty {
-                Text(endpoint)
-                    .font(.title3)
-                    .foregroundStyle(DesignTokens.textSecondary)
+    private func topBar(status: NEVPNStatus) -> some View {
+        HStack(alignment: .center) {
+            HStack(spacing: KW.Space.md) {
+                KabelLogo(size: 40)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("[ KABELWÄCHTER ]").kwLabel()
+                    if let endpoint = tunnel?.serverEndpoint, !endpoint.isEmpty {
+                        Text(endpoint)
+                            .font(KW.Font.telemTV)
+                            .foregroundStyle(Color.kwTextDim)
+                    }
+                }
+            }
+            Spacer()
+            StatusPill(state: connectError != nil ? .error : Self.vizState(for: status))
+        }
+    }
+
+    // MARK: - Center HUD
+
+    @ViewBuilder
+    private func centerHUD(status: NEVPNStatus, vizState: KWConnectionState) -> some View {
+        if tunnel?.isConfiguredHere == false {
+            syncingHUD
+        } else {
+            VStack(spacing: KW.Space.lg) {
+                Text(kicker(for: vizState))
+                    .font(KW.Font.labelTV)
+                    .tracking(6)
+                    .foregroundStyle(vizState.color)
+                Text(tunnel?.name ?? "—")
+                    .font(KW.Font.displayTV)
+                    .foregroundStyle(Color.kwText)
+                    .shadow(color: vizState == .connected ? Color.kwSignal.opacity(0.4) : .clear, radius: KW.Glow.textShadow)
+                    .multilineTextAlignment(.center)
+                if let peer = fullConfig?.peers.first?.endpoint?.stringRepresentation {
+                    Text(peer.uppercased() + " · :51820")
+                        .font(KW.Font.telemTV)
+                        .tracking(2)
+                        .foregroundStyle(Color.kwTextDim)
+                }
             }
         }
     }
 
-    private var connectControl: some View {
-        let status = env.tunnelManager.status(forTunnelID: tunnelID) ?? .invalid
-        return VStack(spacing: 16) {
-            Button {
-                Task { await toggleConnection(currentStatus: status) }
-            } label: {
-                Label(connectLabel(for: status), systemImage: connectSymbol(for: status))
-                    .font(.title2.weight(.semibold))
-                    .frame(maxWidth: .infinity, minHeight: 80)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(connectTint(for: status))
-            .disabled(tunnel?.isConfiguredHere != true || status == .connecting || status == .disconnecting)
+    private var syncingHUD: some View {
+        VStack(spacing: KW.Space.md) {
+            Text("[ iCLOUD-SYNC LÄUFT ]").kwLabel()
+            Text(tunnel?.name ?? "—")
+                .font(KW.Font.titleTV)
+                .foregroundStyle(Color.kwText)
+            Text("Die vollständige Konfiguration ist noch nicht angekommen. Verbinden wird aktiv, sobald der Sync durch ist.")
+                .font(KW.Font.bodyTV)
+                .foregroundStyle(Color.kwTextDim)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 900)
+        }
+    }
 
-            Text(statusText(for: status))
-                .font(.callout)
-                .foregroundStyle(DesignTokens.textSecondary)
+    // MARK: - Bottom controls
 
+    private func bottomControls(status: NEVPNStatus) -> some View {
+        VStack(spacing: KW.Space.md) {
             if let connectError {
-                Label(connectError, systemImage: "exclamationmark.triangle")
-                    .font(.callout)
-                    .foregroundStyle(.orange)
+                Text(connectError)
+                    .font(KW.Font.telemTV)
+                    .foregroundStyle(Color.kwError)
+                    .lineLimit(2)
+            }
+            HStack(spacing: KW.Space.lg) {
+                Button {
+                    Task { await toggleConnection(currentStatus: status) }
+                } label: {
+                    Text(connectLabel(for: status))
+                }
+                .buttonStyle(KWButtonStyle(
+                    tone: status == .connected ? .kwSignal : .kwCyan,
+                    filled: status == .disconnected || status == .invalid
+                ))
+                .disabled(tunnel?.isConfiguredHere != true || status == .connecting || status == .disconnecting)
+                .frame(maxWidth: 520)
+
+                Button(role: .destructive) {
+                    confirmingDelete = true
+                } label: {
+                    Text("Löschen")
+                }
+                .buttonStyle(KWButtonStyle(tone: .kwError))
+                .frame(width: 240)
             }
         }
     }
+
+    // MARK: - Logic
 
     private func toggleConnection(currentStatus: NEVPNStatus) async {
         connectError = nil
@@ -113,10 +156,7 @@ struct TunnelDetailView: View {
             fallthrough
         @unknown default:
             do {
-                try await env.tunnelManager.connect(
-                    tunnelID: tunnelID,
-                    displayName: tunnel?.name ?? "Kabelwächter"
-                )
+                try await env.tunnelManager.connect(tunnelID: tunnelID, displayName: tunnel?.name ?? "Kabelwächter")
             } catch {
                 connectError = String(describing: error)
             }
@@ -125,92 +165,29 @@ struct TunnelDetailView: View {
 
     private func connectLabel(for status: NEVPNStatus) -> String {
         switch status {
-        case .connected: return "Trennen"
-        case .connecting: return "Verbindet…"
-        case .disconnecting: return "Trennt…"
-        case .reasserting: return "Reconnect…"
-        case .disconnected, .invalid: return "Verbinden"
-        @unknown default: return "Verbinden"
+        case .connected:                 return "× Trennen"
+        case .connecting:                return "Verbindet…"
+        case .disconnecting:             return "Trennt…"
+        case .reasserting:               return "Reconnect…"
+        case .disconnected, .invalid:    return "▶ Verbinden"
+        @unknown default:                return "▶ Verbinden"
         }
     }
 
-    private func connectSymbol(for status: NEVPNStatus) -> String {
+    private func kicker(for state: KWConnectionState) -> String {
+        switch state {
+        case .connected:  return "ACTIVE PEER"
+        case .connecting: return "HANDSHAKE…"
+        case .error:      return "PEER UNREACHABLE"
+        case .idle:       return "STANDBY"
+        }
+    }
+
+    private static func vizState(for status: NEVPNStatus) -> KWConnectionState {
         switch status {
-        case .connected: return "shield.fill"
-        case .connecting, .reasserting: return "ellipsis.circle"
-        case .disconnecting: return "shield.slash"
-        default: return "shield.lefthalf.filled"
-        }
-    }
-
-    private func connectTint(for status: NEVPNStatus) -> Color {
-        switch status {
-        case .connected, .reasserting: return DesignTokens.accentSuccess
-        default: return DesignTokens.accentPrimary
-        }
-    }
-
-    private func statusText(for status: NEVPNStatus) -> String {
-        switch status {
-        case .connected: return "Verbunden"
-        case .connecting: return "Verbinde…"
-        case .disconnecting: return "Trenne…"
-        case .reasserting: return "Verbindung wird erneuert…"
-        case .disconnected: return "Getrennt"
-        case .invalid: return "Status unbekannt"
-        @unknown default: return "Status unbekannt"
-        }
-    }
-
-    private var notConfiguredBanner: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Label("iCloud-Sync läuft…", systemImage: "arrow.triangle.2.circlepath.icloud")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(DesignTokens.accentPrimary)
-            Text("Der Tunnel ist via iCloud sichtbar, aber die vollständige Konfiguration ist noch nicht angekommen. Verbinden wird aktiv, sobald der Sync durch ist — meist nach wenigen Sekunden. Bleibt es hängen, prüfe die iCloud-Anmeldung auf diesem Apple TV.")
-                .font(.body)
-                .foregroundStyle(DesignTokens.textSecondary)
-        }
-        .padding(28)
-        .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 16))
-    }
-
-    private var deleteButton: some View {
-        Button(role: .destructive) {
-            confirmingDelete = true
-        } label: {
-            Label("Tunnel löschen", systemImage: "trash")
-                .frame(maxWidth: .infinity, minHeight: 70)
-        }
-        .buttonStyle(.bordered)
-        .tint(.red.opacity(0.8))
-    }
-
-    @ViewBuilder
-    private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(title)
-                .font(.headline)
-                .textCase(.uppercase)
-                .foregroundStyle(DesignTokens.textTertiary)
-            VStack(alignment: .leading, spacing: 16) {
-                content()
-            }
-            .padding(28)
-            .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 16))
-        }
-    }
-
-    private func row(_ label: String, value: String, truncate: Bool = false) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(.callout)
-                .foregroundStyle(DesignTokens.textTertiary)
-            Text(value)
-                .font(.system(.body, design: .monospaced))
-                .foregroundStyle(DesignTokens.textPrimary)
-                .lineLimit(truncate ? 1 : nil)
-                .truncationMode(.middle)
+        case .connected:               return .connected
+        case .connecting, .reasserting: return .connecting
+        default:                       return .idle
         }
     }
 
@@ -231,8 +208,6 @@ struct TunnelDetailView: View {
 }
 
 #Preview {
-    NavigationStack {
-        TunnelDetailView(tunnelID: UUID())
-            .environment(TVAppEnvironment.makePreview())
-    }
+    TunnelDetailView(tunnelID: UUID())
+        .environment(TVAppEnvironment.makePreview())
 }

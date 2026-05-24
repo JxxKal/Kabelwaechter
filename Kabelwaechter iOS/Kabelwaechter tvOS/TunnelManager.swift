@@ -81,7 +81,12 @@ final class TunnelManager {
     /// Baut die NEVPNManager-Konfiguration auf (anlegen oder updaten) und
     /// startet den Tunnel. Wirft, wenn die Tunnel-UUID im Repository
     /// nicht auflösbar ist (z.B. lokaler Tunnel-Instance fehlt).
-    func connect(tunnelID id: UUID, displayName: String) async throws {
+    /// Baut/aktualisiert die NEVPNManager-Konfiguration für eine Tunnel-UUID
+    /// und speichert sie. `onDemand == nil` lässt die bestehende Auto-Connect-
+    /// Einstellung unangetastet; `true`/`false` setzt sie explizit.
+    /// Startet den Tunnel **nicht**.
+    @discardableResult
+    private func prepareManager(tunnelID id: UUID, displayName: String, onDemand: Bool?) async throws -> NETunnelProviderManager {
         let config = try repository.tunnelConfiguration(id: id)
         let wgQuick = config.asWgQuickConfig()
 
@@ -89,8 +94,7 @@ final class TunnelManager {
         let proto = (manager.protocolConfiguration as? NETunnelProviderProtocol) ?? NETunnelProviderProtocol()
         proto.providerBundleIdentifier = providerBundleIdentifier
         // serverAddress muss laut Apple-Doku non-empty sein, sonst lehnt
-        // NEVPNManager.saveToPreferences ab. Wir nehmen den Server-Endpoint
-        // aus der Config — bei generischen Tunneln tut's auch ein Platzhalter.
+        // NEVPNManager.saveToPreferences ab.
         proto.serverAddress = config.peers.first?.endpoint?.stringRepresentation ?? "kabelwaechter"
         proto.providerConfiguration = [
             "wgQuickConfig": wgQuick,
@@ -100,21 +104,41 @@ final class TunnelManager {
         manager.protocolConfiguration = proto
         manager.localizedDescription = displayName
         manager.isEnabled = true
-        // Always-On: der Tunnel verbindet automatisch (wieder), sobald ein
-        // Netz da ist — auch nach einem Reboot des Apple TV. Ein Streaming-
-        // Gerät soll dauerhaft im VPN bleiben, ohne dass jemand „Verbinden"
-        // drückt. Explizites Trennen schaltet On-Demand wieder ab.
-        manager.isOnDemandEnabled = true
-        manager.onDemandRules = [NEOnDemandRuleConnect()]
+        if let onDemand {
+            manager.isOnDemandEnabled = onDemand
+            manager.onDemandRules = onDemand ? [NEOnDemandRuleConnect()] : []
+        }
 
         try await manager.saveToPreferences()
         // Nach saveToPreferences müssen wir loadFromPreferences aufrufen,
         // sonst lehnt startVPNTunnel mit "configuration is invalid" ab —
         // Apple-Quirk, dokumentiert in NEVPNManager.h.
         try await manager.loadFromPreferences()
-
         managers[id] = manager
+        return manager
+    }
+
+    /// Verbindet manuell (einmalig). Lässt die Auto-Connect-Einstellung wie
+    /// sie ist (Default: aus).
+    func connect(tunnelID id: UUID, displayName: String) async throws {
+        let manager = try await prepareManager(tunnelID: id, displayName: displayName, onDemand: nil)
         try manager.connection.startVPNTunnel()
+        statuses[id] = manager.connection.status
+    }
+
+    /// Ob Auto-Connect (On-Demand) für diesen Tunnel aktiv ist.
+    func isAutoConnect(tunnelID id: UUID) -> Bool {
+        managers[id]?.isOnDemandEnabled ?? false
+    }
+
+    /// Schaltet Auto-Connect (Always-On via On-Demand) pro Tunnel. Beim
+    /// Einschalten wird der Tunnel — falls getrennt — gleich gestartet; das
+    /// System hält ihn dann über Netzwechsel und Reboots hinweg verbunden.
+    func setAutoConnect(_ enabled: Bool, tunnelID id: UUID, displayName: String) async throws {
+        let manager = try await prepareManager(tunnelID: id, displayName: displayName, onDemand: enabled)
+        if enabled, manager.connection.status == .disconnected || manager.connection.status == .invalid {
+            try manager.connection.startVPNTunnel()
+        }
         statuses[id] = manager.connection.status
     }
 
@@ -122,8 +146,11 @@ final class TunnelManager {
     /// Tunnel sofort wieder hochkommen. No-op wenn kein Manager existiert.
     func disconnect(tunnelID id: UUID) async {
         guard let manager = managers[id] else { return }
+        // On-Demand muss aus, sonst kommt der Tunnel sofort wieder hoch —
+        // Trennen bedeutet auch „Auto-Connect aus".
         if manager.isOnDemandEnabled {
             manager.isOnDemandEnabled = false
+            manager.onDemandRules = []
             try? await manager.saveToPreferences()
         }
         manager.connection.stopVPNTunnel()

@@ -20,6 +20,7 @@ struct TunnelDetailView: View {
     @State private var confirmingDelete = false
     @State private var connectError: String?
     @State private var stats: TunnelManager.TunnelStats?
+    @State private var autoConnect = false
 
     var body: some View {
         let status = env.tunnelManager.status(forTunnelID: tunnelID) ?? .invalid
@@ -136,7 +137,8 @@ struct TunnelDetailView: View {
     // MARK: - Bottom controls
 
     private func bottomControls(status: NEVPNStatus) -> some View {
-        VStack(spacing: KW.Space.md) {
+        let configured = tunnel?.isConfiguredHere == true
+        return VStack(spacing: KW.Space.md) {
             if let connectError {
                 Text(connectError)
                     .font(KW.Font.telemTV)
@@ -153,17 +155,26 @@ struct TunnelDetailView: View {
                     tone: status == .connected ? .kwSignal : .kwCyan,
                     filled: status == .disconnected || status == .invalid
                 ))
-                .disabled(tunnel?.isConfiguredHere != true || status == .connecting || status == .disconnecting)
-                .frame(maxWidth: 520)
+                .disabled(!configured || status == .connecting || status == .disconnecting)
+                .frame(maxWidth: .infinity)
 
-                Button(role: .destructive) {
-                    confirmingDelete = true
+                Button {
+                    Task { await toggleAutoConnect() }
                 } label: {
-                    Text("Löschen")
+                    Text(autoConnect ? "Auto-Connect: An" : "Auto-Connect: Aus")
                 }
-                .buttonStyle(KWButtonStyle(tone: .kwError))
-                .frame(width: 240)
+                .buttonStyle(KWButtonStyle(tone: autoConnect ? .kwSignal : .kwTextDim))
+                .disabled(!configured)
+                .frame(width: 460)
             }
+
+            Button(role: .destructive) {
+                confirmingDelete = true
+            } label: {
+                Text("Löschen")
+            }
+            .buttonStyle(KWButtonStyle(tone: .kwError))
+            .frame(width: 280)
         }
     }
 
@@ -183,6 +194,21 @@ struct TunnelDetailView: View {
                 connectError = String(describing: error)
             }
         }
+        autoConnect = env.tunnelManager.isAutoConnect(tunnelID: tunnelID)
+    }
+
+    private func toggleAutoConnect() async {
+        connectError = nil
+        do {
+            try await env.tunnelManager.setAutoConnect(
+                !autoConnect,
+                tunnelID: tunnelID,
+                displayName: tunnel?.name ?? "Kabelwächter"
+            )
+        } catch {
+            connectError = String(describing: error)
+        }
+        autoConnect = env.tunnelManager.isAutoConnect(tunnelID: tunnelID)
     }
 
     private func connectLabel(for status: NEVPNStatus) -> String {
@@ -240,6 +266,7 @@ struct TunnelDetailView: View {
         do {
             tunnel = try env.repository.tunnel(id: tunnelID)
             fullConfig = try? env.repository.tunnelConfiguration(id: tunnelID)
+            autoConnect = env.tunnelManager.isAutoConnect(tunnelID: tunnelID)
             loadError = nil
         } catch {
             loadError = String(describing: error)

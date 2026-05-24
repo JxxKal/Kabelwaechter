@@ -1,9 +1,10 @@
 import SwiftUI
 import KabelwaechterCore
 import KabelwaechterPersistence
+import KabelwaechterUI
 
-/// Detailansicht eines Tunnels. Read-only in Phase 2.6 — Edit kommt später.
-/// Zeigt Template-Felder + Status, plus einen Löschen-Button.
+/// Detailansicht eines Tunnels im Kabelwächter-Design. Read-only Config-Sicht
+/// (das iPhone verbindet nicht — Decision #8) plus Löschen.
 struct TunnelDetailView: View {
 
     @Environment(CompanionAppEnvironment.self) private var env
@@ -18,111 +19,109 @@ struct TunnelDetailView: View {
 
     var body: some View {
         ZStack {
-            DesignTokens.backgroundGradient.ignoresSafeArea()
+            Color.kwBg0.ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: KW.Space.lg) {
                     header
                     if let fullConfig {
                         section("Server") {
-                            row("Public Key", value: fullConfig.peers.first?.publicKey.base64EncodedString() ?? "—", monospace: true)
-                            row("Endpoint", value: fullConfig.peers.first?.endpoint?.stringRepresentation ?? "—", monospace: true)
-                            row("AllowedIPs", value: fullConfig.peers.first?.allowedIPs.map { $0.stringRepresentation }.joined(separator: ", ") ?? "—", monospace: true)
+                            row("Public Key", value: fullConfig.peers.first?.publicKey.base64EncodedString() ?? "—")
+                            row("Endpoint", value: fullConfig.peers.first?.endpoint?.stringRepresentation ?? "—")
+                            row("AllowedIPs", value: fullConfig.peers.first?.allowedIPs.map { $0.stringRepresentation }.joined(separator: ", ") ?? "—")
                             if let keepalive = fullConfig.peers.first?.persistentKeepAlive {
                                 row("Keepalive", value: "\(keepalive)s")
                             }
                         }
-                        section("Interface (dieses Gerät)") {
-                            row("Adresse", value: fullConfig.interface.addresses.map { $0.stringRepresentation }.joined(separator: ", "), monospace: true)
-                            row("DNS", value: fullConfig.interface.dns.map { $0.stringRepresentation }.joined(separator: ", "), monospace: true)
-                            if let mtu = fullConfig.interface.mtu {
-                                row("MTU", value: "\(mtu)")
-                            }
-                            if let port = fullConfig.interface.listenPort {
-                                row("ListenPort", value: "\(port)")
-                            }
+                        section("Interface") {
+                            row("Adresse", value: fullConfig.interface.addresses.map { $0.stringRepresentation }.joined(separator: ", "))
+                            row("DNS", value: fullConfig.interface.dns.map { $0.stringRepresentation }.joined(separator: ", "))
+                            if let mtu = fullConfig.interface.mtu { row("MTU", value: "\(mtu)") }
+                            if let port = fullConfig.interface.listenPort { row("ListenPort", value: "\(port)") }
                         }
                     } else if tunnel?.isConfiguredHere == false {
-                        notConfiguredBanner
+                        syncingBanner
                     }
                     deleteButton
                 }
-                .padding(20)
+                .padding(KW.Space.lg)
             }
         }
         .preferredColorScheme(.dark)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .task { reload() }
         .alert("Tunnel löschen?", isPresented: $confirmingDelete) {
             Button("Löschen", role: .destructive, action: deleteTunnel)
             Button("Abbrechen", role: .cancel) {}
         } message: {
-            Text("Diese Aktion löscht den Tunnel auf allen Geräten und entfernt den Private Key aus dem Schlüsselbund.")
+            Text("Wird auf allen iCloud-Geräten entfernt.")
         }
     }
 
     // MARK: - Subviews
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: KW.Space.xs) {
+            Text("[ TUNNEL ]").kwLabel()
             Text(tunnel?.name ?? "Lädt…")
-                .font(.system(.title, design: .monospaced).weight(.bold))
-                .foregroundStyle(DesignTokens.textPrimary)
+                .font(KW.Font.title)
+                .foregroundStyle(Color.kwText)
             if let endpoint = tunnel?.serverEndpoint, !endpoint.isEmpty {
                 Text(endpoint)
-                    .font(.callout)
-                    .foregroundStyle(DesignTokens.textSecondary)
+                    .font(KW.Font.telem)
+                    .foregroundStyle(Color.kwTextDim)
             }
         }
     }
 
-    private var notConfiguredBanner: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("Auf diesem Gerät nicht eingerichtet", systemImage: "exclamationmark.shield")
-                .foregroundStyle(DesignTokens.accentPrimary)
-            Text("Dieser Tunnel wurde via iCloud gesehen, aber es liegt kein Private Key auf diesem Gerät. Importiere eine zweite Konfiguration vom Server-Admin, um ihn hier zu nutzen.")
-                .font(.callout)
-                .foregroundStyle(DesignTokens.textSecondary)
+    private var syncingBanner: some View {
+        VStack(alignment: .leading, spacing: KW.Space.xs) {
+            Text("iCLOUD-SYNC LÄUFT…")
+                .font(KW.Font.label)
+                .tracking(2)
+                .foregroundStyle(Color.kwCyan)
+            Text("Der Tunnel ist via iCloud sichtbar, aber die vollständige Konfiguration ist noch nicht angekommen.")
+                .font(KW.Font.body)
+                .foregroundStyle(Color.kwTextDim)
         }
-        .padding(16)
-        .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 10))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .kwPanel()
     }
 
     private var deleteButton: some View {
         Button(role: .destructive) {
             confirmingDelete = true
         } label: {
-            Label("Tunnel löschen", systemImage: "trash")
-                .frame(maxWidth: .infinity)
-                .padding(14)
+            Text("Tunnel löschen")
         }
-        .buttonStyle(.borderedProminent)
-        .tint(.red.opacity(0.6))
-        .padding(.top, 12)
+        .buttonStyle(KWButtonStyle(tone: .kwError))
+        .padding(.top, KW.Space.sm)
     }
 
     @ViewBuilder
     private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: KW.Space.sm) {
             Text(title)
-                .font(.caption)
+                .font(KW.Font.label)
+                .tracking(2)
                 .textCase(.uppercase)
-                .foregroundStyle(DesignTokens.textTertiary)
-            VStack(alignment: .leading, spacing: 10) {
+                .foregroundStyle(Color.kwTextFaint)
+            VStack(alignment: .leading, spacing: KW.Space.md) {
                 content()
             }
-            .padding(16)
-            .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 10))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .kwPanel()
         }
     }
 
-    private func row(_ label: String, value: String, monospace: Bool = false) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
+    private func row(_ label: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
             Text(label)
-                .font(.caption2)
-                .foregroundStyle(DesignTokens.textTertiary)
+                .font(KW.Font.label)
+                .foregroundStyle(Color.kwTextFaint)
             Text(value)
-                .font(monospace ? .system(.callout, design: .monospaced) : .callout)
-                .foregroundStyle(DesignTokens.textPrimary)
+                .font(KW.Font.telem)
+                .foregroundStyle(Color.kwText)
                 .textSelection(.enabled)
                 .lineLimit(2)
                 .truncationMode(.middle)

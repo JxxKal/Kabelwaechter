@@ -1,9 +1,11 @@
 import SwiftUI
 import CoreData
 import KabelwaechterPersistence
+import KabelwaechterUI
 
-/// Hauptansicht der Companion-App: Liste aller Tunnel, plus Aktionen für
-/// Import und Detail-Bearbeitung.
+/// Hauptansicht der Companion-App im „Centered Hub"-Design (Variant A),
+/// angepasst an die Editor-Rolle: das iPhone verbindet selbst nie (Decision
+/// #8), darum kein Connect/Status — nur Liste, Import und Detail/Config.
 struct TunnelListView: View {
 
     @Environment(CompanionAppEnvironment.self) private var env
@@ -14,83 +16,114 @@ struct TunnelListView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                DesignTokens.backgroundGradient
-                    .ignoresSafeArea()
+            ZStack(alignment: .top) {
+                Color.kwBg0.ignoresSafeArea()
 
-                content
-                    .navigationTitle("Tunnel")
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                showingAddSheet = true
-                            } label: {
-                                Image(systemName: "plus")
-                                    .foregroundStyle(DesignTokens.accentPrimary)
-                            }
-                            .accessibilityLabel(Text("Tunnel hinzufügen"))
-                        }
+                // Dekorative Viz oben, nach unten ausgeblendet
+                TunnelViz(state: .idle, intensity: 0.55)
+                    .frame(height: 360)
+                    .opacity(0.5)
+                    .mask(LinearGradient(colors: [.black, .black, .clear], startPoint: .top, endPoint: .bottom))
+                    .ignoresSafeArea(edges: .top)
+                    .allowsHitTesting(false)
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: KW.Space.lg) {
+                        header
+                        content
                     }
-                    .sheet(isPresented: $showingAddSheet, onDismiss: reload) {
-                        AddTunnelView()
-                    }
+                    .padding(KW.Space.lg)
+                }
+            }
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: UUID.self) { id in
+                TunnelDetailView(tunnelID: id)
+            }
+            .sheet(isPresented: $showingAddSheet, onDismiss: reload) {
+                AddTunnelView()
             }
         }
         .preferredColorScheme(.dark)
         .task { reload() }
-        // CloudKit-Sync liefert Änderungen asynchron — ohne dieses Reload
-        // erschiene ein auf dem Apple TV (oder einem zweiten iPhone)
-        // angelegter Tunnel erst beim nächsten View-Erscheinen.
         .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
             reload()
         }
     }
 
+    // MARK: - Header
+
+    private var header: some View {
+        HStack(alignment: .firstTextBaseline) {
+            VStack(alignment: .leading, spacing: KW.Space.xs) {
+                Text("[ KABELWÄCHTER ]").kwLabel()
+                Text("Tunnels")
+                    .font(KW.Font.title)
+                    .foregroundStyle(Color.kwText)
+            }
+            Spacer()
+            Button {
+                showingAddSheet = true
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.kwCyan)
+                    .frame(width: 40, height: 40)
+                    .background(Color.kwCyan.opacity(0.08))
+                    .overlay(Rectangle().stroke(Color.kwLineDim, lineWidth: KW.Border.hairline))
+            }
+            .accessibilityLabel(Text("Tunnel hinzufügen"))
+        }
+        .padding(.top, KW.Space.xl)
+    }
+
+    // MARK: - Content
+
     @ViewBuilder
     private var content: some View {
-        if let error = loadError {
-            VStack(spacing: 12) {
-                Image(systemName: "exclamationmark.triangle")
-                    .font(.largeTitle)
-                    .foregroundStyle(.orange)
-                Text("Tunnel konnten nicht geladen werden")
-                    .foregroundStyle(DesignTokens.textPrimary)
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(DesignTokens.textTertiary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
+        if let loadError {
+            VStack(alignment: .leading, spacing: KW.Space.sm) {
+                Text("[ FEHLER ]")
+                    .font(KW.Font.label)
+                    .tracking(2)
+                    .foregroundStyle(Color.kwError)
+                Text(loadError)
+                    .font(KW.Font.bodySm)
+                    .foregroundStyle(Color.kwTextDim)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .kwPanel()
         } else if tunnels.isEmpty {
             emptyState
         } else {
-            List(tunnels, id: \.id) { tunnel in
-                NavigationLink {
-                    TunnelDetailView(tunnelID: tunnel.id)
-                } label: {
-                    TunnelRow(tunnel: tunnel)
+            VStack(alignment: .leading, spacing: KW.Space.sm) {
+                Text("ALLE TUNNEL · \(tunnels.count)")
+                    .font(KW.Font.label)
+                    .tracking(2)
+                    .foregroundStyle(Color.kwTextFaint)
+                    .padding(.top, KW.Space.sm)
+                ForEach(tunnels, id: \.id) { tunnel in
+                    NavigationLink(value: tunnel.id) {
+                        TunnelRow(tunnel: tunnel)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .listRowBackground(DesignTokens.surfaceCard)
-                .listRowSeparatorTint(DesignTokens.textTertiary.opacity(0.3))
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
         }
     }
 
     private var emptyState: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "shield.lefthalf.filled")
-                .font(.system(size: 64))
-                .foregroundStyle(DesignTokens.accentPrimary.opacity(0.8))
-            Text("Noch keine Tunnel")
-                .font(.title2)
-                .foregroundStyle(DesignTokens.textPrimary)
-            Text("Tippe auf +, um deine erste WireGuard-Konfiguration einzulesen.")
+        VStack(spacing: KW.Space.md) {
+            Text("[ NOCH KEINE TUNNEL ]")
+                .font(KW.Font.label)
+                .tracking(2)
+                .foregroundStyle(Color.kwCyan)
+            Text("Tippe auf ＋, um eine WireGuard-Konfiguration einzulesen. Sie synct via iCloud automatisch auf deinen Apple TV.")
+                .font(KW.Font.body)
+                .foregroundStyle(Color.kwTextDim)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(DesignTokens.textSecondary)
-                .padding(.horizontal, 40)
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, KW.Space.xxl)
     }
 
     private func reload() {
@@ -103,37 +136,35 @@ struct TunnelListView: View {
     }
 }
 
-/// Listenzeile für einen einzelnen Tunnel.
+/// Listenzeile für einen Tunnel — Navy-Panel, Hairline, Status-Dot, Chevron.
 private struct TunnelRow: View {
     let tunnel: TunnelView
 
     var body: some View {
-        HStack(spacing: 14) {
-            statusDot
+        HStack(spacing: KW.Space.md) {
+            Circle()
+                .fill(tunnel.isConfiguredHere ? Color.kwSignal : Color.kwTextFaint)
+                .frame(width: 8, height: 8)
+                .shadow(color: tunnel.isConfiguredHere ? Color.kwSignal : .clear, radius: 4)
             VStack(alignment: .leading, spacing: 4) {
                 Text(tunnel.name.isEmpty ? "Unbenannt" : tunnel.name)
-                    .font(DesignTokens.brandFont)
-                    .foregroundStyle(DesignTokens.textPrimary)
+                    .font(KW.Font.body.weight(.semibold))
+                    .foregroundStyle(Color.kwText)
                 Text(tunnel.serverEndpoint)
-                    .font(.caption)
-                    .foregroundStyle(DesignTokens.textSecondary)
+                    .font(KW.Font.bodySm.monospaced())
+                    .foregroundStyle(Color.kwTextFaint)
                     .lineLimit(1)
                     .truncationMode(.middle)
             }
             Spacer()
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Color.kwTextFaint)
         }
-        .padding(.vertical, 6)
-    }
-
-    private var statusDot: some View {
-        Circle()
-            .fill(tunnel.isConfiguredHere ? DesignTokens.accentSuccess : DesignTokens.textTertiary)
-            .frame(width: 10, height: 10)
-            .shadow(color: tunnel.isConfiguredHere ? DesignTokens.accentSuccess.opacity(0.6) : .clear,
-                    radius: 4)
-            .accessibilityLabel(Text(tunnel.isConfiguredHere
-                                     ? "Auf diesem Gerät eingerichtet"
-                                     : "Auf diesem Gerät nicht eingerichtet"))
+        .padding(KW.Space.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.kwBg2.opacity(0.7))
+        .overlay(Rectangle().stroke(Color.kwLineDim, lineWidth: KW.Border.hairline))
     }
 }
 

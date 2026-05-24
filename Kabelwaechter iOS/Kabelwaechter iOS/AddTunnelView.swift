@@ -1,8 +1,9 @@
 import SwiftUI
 import KabelwaechterPersistence
+import KabelwaechterUI
 
-/// Modal-Sheet für den Import einer wg-quick-Config. Zwei Felder
-/// (Anzeige-Name + Config-Text), ein Speichern-Button.
+/// Modal-Sheet für den Import einer wg-quick-Config (iOS) im Kabelwächter-
+/// Design. Zwei Felder (Anzeige-Name + Config-Text), Speichern in der Toolbar.
 struct AddTunnelView: View {
 
     @Environment(CompanionAppEnvironment.self) private var env
@@ -16,32 +17,39 @@ struct AddTunnelView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                DesignTokens.backgroundGradient.ignoresSafeArea()
+                Color.kwBg0.ignoresSafeArea()
 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: KW.Space.lg) {
+                        Text("Importiere eine wg-quick-Konfiguration. Sie synct via iCloud automatisch auf deinen Apple TV.")
+                            .font(KW.Font.body)
+                            .foregroundStyle(Color.kwTextDim)
                         nameField
                         configField
                         if let errorMessage {
-                            Label(errorMessage, systemImage: "exclamationmark.triangle")
-                                .font(.callout)
-                                .foregroundStyle(.orange)
-                                .padding()
-                                .background(.orange.opacity(0.15), in: RoundedRectangle(cornerRadius: 8))
+                            Text(errorMessage)
+                                .font(KW.Font.bodySm)
+                                .foregroundStyle(Color.kwError)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(KW.Space.md)
+                                .background(Color.kwError.opacity(0.12))
+                                .overlay(Rectangle().stroke(Color.kwError.opacity(0.5), lineWidth: KW.Border.hairline))
                         }
                     }
-                    .padding(20)
+                    .padding(KW.Space.lg)
                 }
             }
             .navigationTitle("Tunnel hinzufügen")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Abbrechen") { dismiss() }
-                        .foregroundStyle(DesignTokens.textSecondary)
+                        .foregroundStyle(Color.kwTextDim)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Speichern", action: importTunnel)
-                        .foregroundStyle(canImport ? DesignTokens.accentPrimary : DesignTokens.textTertiary)
+                        .foregroundStyle(canImport ? Color.kwCyan : Color.kwTextFaint)
                         .disabled(!canImport || isImporting)
                 }
             }
@@ -50,40 +58,37 @@ struct AddTunnelView: View {
     }
 
     private var nameField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Anzeige-Name")
-                .font(.caption)
-                .foregroundStyle(DesignTokens.textTertiary)
-                .textCase(.uppercase)
+        VStack(alignment: .leading, spacing: KW.Space.xs) {
+            Text("Anzeige-Name").kwLabel()
             TextField("Heimnetz", text: $name)
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled()
-                .padding(12)
-                .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 8))
-                .foregroundStyle(DesignTokens.textPrimary)
+                .font(KW.Font.body)
+                .padding(KW.Space.md)
+                .background(Color.kwBg2)
+                .overlay(Rectangle().stroke(Color.kwLineDim, lineWidth: KW.Border.hairline))
+                .foregroundStyle(Color.kwText)
         }
     }
 
     private var configField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("wg-quick-Konfiguration")
-                .font(.caption)
-                .foregroundStyle(DesignTokens.textTertiary)
-                .textCase(.uppercase)
+        VStack(alignment: .leading, spacing: KW.Space.xs) {
+            Text("wg-quick-Konfiguration").kwLabel()
             TextEditor(text: $wgQuickText)
-                .font(.system(.body, design: .monospaced))
+                .font(KW.Font.telem)
                 .scrollContentBackground(.hidden)
-                .padding(10)
+                .padding(KW.Space.sm)
                 .frame(minHeight: 240)
-                .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 8))
-                .foregroundStyle(DesignTokens.textPrimary)
+                .background(Color.kwBg2)
+                .overlay(Rectangle().stroke(Color.kwLineDim, lineWidth: KW.Border.hairline))
+                .foregroundStyle(Color.kwText)
                 .overlay(alignment: .topLeading) {
                     if wgQuickText.isEmpty {
                         Text("[Interface]\nPrivateKey = …\n…")
-                            .font(.system(.body, design: .monospaced))
-                            .foregroundStyle(DesignTokens.textTertiary)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 18)
+                            .font(KW.Font.telem)
+                            .foregroundStyle(Color.kwTextFaint)
+                            .padding(.horizontal, KW.Space.md)
+                            .padding(.vertical, KW.Space.md + 2)
                             .allowsHitTesting(false)
                     }
                 }

@@ -1,5 +1,6 @@
 import SwiftUI
 import KabelwaechterCore
+import KabelwaechterUI
 
 @main
 struct Kabelwaechter_iOSApp: App {
@@ -24,19 +25,19 @@ struct Kabelwaechter_iOSApp: App {
                             .foregroundStyle(.red)
                         Text("Startfehler")
                             .font(.headline)
-                            .foregroundStyle(DesignTokens.textPrimary)
+                            .foregroundStyle(Color.kwText)
                         Text(initError)
                             .font(.caption)
-                            .foregroundStyle(DesignTokens.textSecondary)
+                            .foregroundStyle(Color.kwTextDim)
                             .multilineTextAlignment(.center)
                             .padding()
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(DesignTokens.backgroundGradient.ignoresSafeArea())
+                    .background(Color.kwBg0.ignoresSafeArea())
                 } else {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(DesignTokens.backgroundGradient.ignoresSafeArea())
+                        .background(Color.kwBg0.ignoresSafeArea())
                 }
             }
             .preferredColorScheme(.dark)

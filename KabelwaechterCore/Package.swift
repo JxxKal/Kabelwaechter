@@ -32,7 +32,12 @@ let package = Package(
         ),
         // Reines Präsentations-Designsystem (SwiftUI) — keine Core/Persistence-
         // Abhängigkeit. Tokens, Modifiers, Primitives + Tunnel-Visualisierung.
-        .target(name: "KabelwaechterUI"),
+        // Colors.xcassets als Resource → benannte Farben (KW/cyan …) via
+        // Bundle.module, designer-editierbar ohne Recompile.
+        .target(
+            name: "KabelwaechterUI",
+            resources: [.process("Colors.xcassets")]
+        ),
         .testTarget(
             name: "KabelwaechterCoreTests",
             dependencies: ["KabelwaechterCore"]

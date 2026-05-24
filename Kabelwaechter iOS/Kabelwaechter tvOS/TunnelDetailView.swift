@@ -19,6 +19,7 @@ struct TunnelDetailView: View {
     @State private var loadError: String?
     @State private var confirmingDelete = false
     @State private var connectError: String?
+    @State private var stats: TunnelManager.TunnelStats?
 
     var body: some View {
         let status = env.tunnelManager.status(forTunnelID: tunnelID) ?? .invalid
@@ -42,6 +43,7 @@ struct TunnelDetailView: View {
         }
         .preferredColorScheme(.dark)
         .task { reload() }
+        .task(id: status) { await pollStats(status: status) }
         .alert("Tunnel löschen?", isPresented: $confirmingDelete) {
             Button("Löschen", role: .destructive, action: deleteTunnel)
             Button("Abbrechen", role: .cancel) {}
@@ -93,8 +95,28 @@ struct TunnelDetailView: View {
                         .tracking(2)
                         .foregroundStyle(Color.kwTextDim)
                 }
+                if let stats { telemetry(stats) }
             }
         }
+    }
+
+    private func telemetry(_ s: TunnelManager.TunnelStats) -> some View {
+        HStack(spacing: KW.Space.xl) {
+            telemItem(symbol: "arrow.up", value: Self.fmtBytes(s.txBytes), tint: .kwCyan)
+            telemItem(symbol: "arrow.down", value: Self.fmtBytes(s.rxBytes), tint: .kwSignal)
+            telemItem(symbol: "arrow.triangle.2.circlepath",
+                      value: s.lastHandshake.map(Self.relHandshake) ?? "—",
+                      tint: .kwTextDim)
+        }
+        .padding(.top, KW.Space.sm)
+    }
+
+    private func telemItem(symbol: String, value: String, tint: Color) -> some View {
+        HStack(spacing: KW.Space.xs) {
+            Image(systemName: symbol).foregroundStyle(tint)
+            Text(value).foregroundStyle(Color.kwText)
+        }
+        .font(KW.Font.telemTV)
     }
 
     private var syncingHUD: some View {
@@ -151,7 +173,7 @@ struct TunnelDetailView: View {
         connectError = nil
         switch currentStatus {
         case .connected, .connecting, .reasserting:
-            env.tunnelManager.disconnect(tunnelID: tunnelID)
+            await env.tunnelManager.disconnect(tunnelID: tunnelID)
         case .disconnected, .disconnecting, .invalid:
             fallthrough
         @unknown default:
@@ -189,6 +211,29 @@ struct TunnelDetailView: View {
         case .connecting, .reasserting: return .connecting
         default:                       return .idle
         }
+    }
+
+    /// Pollt die Live-Stats alle 2s, solange der Tunnel verbunden ist.
+    /// Läuft via `.task(id: status)` neu an, wenn sich der Status ändert.
+    private func pollStats(status: NEVPNStatus) async {
+        guard status == .connected else { stats = nil; return }
+        while !Task.isCancelled {
+            stats = await env.tunnelManager.fetchStats(tunnelID: tunnelID)
+            try? await Task.sleep(for: .seconds(2))
+        }
+    }
+
+    private static func fmtBytes(_ b: UInt64) -> String {
+        let f = ByteCountFormatter()
+        f.countStyle = .binary
+        return f.string(fromByteCount: Int64(min(b, UInt64(Int64.max))))
+    }
+
+    private static func relHandshake(_ d: Date) -> String {
+        let s = max(0, Int(Date().timeIntervalSince(d)))
+        if s < 60 { return "vor \(s)s" }
+        if s < 3600 { return "vor \(s / 60)m" }
+        return "vor \(s / 3600)h"
     }
 
     private func reload() {

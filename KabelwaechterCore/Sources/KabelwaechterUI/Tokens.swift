@@ -35,28 +35,35 @@ public enum KW {
 
 public extension Color {
 
+    /// Benannte Farbe aus `Colors.xcassets` (KW-Namespace, Bundle.module).
+    /// Quelle der Wahrheit ist der Asset-Katalog — Designer können dort
+    /// tweaken, ohne Code anzufassen. Hex-Werte als Orientierung im Kommentar.
+    private static func kw(_ name: String) -> Color {
+        Color("KW/\(name)", bundle: .module)
+    }
+
     // Surfaces — deep navy, never pure black
-    static let kwBg0 = Color(hex: 0x05080D)              // deepest backdrop
-    static let kwBg1 = Color(hex: 0x0A0F1A)              // surface
-    static let kwBg2 = Color(hex: 0x0F1825)              // raised
-    static let kwBg3 = Color(hex: 0x152135)              // selected / focus fill
+    static let kwBg0 = kw("bg0")              // 0x05080D — deepest backdrop
+    static let kwBg1 = kw("bg1")              // 0x0A0F1A — surface
+    static let kwBg2 = kw("bg2")              // 0x0F1825 — raised
+    static let kwBg3 = kw("bg3")              // 0x152135 — selected / focus fill
 
     // Signal — single-use semantic colors
-    static let kwCyan   = Color(hex: 0x00D4FF)           // primary accent
-    static let kwCyanSoft = Color(hex: 0x5BE0FF)         // hover / focus
-    static let kwSignal = Color(hex: 0x00FF9D)           // "connected" — RESERVED
-    static let kwWarn   = Color(hex: 0xFFB84D)           // handshake / warning
-    static let kwError  = Color(hex: 0xFF4757)           // error / disconnect
+    static let kwCyan     = kw("cyan")        // 0x00D4FF — primary accent
+    static let kwCyanSoft = kw("cyanSoft")    // 0x5BE0FF — hover / focus
+    static let kwSignal   = kw("signal")      // 0x00FF9D — "connected" — RESERVED
+    static let kwWarn     = kw("warn")        // 0xFFB84D — handshake / warning
+    static let kwError    = kw("error")       // 0xFF4757 — error / disconnect
 
     // Text
-    static let kwText      = Color(hex: 0xE6F3FF)
-    static let kwTextDim   = Color(hex: 0xE6F3FF, opacity: 0.55)
-    static let kwTextFaint = Color(hex: 0xE6F3FF, opacity: 0.32)
+    static let kwText      = kw("text")       // 0xE6F3FF
+    static let kwTextDim   = kw("textDim")    // 0xE6F3FF @ 0.55
+    static let kwTextFaint = kw("textFaint")  // 0xE6F3FF @ 0.32
 
     // Lines & grid
-    static let kwLine    = Color(hex: 0x00D4FF, opacity: 0.35)
-    static let kwLineDim = Color(hex: 0x00D4FF, opacity: 0.15)
-    static let kwGrid    = Color(hex: 0x00D4FF, opacity: 0.08)
+    static let kwLine    = kw("line")         // cyan @ 0.35
+    static let kwLineDim = kw("lineDim")      // cyan @ 0.15
+    static let kwGrid    = kw("grid")         // cyan @ 0.08
 }
 
 // MARK: - Connection state → color helper

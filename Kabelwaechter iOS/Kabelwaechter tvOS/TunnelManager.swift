@@ -100,6 +100,12 @@ final class TunnelManager {
         manager.protocolConfiguration = proto
         manager.localizedDescription = displayName
         manager.isEnabled = true
+        // Always-On: der Tunnel verbindet automatisch (wieder), sobald ein
+        // Netz da ist — auch nach einem Reboot des Apple TV. Ein Streaming-
+        // Gerät soll dauerhaft im VPN bleiben, ohne dass jemand „Verbinden"
+        // drückt. Explizites Trennen schaltet On-Demand wieder ab.
+        manager.isOnDemandEnabled = true
+        manager.onDemandRules = [NEOnDemandRuleConnect()]
 
         try await manager.saveToPreferences()
         // Nach saveToPreferences müssen wir loadFromPreferences aufrufen,
@@ -112,9 +118,63 @@ final class TunnelManager {
         statuses[id] = manager.connection.status
     }
 
-    /// Stoppt einen aktiven Tunnel. No-op wenn kein Manager existiert.
-    func disconnect(tunnelID id: UUID) {
-        managers[id]?.connection.stopVPNTunnel()
+    /// Stoppt einen aktiven Tunnel und schaltet On-Demand ab — sonst würde der
+    /// Tunnel sofort wieder hochkommen. No-op wenn kein Manager existiert.
+    func disconnect(tunnelID id: UUID) async {
+        guard let manager = managers[id] else { return }
+        if manager.isOnDemandEnabled {
+            manager.isOnDemandEnabled = false
+            try? await manager.saveToPreferences()
+        }
+        manager.connection.stopVPNTunnel()
+    }
+
+    // MARK: - Live-Statistiken
+
+    /// Momentaufnahme der Tunnel-Statistik (Summe über alle Peers).
+    struct TunnelStats: Sendable, Equatable {
+        var rxBytes: UInt64
+        var txBytes: UInt64
+        var lastHandshake: Date?
+    }
+
+    /// Fragt die NE per `sendProviderMessage("stats")` nach der Runtime-Config
+    /// (wg-uapi-Format) und parst rx/tx/Handshake heraus. `nil`, wenn der
+    /// Tunnel nicht läuft oder die NE nicht antwortet.
+    func fetchStats(tunnelID id: UUID) async -> TunnelStats? {
+        guard let session = managers[id]?.connection as? NETunnelProviderSession else { return nil }
+        return await withCheckedContinuation { (cont: CheckedContinuation<TunnelStats?, Never>) in
+            do {
+                try session.sendProviderMessage(Data("stats".utf8)) { response in
+                    cont.resume(returning: Self.parseStats(response))
+                }
+            } catch {
+                cont.resume(returning: nil)
+            }
+        }
+    }
+
+    /// Parst das wg-uapi-Settings-Format (`key=value`-Zeilen) zu `TunnelStats`.
+    private static func parseStats(_ data: Data?) -> TunnelStats? {
+        guard let data, let text = String(data: data, encoding: .utf8) else { return nil }
+        var rx: UInt64 = 0, tx: UInt64 = 0
+        var handshake: TimeInterval = 0
+        for line in text.split(separator: "\n") {
+            guard let eq = line.firstIndex(of: "=") else { continue }
+            let key = line[..<eq]
+            let value = line[line.index(after: eq)...]
+            switch key {
+            case "rx_bytes": rx += UInt64(value) ?? 0
+            case "tx_bytes": tx += UInt64(value) ?? 0
+            case "last_handshake_time_sec": handshake = max(handshake, Double(value) ?? 0)
+            default: break
+            }
+        }
+        return TunnelStats(
+            rxBytes: rx,
+            txBytes: tx,
+            lastHandshake: handshake > 0 ? Date(timeIntervalSince1970: handshake) : nil
+        )
     }
 
     // MARK: - Helpers

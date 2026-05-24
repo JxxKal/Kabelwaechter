@@ -72,9 +72,16 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
 
     override func handleAppMessage(_ messageData: Data, completionHandler: ((Data?) -> Void)?) {
-        // Phase 3 nutzt diesen Pfad nicht — Status-Updates kommen via
-        // NEVPNStatusDidChange-Notification automatisch.
-        completionHandler?(nil)
+        // Live-Statistik: die App schickt "stats", wir liefern die
+        // wg-uapi-Runtime-Config (enthält rx_bytes/tx_bytes/
+        // last_handshake_time_sec pro Peer) zurück. App parst das.
+        guard String(data: messageData, encoding: .utf8) == "stats" else {
+            completionHandler?(nil)
+            return
+        }
+        adapter.getRuntimeConfiguration { config in
+            completionHandler?(config?.data(using: .utf8))
+        }
     }
 
     override func sleep(completionHandler: @escaping () -> Void) {

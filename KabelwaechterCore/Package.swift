@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "KabelwaechterCore",
     platforms: [
-        .macOS(.v13),
+        .macOS(.v14),
         .iOS(.v17),
         .tvOS(.v17)
     ],
@@ -15,12 +15,24 @@ let package = Package(
             name: "KabelwaechterCore",
             targets: ["KabelwaechterCore"]
         ),
+        .library(
+            name: "KabelwaechterPersistence",
+            targets: ["KabelwaechterPersistence"]
+        )
     ],
     targets: [
         .target(name: "KabelwaechterCore"),
+        .target(
+            name: "KabelwaechterPersistence",
+            dependencies: ["KabelwaechterCore"]
+        ),
         .testTarget(
             name: "KabelwaechterCoreTests",
             dependencies: ["KabelwaechterCore"]
         ),
+        .testTarget(
+            name: "KabelwaechterPersistenceTests",
+            dependencies: ["KabelwaechterPersistence"]
+        )
     ]
 )

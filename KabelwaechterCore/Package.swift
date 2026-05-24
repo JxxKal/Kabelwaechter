@@ -6,6 +6,7 @@ import PackageDescription
 let package = Package(
     name: "KabelwaechterCore",
     platforms: [
+        .macOS(.v13),
         .iOS(.v17),
         .tvOS(.v17)
     ],

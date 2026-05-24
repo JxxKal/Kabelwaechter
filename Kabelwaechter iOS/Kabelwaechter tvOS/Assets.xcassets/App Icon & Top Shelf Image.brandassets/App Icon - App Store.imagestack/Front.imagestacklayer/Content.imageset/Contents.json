@@ -1,11 +1,6 @@
 {
   "images" : [
-    {
-      "idiom" : "tv"
-    }
+    { "idiom" : "tv", "filename" : "layer.png" }
   ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
+  "info" : { "author" : "xcode", "version" : 1 }
 }

@@ -18,6 +18,7 @@ struct TunnelDetailView: View {
     @State private var loadError: String?
     @State private var confirmingDelete = false
     @State private var connectError: String?
+    @State private var showingAttachSheet = false
 
     var body: some View {
         ZStack {
@@ -55,6 +56,9 @@ struct TunnelDetailView: View {
         }
         .preferredColorScheme(.dark)
         .task { reload() }
+        .fullScreenCover(isPresented: $showingAttachSheet, onDismiss: reload) {
+            AddTunnelView(attachToTunnelID: tunnelID)
+        }
         .alert("Tunnel löschen?", isPresented: $confirmingDelete) {
             Button("Löschen", role: .destructive, action: deleteTunnel)
             Button("Abbrechen", role: .cancel) {}
@@ -163,13 +167,22 @@ struct TunnelDetailView: View {
     }
 
     private var notConfiguredBanner: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Label("Auf diesem Apple TV nicht eingerichtet", systemImage: "exclamationmark.shield")
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(DesignTokens.accentPrimary)
             Text("Der Tunnel wurde via iCloud vom iPhone gesehen, aber kein Private Key liegt hier. Verbinden geht erst, sobald die Per-Device-Config eingerichtet wurde.")
                 .font(.body)
                 .foregroundStyle(DesignTokens.textSecondary)
+            Button {
+                showingAttachSheet = true
+            } label: {
+                Label("Auf diesem Apple TV einrichten", systemImage: "plus.circle")
+                    .font(.title3.weight(.semibold))
+                    .frame(maxWidth: .infinity, minHeight: 70)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(DesignTokens.accentPrimary)
         }
         .padding(28)
         .background(DesignTokens.surfaceCard, in: RoundedRectangle(cornerRadius: 16))

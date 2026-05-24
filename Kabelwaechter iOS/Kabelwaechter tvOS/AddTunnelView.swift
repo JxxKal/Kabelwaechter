@@ -11,10 +11,18 @@ struct AddTunnelView: View {
     @Environment(TVAppEnvironment.self) private var env
     @Environment(\.dismiss) private var dismiss
 
+    /// Wenn gesetzt: dieser Tunnel (bereits als Template via CloudKit
+    /// vorhanden) wird auf diesem Gerät eingerichtet — die eingegebene
+    /// Config liefert nur den per-Device-Teil (PrivateKey + Address) via
+    /// `attachInstance`. Bei `nil`: kompletter Neu-Import via `importWgQuick`.
+    var attachToTunnelID: UUID? = nil
+
     @State private var name: String = ""
     @State private var wgQuickText: String = ""
     @State private var errorMessage: String?
     @State private var isImporting = false
+
+    private var isAttaching: Bool { attachToTunnelID != nil }
 
     var body: some View {
         NavigationStack {
@@ -22,9 +30,18 @@ struct AddTunnelView: View {
                 DesignTokens.backgroundGradient.ignoresSafeArea()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 28) {
-                        Text("Tunnel hinzufügen")
+                        Text(isAttaching ? "Auf diesem Apple TV einrichten" : "Tunnel hinzufügen")
                             .font(.largeTitle.bold())
                             .foregroundStyle(DesignTokens.textPrimary)
+
+                        if isAttaching {
+                            Label("Dieser Tunnel kam via iCloud. Füge die Konfiguration ein, die der Server-Admin für **dieses Apple TV** erstellt hat (eigener PrivateKey + eigene Address). Server-Daten kommen aus dem geteilten Template.",
+                                  systemImage: "externaldrive.badge.icloud")
+                                .font(.callout)
+                                .foregroundStyle(DesignTokens.textSecondary)
+                                .padding(20)
+                                .background(DesignTokens.surfaceSecondary, in: RoundedRectangle(cornerRadius: 12))
+                        }
 
                         Label("Tipp: Bluetooth-Tastatur verbinden. Die Konfiguration braucht echte Zeilenumbrüche zwischen [Interface], den Schlüsseln und [Peer].",
                               systemImage: "keyboard")
@@ -33,7 +50,9 @@ struct AddTunnelView: View {
                             .padding(20)
                             .background(DesignTokens.surfaceSecondary, in: RoundedRectangle(cornerRadius: 12))
 
-                        nameField
+                        if !isAttaching {
+                            nameField
+                        }
                         configField
 
                         if let errorMessage {
@@ -110,15 +129,22 @@ struct AddTunnelView: View {
     }
 
     private var canImport: Bool {
-        !name.trimmingCharacters(in: .whitespaces).isEmpty
-            && !wgQuickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let configReady = !wgQuickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        if isAttaching {
+            return configReady
+        }
+        return configReady && !name.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     private func importTunnel() {
         isImporting = true
         errorMessage = nil
         do {
-            _ = try env.repository.importWgQuick(wgQuickText, named: name.trimmingCharacters(in: .whitespaces))
+            if let attachToTunnelID {
+                try env.repository.attachInstance(toTunnelID: attachToTunnelID, wgQuickConfig: wgQuickText)
+            } else {
+                _ = try env.repository.importWgQuick(wgQuickText, named: name.trimmingCharacters(in: .whitespaces))
+            }
             dismiss()
         } catch let error as TunnelRepositoryError {
             errorMessage = humanMessage(for: error)

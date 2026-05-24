@@ -4,12 +4,12 @@ import SwiftData
 
 @Suite("CloudKit schema probe")
 struct CloudKitSchemaProbe {
-    @Test("TunnelTemplate-Container mit CloudKit-Config lässt sich bauen")
+    @Test("StoredTunnel-Container mit CloudKit-Config lässt sich bauen")
     func cloudKitContainerBuilds() throws {
         let config = ModelConfiguration(
-            "templates",
+            "tunnels",
             cloudKitDatabase: .private("iCloud.de.jankaluza.kabelwaechter.tunnels")
         )
-        _ = try ModelContainer(for: TunnelTemplate.self, configurations: config)
+        _ = try ModelContainer(for: StoredTunnel.self, configurations: config)
     }
 }

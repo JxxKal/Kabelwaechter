@@ -8,13 +8,13 @@ configuration and management.
 
 ## Status
 
-**Phase 3 — tvOS tunnel activation, code complete.**
+**Phase 3 — tvOS tunnel activation, validated on hardware.**
 
-End-to-end code path from `Verbinden` button → `NETunnelProviderManager` →
-`PacketTunnelProvider` → `WireGuardAdapter.start(…)` is wired and builds clean
-on iOS Simulator and tvOS device. The actual on-device VPN data-path
-validation (Phase 3.4) requires a physical Apple TV — see
-[Deploy & Test on Apple TV](#deploy--test-on-apple-tv).
+End-to-end path from `Verbinden` button → `NETunnelProviderManager` →
+`PacketTunnelProvider` → `WireGuardAdapter.start(…)` is verified on a physical
+Apple TV: a tunnel imported once on the iPhone companion syncs in full (incl.
+private key, see [ADR-0003](docs/adr/0003-full-tunnel-sync.md)) to the Apple TV
+and connects. See [Deploy & Test on Apple TV](#deploy--test-on-apple-tv).
 
 ## Architecture overview
 
@@ -120,14 +120,16 @@ Two paths, depending on iCloud:
 
 - **iCloud sync (preferred).** Set up the tunnel once on the iPhone Companion
   (`+` button → paste wg-quick → Save). CloudKit Private Database syncs the
-  **TunnelTemplate** to the Apple TV within seconds. On the TV the tunnel
-  shows up greyed-out ("not configured here") — tap it → use *Manuell*
-  Import to drop in this device's wg-quick (with its own Address and Private
-  Key) → the dot turns mint.
-- **Manual on Apple TV.** Open the tvOS app → `+` button → paste the
-  wg-quick directly (a Bluetooth keyboard paired to the TV is strongly
-  recommended; the Siri Remote on-screen keyboard is painful for multi-line
-  base64). Save.
+  whole tunnel — including the private key — to the Apple TV within seconds
+  (see [ADR-0003](docs/adr/0003-full-tunnel-sync.md)). It appears
+  ready-to-connect, no re-entry on the TV. If the detail view briefly shows
+  "iCloud-Sync läuft…", the record hasn't fully arrived yet — wait a few
+  seconds.
+- **Manual on Apple TV (second device).** Only needed for a *second* Apple TV
+  that should be its own WireGuard peer with its own key. Open the tvOS app →
+  `+` button → paste a separate wg-quick directly (a Bluetooth keyboard paired
+  to the TV is strongly recommended; the Siri Remote on-screen keyboard is
+  painful for multi-line base64). Save.
 
 ### Connect
 
@@ -163,7 +165,7 @@ Common failures:
 
 | Symptom in Console | Likely cause |
 |---|---|
-| `kein wgQuickConfig in providerConfiguration` | App-side `TunnelManager.connect` didn't populate the dictionary — usually means the tunnel has no `TunnelInstance` locally yet. |
+| `kein wgQuickConfig in providerConfiguration` | App-side `TunnelManager.connect` didn't populate the dictionary — usually means the `StoredTunnel` record hasn't fully synced yet (no private key locally). |
 | `wgQuick-Parse fehlgeschlagen: invalidLine(…)` | The wg-quick that was pasted has a stray non-key/value line. Fix the source config and re-import. |
 | `Core→WireGuardKit-Mapping fehlgeschlagen: invalidPrivateKey` | The Curve25519 key isn't 32 bytes after base64 decode — config is malformed. |
 | `WireGuardAdapter.start Fehler: cannotLocateTunnelFileDescriptor` | NE booted before NEPacketTunnelFlow handed it a tunnel FD — usually a transient race; retry. If persistent, check the NE's entitlements (App Group + NetworkExtensions). |

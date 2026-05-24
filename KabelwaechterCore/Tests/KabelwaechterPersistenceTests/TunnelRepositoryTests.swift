@@ -6,7 +6,7 @@ import SwiftData
 
 /// Tests gegen das `TunnelRepositoring`-Protokoll. Laufen gegen
 /// `InMemoryTunnelRepository` UND gegen das echte `TunnelRepository` mit
-/// In-Memory-ModelContainern — so verifizieren wir, dass beide
+/// einem In-Memory-ModelContainer — so verifizieren wir, dass beide
 /// Implementierungen denselben Vertrag erfüllen.
 @MainActor
 @Suite("TunnelRepository (Protocol-Contract)")
@@ -27,7 +27,7 @@ struct TunnelRepositoryTests {
     PersistentKeepalive = 25
     """
 
-    static let secondDeviceConfig = """
+    static let secondConfig = """
     [Interface]
     PrivateKey = WB7P2H8tBp3y4LKVxFZK0sGn6Tn+RrjwzN5sZeY+y3I=
     Address = 10.0.0.6/32
@@ -41,35 +41,30 @@ struct TunnelRepositoryTests {
     // MARK: - Repository-Factories für die zwei Implementierungen
 
     private static func makeInMemoryRepo() -> any TunnelRepositoring {
-        InMemoryTunnelRepository(keychain: InMemoryKeychainStore())
+        InMemoryTunnelRepository()
     }
 
     private static func makeSwiftDataRepo() throws -> any TunnelRepositoring {
-        let templateContainer = try TunnelContainers.makeCloudTemplateContainer(
+        let container = try TunnelContainers.makeTunnelContainer(
             cloudKitContainerID: "iCloud.test",
             isInMemory: true
         )
-        let instanceContainer = try TunnelContainers.makeLocalInstanceContainer(isInMemory: true)
-        return TunnelRepository(
-            templateContainer: templateContainer,
-            instanceContainer: instanceContainer,
-            keychain: InMemoryKeychainStore()
-        )
+        return TunnelRepository(container: container)
     }
 
     // MARK: - Tests
 
-    @Test("Import: wg-quick wird in Template+Instance+Keychain gesplittet (InMemory)")
-    func importSplitsCorrectly_inMemory() throws {
-        try assertImportSplitsCorrectly(repo: Self.makeInMemoryRepo())
+    @Test("Import: wg-quick landet als StoredTunnel inkl. Key (InMemory)")
+    func importStores_inMemory() throws {
+        try assertImportStores(repo: Self.makeInMemoryRepo())
     }
 
-    @Test("Import: wg-quick wird in Template+Instance+Keychain gesplittet (SwiftData)")
-    func importSplitsCorrectly_swiftData() throws {
-        try assertImportSplitsCorrectly(repo: try Self.makeSwiftDataRepo())
+    @Test("Import: wg-quick landet als StoredTunnel inkl. Key (SwiftData)")
+    func importStores_swiftData() throws {
+        try assertImportStores(repo: try Self.makeSwiftDataRepo())
     }
 
-    private func assertImportSplitsCorrectly(repo: any TunnelRepositoring) throws {
+    private func assertImportStores(repo: any TunnelRepositoring) throws {
         let id = try repo.importWgQuick(Self.validConfig, named: "Heimnetz")
         let view = try repo.tunnel(id: id)
         #expect(view.name == "Heimnetz")
@@ -101,17 +96,17 @@ struct TunnelRepositoryTests {
         #expect(config.peers[0].allowedIPs.count == 2)
     }
 
-    @Test("delete cascades: Template + Instance + Keychain alle weg (InMemory)")
-    func deleteCascades_inMemory() throws {
-        try assertDeleteCascades(repo: Self.makeInMemoryRepo())
+    @Test("delete entfernt Tunnel komplett (InMemory)")
+    func deleteRemoves_inMemory() throws {
+        try assertDeleteRemoves(repo: Self.makeInMemoryRepo())
     }
 
-    @Test("delete cascades: Template + Instance + Keychain alle weg (SwiftData)")
-    func deleteCascades_swiftData() throws {
-        try assertDeleteCascades(repo: try Self.makeSwiftDataRepo())
+    @Test("delete entfernt Tunnel komplett (SwiftData)")
+    func deleteRemoves_swiftData() throws {
+        try assertDeleteRemoves(repo: try Self.makeSwiftDataRepo())
     }
 
-    private func assertDeleteCascades(repo: any TunnelRepositoring) throws {
+    private func assertDeleteRemoves(repo: any TunnelRepositoring) throws {
         let id = try repo.importWgQuick(Self.validConfig, named: "T")
         try repo.deleteTunnel(id: id)
 
@@ -126,33 +121,10 @@ struct TunnelRepositoryTests {
     func allTunnels_listsMultiple() throws {
         let repo = try Self.makeSwiftDataRepo()
         _ = try repo.importWgQuick(Self.validConfig, named: "A")
-        _ = try repo.importWgQuick(Self.secondDeviceConfig, named: "B")
+        _ = try repo.importWgQuick(Self.secondConfig, named: "B")
         let all = try repo.allTunnels()
         #expect(all.count == 2)
         #expect(Set(all.map { $0.name }) == ["A", "B"])
-    }
-
-    @Test("attachInstance simuliert Zweit-Gerät: Template bleibt, Instance wird neu (InMemory)")
-    func attachInstance_inMemory() throws {
-        let repo = Self.makeInMemoryRepo()
-        let id = try repo.importWgQuick(Self.validConfig, named: "Heimnetz")
-
-        // Simuliere "User hat Tunnel via CloudKit gesehen, importiert jetzt
-        // eine zweite Config für dieses Gerät":
-        try repo.attachInstance(toTunnelID: id, wgQuickConfig: Self.secondDeviceConfig)
-
-        let config = try repo.tunnelConfiguration(id: id)
-        #expect(config.interface.addresses.map { $0.stringRepresentation } == ["10.0.0.6/32"])
-        // Template-Felder bleiben unverändert (Server, AllowedIPs).
-        #expect(config.peers[0].endpoint?.stringRepresentation == "vpn.example.com:51820")
-    }
-
-    @Test("attachInstance auf unbekannte TunnelID wirft tunnelNotFound")
-    func attachInstance_unknownTunnel() throws {
-        let repo = Self.makeInMemoryRepo()
-        #expect(throws: TunnelRepositoryError.tunnelNotFound) {
-            try repo.attachInstance(toTunnelID: UUID(), wgQuickConfig: Self.validConfig)
-        }
     }
 
     @Test("tunnelConfiguration auf unbekannte TunnelID wirft tunnelNotFound")

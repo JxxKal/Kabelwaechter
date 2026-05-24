@@ -25,27 +25,20 @@ final class CompanionAppEnvironment {
 
     // MARK: - Factories
 
-    /// Production-Setup: zwei SwiftData-ModelContainer (Cloud + Local),
-    /// echter Security-Framework-Keychain (ohne accessGroup — iOS hat in
-    /// Phase 1 keine NE, also kein Sharing nötig).
+    /// Production-Setup: ein SwiftData-ModelContainer (`StoredTunnel`,
+    /// optional CloudKit-gesynct).
     ///
     /// CloudKit-Verhalten folgt Decision #12 (P2 — iCloud-optional):
     /// auf dem Simulator ohne signed entitlements oder ohne iCloud-Account
     /// würde die CoreData/CloudKit-Mirroring-Initialisierung `os_crash`
     /// auslösen — wir laufen dort lokal-only. Auf signed Builds mit
-    /// iCloud-Account sync't der Template-Store via Private-Database.
+    /// iCloud-Account sync't der Tunnel-Store via Private-Database.
     @MainActor
     static func makeProduction() throws -> CompanionAppEnvironment {
-        let templateContainer = try TunnelContainers.makeCloudTemplateContainer(
+        let container = try TunnelContainers.makeTunnelContainer(
             cloudKitContainerID: cloudKitContainerIDIfAvailable
         )
-        let instanceContainer = try TunnelContainers.makeLocalInstanceContainer()
-        let keychain = KeychainStore()
-        let repo = TunnelRepository(
-            templateContainer: templateContainer,
-            instanceContainer: instanceContainer,
-            keychain: keychain
-        )
+        let repo = TunnelRepository(container: container)
         return CompanionAppEnvironment(repository: repo)
     }
 

@@ -2,28 +2,21 @@ import Foundation
 import SwiftData
 import KabelwaechterCore
 
-/// SwiftData-Implementierung von `TunnelRepositoring`. Operiert auf zwei
-/// `ModelContainer`n (Cloud-Template + Local-Instance) und einem
-/// `KeychainStoring`.
+/// SwiftData-Implementierung von `TunnelRepositoring`. Operiert auf **einem**
+/// `ModelContainer` (`StoredTunnel`, optional CloudKit-gesynct). Der Private
+/// Key lebt seit ADR-0003 im Modell selbst — kein separater Keychain mehr im
+/// Repo-Pfad (die NE bekommt den Key ohnehin als wg-quick-String über
+/// `providerConfiguration`, nicht aus dem Keychain).
 ///
 /// `@MainActor`-isoliert, weil `ModelContext` nicht `Sendable` ist und
-/// SwiftUI ohnehin auf dem Main-Actor lebt. Phase 2.3 braucht kein
-/// `@ModelActor` — DB-Operationen sind hier billig.
+/// SwiftUI ohnehin auf dem Main-Actor lebt.
 @MainActor
 public final class TunnelRepository: TunnelRepositoring {
 
-    private let templateContext: ModelContext
-    private let instanceContext: ModelContext
-    private let keychain: any KeychainStoring
+    private let context: ModelContext
 
-    public init(
-        templateContainer: ModelContainer,
-        instanceContainer: ModelContainer,
-        keychain: any KeychainStoring
-    ) {
-        self.templateContext = ModelContext(templateContainer)
-        self.instanceContext = ModelContext(instanceContainer)
-        self.keychain = keychain
+    public init(container: ModelContainer) {
+        self.context = ModelContext(container)
     }
 
     // MARK: - Import
@@ -37,127 +30,66 @@ public final class TunnelRepository: TunnelRepositoring {
         }
 
         let tunnelID = UUID()
-        let (template, instance, privateKey) = try parsed.splitForPersistence(tunnelID: tunnelID)
+        let stored = try parsed.toStoredTunnel(tunnelID: tunnelID)
         // Falls der Parser den Namen nicht gesetzt hat (init named: nil),
         // sorgt der explizite `name`-Parameter dafür, dass die Liste etwas zeigt.
-        if template.name.isEmpty { template.name = name }
+        if stored.name.isEmpty { stored.name = name }
 
-        templateContext.insert(template)
-        instanceContext.insert(instance)
-        try keychain.storePrivateKey(privateKey, forTunnelID: tunnelID.uuidString)
-        try templateContext.save()
-        try instanceContext.save()
+        context.insert(stored)
+        try context.save()
         return tunnelID
     }
 
     // MARK: - Reads
 
     public func allTunnels() throws -> [TunnelView] {
-        let templates = try templateContext.fetch(FetchDescriptor<TunnelTemplate>())
-        let instances = try instanceContext.fetch(FetchDescriptor<TunnelInstance>())
-        let instanceIDs = Set(instances.map { $0.templateID })
-
-        return templates.map { template in
-            let hasInstance = instanceIDs.contains(template.id)
-            let hasKey = (try? keychain.loadPrivateKey(forTunnelID: template.id.uuidString)) != nil
-            return TunnelView(
-                id: template.id,
-                name: template.name,
-                isConfiguredHere: hasInstance && hasKey,
-                serverEndpoint: template.serverEndpoint,
-                createdAt: template.createdAt
-            )
-        }
+        let tunnels = try context.fetch(FetchDescriptor<StoredTunnel>())
+        return tunnels.map(Self.view(of:))
     }
 
     public func tunnel(id: UUID) throws -> TunnelView {
-        guard let template = try fetchTemplate(id: id) else {
+        guard let stored = try fetch(id: id) else {
             throw TunnelRepositoryError.tunnelNotFound
         }
-        let hasInstance = try fetchInstance(templateID: id) != nil
-        let hasKey = (try? keychain.loadPrivateKey(forTunnelID: id.uuidString)) != nil
-        return TunnelView(
-            id: template.id,
-            name: template.name,
-            isConfiguredHere: hasInstance && hasKey,
-            serverEndpoint: template.serverEndpoint,
-            createdAt: template.createdAt
-        )
+        return Self.view(of: stored)
     }
 
     public func tunnelConfiguration(id: UUID) throws -> TunnelConfiguration {
-        guard let template = try fetchTemplate(id: id) else {
+        guard let stored = try fetch(id: id) else {
             throw TunnelRepositoryError.tunnelNotFound
         }
-        guard let instance = try fetchInstance(templateID: id) else {
+        guard !stored.privateKey.isEmpty else {
             throw TunnelRepositoryError.notConfiguredOnThisDevice
         }
-        let privateKey: Data
-        do {
-            privateKey = try keychain.loadPrivateKey(forTunnelID: id.uuidString)
-        } catch {
-            throw TunnelRepositoryError.notConfiguredOnThisDevice
-        }
-        return TunnelConfiguration(template: template, instance: instance, privateKey: privateKey)
+        return TunnelConfiguration(stored: stored)
     }
 
     // MARK: - Mutations
 
     public func deleteTunnel(id: UUID) throws {
-        if let template = try fetchTemplate(id: id) {
-            templateContext.delete(template)
+        if let stored = try fetch(id: id) {
+            context.delete(stored)
+            try context.save()
         }
-        if let instance = try fetchInstance(templateID: id) {
-            instanceContext.delete(instance)
-        }
-        try? keychain.deletePrivateKey(forTunnelID: id.uuidString)
-        try templateContext.save()
-        try instanceContext.save()
-    }
-
-    public func attachInstance(toTunnelID id: UUID, wgQuickConfig: String) throws {
-        guard try fetchTemplate(id: id) != nil else {
-            throw TunnelRepositoryError.tunnelNotFound
-        }
-        let parsed: TunnelConfiguration
-        do {
-            parsed = try TunnelConfiguration(fromWgQuickConfig: wgQuickConfig)
-        } catch let error as TunnelConfiguration.ParseError {
-            throw TunnelRepositoryError.invalidWgQuickConfig(String(describing: error))
-        }
-        guard parsed.peers.count <= 1 else {
-            throw TunnelRepositoryError.multiPeerNotSupported
-        }
-        // Bestehende Instance auf dem Gerät überschreiben — User hat
-        // explizit eine neue Config eingelesen.
-        if let existing = try fetchInstance(templateID: id) {
-            instanceContext.delete(existing)
-        }
-        let newInstance = TunnelInstance(
-            templateID: id,
-            addresses: parsed.interface.addresses.map { $0.stringRepresentation },
-            listenPort: parsed.interface.listenPort.map { Int($0) }
-        )
-        instanceContext.insert(newInstance)
-        try keychain.storePrivateKey(parsed.interface.privateKey, forTunnelID: id.uuidString)
-        try instanceContext.save()
     }
 
     // MARK: - Helpers
 
-    private func fetchTemplate(id: UUID) throws -> TunnelTemplate? {
-        var descriptor = FetchDescriptor<TunnelTemplate>(
+    private func fetch(id: UUID) throws -> StoredTunnel? {
+        var descriptor = FetchDescriptor<StoredTunnel>(
             predicate: #Predicate { $0.id == id }
         )
         descriptor.fetchLimit = 1
-        return try templateContext.fetch(descriptor).first
+        return try context.fetch(descriptor).first
     }
 
-    private func fetchInstance(templateID: UUID) throws -> TunnelInstance? {
-        var descriptor = FetchDescriptor<TunnelInstance>(
-            predicate: #Predicate { $0.templateID == templateID }
+    private static func view(of stored: StoredTunnel) -> TunnelView {
+        TunnelView(
+            id: stored.id,
+            name: stored.name,
+            isConfiguredHere: !stored.privateKey.isEmpty,
+            serverEndpoint: stored.serverEndpoint,
+            createdAt: stored.createdAt
         )
-        descriptor.fetchLimit = 1
-        return try instanceContext.fetch(descriptor).first
     }
 }

@@ -26,18 +26,10 @@ final class TVAppEnvironment {
     /// Sim-Builds in CloudKit-Init crashen (gleiche Begründung wie iOS).
     @MainActor
     static func makeProduction() throws -> TVAppEnvironment {
-        let templateContainer = try TunnelContainers.makeCloudTemplateContainer(
+        let container = try TunnelContainers.makeTunnelContainer(
             cloudKitContainerID: cloudKitContainerIDIfAvailable
         )
-        let instanceContainer = try TunnelContainers.makeLocalInstanceContainer()
-        // tvOS nutzt `accessGroup` damit die NE im selben App-Group den
-        // Private Key lesen kann.
-        let keychain = KeychainStore(accessGroup: KabelwaechterConstants.keychainSharingGroup)
-        let repo = TunnelRepository(
-            templateContainer: templateContainer,
-            instanceContainer: instanceContainer,
-            keychain: keychain
-        )
+        let repo = TunnelRepository(container: container)
         return TVAppEnvironment(repository: repo)
     }
 

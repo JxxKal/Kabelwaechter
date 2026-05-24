@@ -1,5 +1,11 @@
 # Tunnel-Persistenz: TunnelTemplate (CloudKit) + TunnelInstance (lokal) in zwei ModelContainern
 
+> **⚠️ ABGELÖST durch [ADR-0003](0003-full-tunnel-sync.md) (2026-05-24).** Der hier
+> beschriebene Template/Instance-Split wurde aufgegeben: der komplette Tunnel inkl.
+> PrivateKey syncht jetzt via CloudKit (ein `StoredTunnel`-Modell). Dieses Dokument
+> bleibt als historische Begründung erhalten — der beschriebene Zustand ist **nicht
+> mehr aktuell**.
+
 Architektur-Entscheidung #9 ("Per-Device-Keypair, CloudKit syncs nur Metadaten") wurde
 in Phase 2.3 konkretisiert: ein **Tunnel** zerfällt persistenz-seitig in einen
 gerätegeteilten **TunnelTemplate** (Display-Name, Server-PublicKey, Server-Endpoint,

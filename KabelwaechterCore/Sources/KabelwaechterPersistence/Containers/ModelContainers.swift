@@ -1,13 +1,15 @@
 import Foundation
 import SwiftData
 
-/// Factories für die zwei `ModelContainer`, in denen TunnelTemplate (Cloud)
-/// und TunnelInstance (lokal) getrennt persistiert werden. Siehe ADR-0001.
+/// Factory für den `ModelContainer`, in dem `StoredTunnel` persistiert und
+/// (optional) via CloudKit synchronisiert wird. Seit ADR-0003 gibt es nur
+/// noch **einen** Container — der frühere Template/Instance-Split (ADR-0001)
+/// wurde aufgegeben, weil jetzt der komplette Tunnel inkl. Key syncen soll.
 public enum TunnelContainers {
 
-    /// Container für `TunnelTemplate`. CloudKit-Sync ist optional und
-    /// orientiert sich an Decision #12 (P2 — iCloud-optional, lokal-zuerst):
-    /// ohne `cloudKitContainerID` läuft der Container rein lokal.
+    /// Container für `StoredTunnel`. CloudKit-Sync ist optional und orientiert
+    /// sich an Decision #12 (P2 — iCloud-optional, lokal-zuerst): ohne
+    /// `cloudKitContainerID` läuft der Container rein lokal.
     /// - Parameters:
     ///   - cloudKitContainerID: Der iCloud-Container-Identifier (z.B. aus
     ///     `KabelwaechterConstants.iCloudContainerIdentifier`) — oder `nil`
@@ -15,7 +17,7 @@ public enum TunnelContainers {
     ///     User ohne iCloud-Account, …).
     ///   - isInMemory: `true` für Tests/Previews — schreibt nichts auf die
     ///     Platte und syncht nicht.
-    public static func makeCloudTemplateContainer(
+    public static func makeTunnelContainer(
         cloudKitContainerID: String?,
         isInMemory: Bool = false
     ) throws -> ModelContainer {
@@ -24,40 +26,19 @@ public enum TunnelContainers {
             configuration = ModelConfiguration(isStoredInMemoryOnly: true)
         } else if let cloudKitContainerID {
             configuration = ModelConfiguration(
-                "templates",
+                "tunnels",
                 isStoredInMemoryOnly: false,
                 cloudKitDatabase: .private(cloudKitContainerID)
             )
         } else {
             configuration = ModelConfiguration(
-                "templates",
+                "tunnels",
                 isStoredInMemoryOnly: false,
                 cloudKitDatabase: .none
             )
         }
         return try ModelContainer(
-            for: TunnelTemplate.self,
-            configurations: configuration
-        )
-    }
-
-    /// Container für `TunnelInstance` — explizit **kein** CloudKit-Sync.
-    /// Strukturelle Garantie, dass per-Device-Daten nicht in iCloud landen.
-    public static func makeLocalInstanceContainer(
-        isInMemory: Bool = false
-    ) throws -> ModelContainer {
-        let configuration: ModelConfiguration
-        if isInMemory {
-            configuration = ModelConfiguration(isStoredInMemoryOnly: true)
-        } else {
-            configuration = ModelConfiguration(
-                "instances",
-                isStoredInMemoryOnly: false,
-                cloudKitDatabase: .none
-            )
-        }
-        return try ModelContainer(
-            for: TunnelInstance.self,
+            for: StoredTunnel.self,
             configurations: configuration
         )
     }

@@ -58,7 +58,6 @@ struct TunnelDetailView: View {
     private func topBar(status: NEVPNStatus) -> some View {
         HStack(alignment: .center) {
             HStack(spacing: KW.Space.md) {
-                KabelLogo(size: 40)
                 VStack(alignment: .leading, spacing: 4) {
                     Text("[ KABELWÄCHTER ]").kwLabel()
                     if let endpoint = tunnel?.serverEndpoint, !endpoint.isEmpty {

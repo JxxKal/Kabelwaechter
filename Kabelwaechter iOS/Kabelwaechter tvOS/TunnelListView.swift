@@ -60,7 +60,6 @@ struct TunnelListView: View {
     private var topBar: some View {
         HStack(alignment: .center) {
             HStack(spacing: KW.Space.md) {
-                KabelLogo(size: 40)
                 VStack(alignment: .leading, spacing: 4) {
                     Text("[ KABELWÄCHTER ]").kwLabel()
                     Text(tunnels.isEmpty ? "Keine Tunnel" : "\(tunnels.count) Tunnel · via iCloud")
@@ -153,7 +152,7 @@ struct TunnelListView: View {
                     stepRow("01", "iPhone-App installieren (QR scannen)")
                     stepRow("02", "Tunnel in der App importieren")
                     stepRow("03", "Auf Apple TV verschieben → erscheint hier via iCloud")
-                    Text("Tunnel werden über die iPhone-App verwaltet. Alternativ unten manuell eine wg-quick einlesen.")
+                    Text("Tunnel werden über die iPhone-App verwaltet. Alternativ oben über ＋ Manuell eine wg-quick direkt eingeben.")
                         .font(KW.Font.bodyTV)
                         .foregroundStyle(Color.kwTextDim)
                         .frame(maxWidth: 560, alignment: .leading)

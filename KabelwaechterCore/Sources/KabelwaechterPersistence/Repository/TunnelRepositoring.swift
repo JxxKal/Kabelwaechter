@@ -58,6 +58,11 @@ public protocol TunnelRepositoring {
     /// - Returns: die neue Tunnel-UUID.
     func importWgQuick(_ wgQuickConfig: String, named name: String) throws -> UUID
 
+    /// Aktualisiert einen bestehenden Tunnel (gleiche ID, damit CloudKit es als
+    /// Änderung synct statt als neuen Record): überschreibt Name + alle Felder
+    /// aus der neuen wg-quick-Config. Wirft `tunnelNotFound`, wenn die ID fehlt.
+    func updateTunnel(id: UUID, name: String, wgQuickConfig: String) throws
+
     /// Liefert alle Tunnel als schmale Liste.
     func allTunnels() throws -> [TunnelView]
 

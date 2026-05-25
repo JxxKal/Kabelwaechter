@@ -34,6 +34,22 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
         return tunnelID
     }
 
+    public func updateTunnel(id: UUID, name: String, wgQuickConfig: String) throws {
+        guard tunnels[id] != nil else {
+            throw TunnelRepositoryError.tunnelNotFound
+        }
+        let parsed: TunnelConfiguration
+        do {
+            parsed = try TunnelConfiguration(fromWgQuickConfig: wgQuickConfig, called: name)
+        } catch let error as TunnelConfiguration.ParseError {
+            throw TunnelRepositoryError.invalidWgQuickConfig(String(describing: error))
+        }
+        let fresh = try parsed.toStoredTunnel(tunnelID: id)
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        if !trimmed.isEmpty { fresh.name = trimmed }
+        tunnels[id] = fresh
+    }
+
     public func allTunnels() throws -> [TunnelView] {
         tunnels.values.map(Self.view(of:))
     }

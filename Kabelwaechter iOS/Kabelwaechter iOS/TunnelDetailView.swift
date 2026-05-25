@@ -16,6 +16,7 @@ struct TunnelDetailView: View {
     @State private var fullConfig: TunnelConfiguration?
     @State private var loadError: String?
     @State private var confirmingDelete = false
+    @State private var showEdit = false
 
     var body: some View {
         ZStack {
@@ -49,6 +50,16 @@ struct TunnelDetailView: View {
         }
         .preferredColorScheme(.dark)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Bearbeiten") { showEdit = true }
+                    .foregroundStyle(Color.kwCyan)
+            }
+        }
+        .sheet(isPresented: $showEdit, onDismiss: reload) {
+            EditTunnelView(tunnelID: tunnelID)
+                .environment(env)
+        }
         .task { reload() }
         .alert("Tunnel löschen?", isPresented: $confirmingDelete) {
             Button("Löschen", role: .destructive, action: deleteTunnel)

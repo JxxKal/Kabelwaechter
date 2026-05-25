@@ -54,6 +54,34 @@ public final class TunnelRepository: TunnelRepositoring {
         }
     }
 
+    // MARK: - Update
+
+    public func updateTunnel(id: UUID, name: String, wgQuickConfig: String) throws {
+        guard let existing = try fetch(id: id) else {
+            throw TunnelRepositoryError.tunnelNotFound
+        }
+        let parsed: TunnelConfiguration
+        do {
+            parsed = try TunnelConfiguration(fromWgQuickConfig: wgQuickConfig, called: name)
+        } catch let error as TunnelConfiguration.ParseError {
+            throw TunnelRepositoryError.invalidWgQuickConfig(String(describing: error))
+        }
+        let fresh = try parsed.toStoredTunnel(tunnelID: id)
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        existing.name = trimmed.isEmpty ? fresh.name : trimmed
+        existing.addresses = fresh.addresses
+        existing.privateKey = fresh.privateKey
+        existing.listenPort = fresh.listenPort
+        existing.dns = fresh.dns
+        existing.mtu = fresh.mtu
+        existing.serverPublicKey = fresh.serverPublicKey
+        existing.serverEndpoint = fresh.serverEndpoint
+        existing.allowedIPs = fresh.allowedIPs
+        existing.presharedKey = fresh.presharedKey
+        existing.persistentKeepalive = fresh.persistentKeepalive
+        try context.save()
+    }
+
     // MARK: - Reads
 
     public func allTunnels() throws -> [TunnelView] {

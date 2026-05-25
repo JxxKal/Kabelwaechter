@@ -175,4 +175,30 @@ struct TunnelRepositoryTests {
             _ = try repo.importWgQuick(Self.secondConfig, named: "Zweitgerät")
         }
     }
+
+    @Test("updateTunnel überschreibt Name + Felder, behält ID (InMemory)")
+    func updateTunnel_inMemory() throws {
+        try assertUpdate(repo: Self.makeInMemoryRepo())
+    }
+
+    @Test("updateTunnel überschreibt Name + Felder, behält ID (SwiftData)")
+    func updateTunnel_swiftData() throws {
+        try assertUpdate(repo: try Self.makeSwiftDataRepo())
+    }
+
+    private func assertUpdate(repo: any TunnelRepositoring) throws {
+        let id = try repo.importWgQuick(Self.validConfig, named: "Heimnetz")
+        try repo.updateTunnel(id: id, name: "Umbenannt", wgQuickConfig: Self.secondConfig)
+
+        let view = try repo.tunnel(id: id)
+        #expect(view.name == "Umbenannt")
+        let config = try repo.tunnelConfiguration(id: id)
+        #expect(config.interface.addresses.map { $0.stringRepresentation } == ["10.0.0.6/32"])
+        // Gleiche ID → kein neuer Record.
+        #expect(try repo.allTunnels().count == 1)
+
+        #expect(throws: TunnelRepositoryError.tunnelNotFound) {
+            try repo.updateTunnel(id: UUID(), name: "X", wgQuickConfig: Self.validConfig)
+        }
+    }
 }

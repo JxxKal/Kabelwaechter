@@ -43,6 +43,11 @@ public enum TunnelRepositoryError: Error, Equatable {
     /// wg-quick-Parser hat einen Fehler geworfen — Wrapping für Aufrufer,
     /// die nicht beide Fehlerräume kennen müssen.
     case invalidWgQuickConfig(String)
+
+    /// Ein Tunnel mit gleichem Server-PublicKey + gleicher Interface-Address
+    /// existiert bereits (gleiche Peer-Identität). `existingName` ist sein
+    /// Anzeige-Name für die Meldung.
+    case duplicate(existingName: String)
 }
 
 /// Schnittstelle für CRUD auf Tunneln über einen `StoredTunnel`-Container.

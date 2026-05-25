@@ -125,13 +125,17 @@ struct AddTunnelView: View {
                     wgQuickText = entries[0].config
                     if name.trimmingCharacters(in: .whitespaces).isEmpty { name = entries[0].name }
                 } else {
-                    // Archiv mit mehreren Tunneln → direkt alle importieren.
+                    // Archiv mit mehreren Tunneln → direkt alle importieren,
+                    // bereits vorhandene überspringen.
                     var imported = 0
+                    var skipped = 0
                     var firstError: String?
                     for entry in entries {
                         do {
                             _ = try env.repository.importWgQuick(entry.config, named: entry.name)
                             imported += 1
+                        } catch TunnelRepositoryError.duplicate {
+                            skipped += 1
                         } catch let e as TunnelRepositoryError {
                             if firstError == nil { firstError = humanMessage(for: e) }
                         } catch {
@@ -140,6 +144,8 @@ struct AddTunnelView: View {
                     }
                     if imported > 0 {
                         dismiss()
+                    } else if skipped > 0, firstError == nil {
+                        errorMessage = "Alle \(skipped) Tunnel im Archiv sind bereits vorhanden."
                     } else {
                         errorMessage = firstError ?? "Import fehlgeschlagen."
                     }
@@ -213,6 +219,8 @@ struct AddTunnelView: View {
             return "Konfiguration ist ungültig: \(detail)"
         case .multiPeerNotSupported:
             return "Mehrere [Peer]-Blöcke werden noch nicht unterstützt."
+        case .duplicate(let existingName):
+            return "Dieser Tunnel ist bereits vorhanden als „\(existingName)“."
         case .tunnelNotFound, .notConfiguredOnThisDevice:
             return String(describing: error)
         }

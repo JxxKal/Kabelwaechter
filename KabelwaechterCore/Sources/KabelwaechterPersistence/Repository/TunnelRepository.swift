@@ -35,9 +35,23 @@ public final class TunnelRepository: TunnelRepositoring {
         // sorgt der explizite `name`-Parameter dafür, dass die Liste etwas zeigt.
         if stored.name.isEmpty { stored.name = name }
 
+        if let existing = try duplicate(of: stored) {
+            throw TunnelRepositoryError.duplicate(existingName: existing.name)
+        }
+
         context.insert(stored)
         try context.save()
         return tunnelID
+    }
+
+    /// Sucht einen bereits vorhandenen Tunnel mit gleicher Peer-Identität
+    /// (gleicher Server-PublicKey + gleiche Interface-Address-Menge).
+    private func duplicate(of candidate: StoredTunnel) throws -> StoredTunnel? {
+        guard !candidate.serverPublicKey.isEmpty else { return nil }
+        let addrs = Set(candidate.addresses)
+        return try context.fetch(FetchDescriptor<StoredTunnel>()).first {
+            $0.serverPublicKey == candidate.serverPublicKey && Set($0.addresses) == addrs
+        }
     }
 
     // MARK: - Reads

@@ -125,6 +125,8 @@ struct AddTunnelView: View {
             return "Konfiguration ist ungültig.\n\n\(detail)\n\nHäufigste Ursache auf dem Apple TV: fehlende Zeilenumbrüche — die ganze Config landet in einer Zeile. Mit einer Bluetooth-Tastatur Enter zwischen den Zeilen drücken."
         case .multiPeerNotSupported:
             return "Mehrere [Peer]-Blöcke werden noch nicht unterstützt."
+        case .duplicate(let existingName):
+            return "Dieser Tunnel ist bereits vorhanden als „\(existingName)“."
         case .tunnelNotFound, .notConfiguredOnThisDevice:
             return String(describing: error)
         }

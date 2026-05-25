@@ -22,6 +22,14 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
         let tunnelID = UUID()
         let stored = try parsed.toStoredTunnel(tunnelID: tunnelID)
         if stored.name.isEmpty { stored.name = name }
+        if !stored.serverPublicKey.isEmpty {
+            let addrs = Set(stored.addresses)
+            if let existing = tunnels.values.first(where: {
+                $0.serverPublicKey == stored.serverPublicKey && Set($0.addresses) == addrs
+            }) {
+                throw TunnelRepositoryError.duplicate(existingName: existing.name)
+            }
+        }
         tunnels[tunnelID] = stored
         return tunnelID
     }

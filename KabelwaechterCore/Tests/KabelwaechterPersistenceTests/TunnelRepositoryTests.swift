@@ -154,4 +154,25 @@ struct TunnelRepositoryTests {
             _ = try repo.importWgQuick(multiPeer, named: "Multi")
         }
     }
+
+    @Test("Re-Import derselben Config wird als Duplikat abgelehnt (InMemory)")
+    func duplicateRejected_inMemory() throws {
+        try assertDuplicateRejected(repo: Self.makeInMemoryRepo())
+    }
+
+    @Test("Re-Import derselben Config wird als Duplikat abgelehnt (SwiftData)")
+    func duplicateRejected_swiftData() throws {
+        try assertDuplicateRejected(repo: try Self.makeSwiftDataRepo())
+    }
+
+    private func assertDuplicateRejected(repo: any TunnelRepositoring) throws {
+        _ = try repo.importWgQuick(Self.validConfig, named: "Heimnetz")
+        #expect(throws: TunnelRepositoryError.duplicate(existingName: "Heimnetz")) {
+            _ = try repo.importWgQuick(Self.validConfig, named: "Nochmal")
+        }
+        // Anderer Tunnel (gleicher Server, andere Address) ist KEIN Duplikat.
+        #expect(throws: Never.self) {
+            _ = try repo.importWgQuick(Self.secondConfig, named: "Zweitgerät")
+        }
+    }
 }

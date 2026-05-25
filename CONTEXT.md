@@ -1,6 +1,6 @@
 # Kabelwächter
 
-WireGuard-VPN-Client für Apple TV (tvOS) mit iOS-Companion-Editor. Tunnel-Konfigurationen werden lokal-zuerst gespeichert und (optional) zwischen Geräten via CloudKit synchronisiert.
+WireGuard-VPN-Client für Apple TV (tvOS) **und** iPhone (iOS) — beide verbinden selbst (Decision #8 revidiert, ADR-0004). Tunnel-Konfigurationen werden lokal-zuerst gespeichert und (optional) zwischen Geräten via CloudKit synchronisiert.
 
 ## Language
 
@@ -13,6 +13,10 @@ _Avoid_: "Tunnel-Metadaten", "TunnelTemplate", "TunnelInstance"
 **Tunnel**:
 Die Sicht-auf-einen-Tunnel aus User-Perspektive — entspricht genau einem **StoredTunnel**. Auf jedem Gerät identisch, weil der komplette Tunnel synct. Ein zweites Apple TV, das eine *eigene* Identität (eigenen PrivateKey/Address) braucht, bekommt einen separaten **StoredTunnel** via manuellen wg-quick-Import.
 _Avoid_: "VPN-Eintrag", "Connection"
+
+**TunnelTarget** (Zielgerät / Rolle):
+Steuert, *wo* ein Tunnel verbunden wird: `phone` (das iPhone baut ihn auf) oder `appleTV` (die Apple TV baut ihn auf; auf dem iPhone separiert/nicht-verbindbar gelistet). Default `appleTV` (Bestandsdaten). iOS-Import → phone, tvOS-Import → appleTV. Per **„Verschieben"** umschaltbar (nicht „Kopieren" — ein Gerät pro Tunnel, sonst WireGuard-Peer-Konflikt). Siehe ADR-0004.
+_Avoid_: "Plattform", "Gerätetyp" (zu unspezifisch — es ist die *Verbindungs-Rolle*)
 
 **wg-quick-Config**:
 Das Text-Format `[Interface]\n…\n[Peer]\n…`, das WireGuard-Tools (wg-quick) lesen und schreiben. Quelle für den Import **und** das Format, in dem die Config an die Network Extension übergeben wird (via `providerConfiguration`). Der Parser lebt in `KabelwaechterCore`.

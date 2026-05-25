@@ -1,7 +1,7 @@
 # Kabelwaechter
 
-WireGuard VPN client for **Apple TV** with an **iOS companion app** for tunnel
-configuration and management.
+WireGuard VPN client for **Apple TV** and **iPhone** — both connect tunnels
+themselves; configs sync between devices via CloudKit.
 
 > Powered by [WireGuard](https://www.wireguard.com/). WireGuard is a registered
 > trademark of Jason A. Donenfeld.
@@ -23,11 +23,12 @@ Extension, and a WireGuard fork:
 
 | Component | Role |
 |---|---|
-| `Kabelwaechter iOS` (iPhone companion) | Edits tunnel configs, no VPN itself (decision #8 — no Personal-VPN entitlement on iOS) |
-| `Kabelwaechter tvOS` (Apple TV app) | Tunnel list, manual import, Connect/Disconnect |
-| `KabelwaechterNEtvOS` (Network Extension) | Packet Tunnel Provider — runs the actual WireGuard tunnel |
+| `Kabelwaechter iOS` (iPhone) | Import (QR/file/zip/manual), edit, Connect/Disconnect — connects `phone`-target tunnels itself (decision #8 reversed, ADR-0004) |
+| `Kabelwaechter tvOS` (Apple TV app) | Hub: viz, Connect/Disconnect, Auto-Connect; shows `appleTV`-target tunnels |
+| `KabelwaechterNEiOS` / `KabelwaechterNEtvOS` (Network Extensions) | Packet Tunnel Providers — run the actual WireGuard tunnel (go-bridge via run-script phase, ADR-0005) |
 | `KabelwaechterCore` (Swift package, library 1) | Domain types (TunnelConfiguration, wg-quick parser, KeychainStore) — **no WireGuardKit dependency** |
-| `KabelwaechterPersistence` (Swift package, library 2) | SwiftData `@Model`s, `TunnelRepository`, CloudKit container factories |
+| `KabelwaechterPersistence` (Swift package, library 2) | SwiftData `StoredTunnel` `@Model`, `TunnelRepository`, CloudKit container factory |
+| `KabelwaechterUI` (Swift package, library 3) | Designsystem (tokens, TunnelViz, QRCodeView, button/card styles) |
 | [`JxxKal/wireguard-apple-tvos`](https://github.com/JxxKal/wireguard-apple-tvos) | Fork of `natesinnott/wireguard-apple-tvos`, `.v17` platform downgrade |
 
 Tunnel data is split structurally into a shared **TunnelTemplate** (synced via

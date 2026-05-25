@@ -22,6 +22,7 @@ struct TunnelDetailView: View {
     @State private var showEdit = false
     @State private var connectError: String?
     @State private var autoConnect = false
+    @State private var stats: TunnelManager.TunnelStats?
 
     var body: some View {
         ZStack {
@@ -72,6 +73,9 @@ struct TunnelDetailView: View {
         .task {
             try? await env.tunnelManager.refresh()
             reload()
+        }
+        .task(id: env.tunnelManager.status(forTunnelID: tunnelID)) {
+            await pollStats(status: env.tunnelManager.status(forTunnelID: tunnelID) ?? .invalid)
         }
         .alert("Tunnel löschen?", isPresented: $confirmingDelete) {
             Button("Löschen", role: .destructive, action: deleteTunnel)
@@ -142,9 +146,51 @@ struct TunnelDetailView: View {
                     .font(KW.Font.bodySm)
                     .foregroundStyle(Color.kwError)
             }
+            if let stats {
+                telemetry(stats)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .kwPanel()
+    }
+
+    private func telemetry(_ s: TunnelManager.TunnelStats) -> some View {
+        HStack(spacing: KW.Space.lg) {
+            telemItem("arrow.up", Self.fmtBytes(s.txBytes), .kwCyan)
+            telemItem("arrow.down", Self.fmtBytes(s.rxBytes), .kwSignal)
+            telemItem("arrow.triangle.2.circlepath",
+                      s.lastHandshake.map(Self.relHandshake) ?? "—", .kwTextDim)
+        }
+        .padding(.top, KW.Space.xs)
+    }
+
+    private func telemItem(_ symbol: String, _ value: String, _ tint: Color) -> some View {
+        HStack(spacing: KW.Space.xxs) {
+            Image(systemName: symbol).foregroundStyle(tint)
+            Text(value).foregroundStyle(Color.kwText)
+        }
+        .font(KW.Font.telem)
+    }
+
+    private static func fmtBytes(_ b: UInt64) -> String {
+        let f = ByteCountFormatter(); f.countStyle = .binary
+        return f.string(fromByteCount: Int64(min(b, UInt64(Int64.max))))
+    }
+
+    private static func relHandshake(_ d: Date) -> String {
+        let s = max(0, Int(Date().timeIntervalSince(d)))
+        if s < 60 { return "vor \(s)s" }
+        if s < 3600 { return "vor \(s / 60)m" }
+        return "vor \(s / 3600)h"
+    }
+
+    /// Pollt die Live-Stats alle 2s, solange verbunden.
+    private func pollStats(status: NEVPNStatus) async {
+        guard status == .connected else { stats = nil; return }
+        while !Task.isCancelled {
+            stats = await env.tunnelManager.fetchStats(tunnelID: tunnelID)
+            try? await Task.sleep(for: .seconds(2))
+        }
     }
 
     private func connectLabel(for status: NEVPNStatus) -> String {

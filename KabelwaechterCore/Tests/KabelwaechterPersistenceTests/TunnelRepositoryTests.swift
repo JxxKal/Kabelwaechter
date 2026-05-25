@@ -201,4 +201,30 @@ struct TunnelRepositoryTests {
             try repo.updateTunnel(id: UUID(), name: "X", wgQuickConfig: Self.validConfig)
         }
     }
+
+    @Test("Ziel: Import-Ziel, setTarget verschiebt, Update erhält, 2-arg-Default (InMemory)")
+    func target_inMemory() throws {
+        try assertTarget(repo: Self.makeInMemoryRepo())
+    }
+
+    @Test("Ziel: Import-Ziel, setTarget verschiebt, Update erhält, 2-arg-Default (SwiftData)")
+    func target_swiftData() throws {
+        try assertTarget(repo: try Self.makeSwiftDataRepo())
+    }
+
+    private func assertTarget(repo: any TunnelRepositoring) throws {
+        let id = try repo.importWgQuick(Self.validConfig, named: "Phone", target: .phone)
+        #expect(try repo.tunnel(id: id).target == .phone)
+
+        try repo.setTarget(.appleTV, forTunnelID: id)
+        #expect(try repo.tunnel(id: id).target == .appleTV)
+
+        // Bearbeiten erhält das Ziel.
+        try repo.updateTunnel(id: id, name: "Phone2", wgQuickConfig: Self.validConfig)
+        #expect(try repo.tunnel(id: id).target == .appleTV)
+
+        // 2-arg-Convenience → Default appleTV (Bestands-Verhalten).
+        let id2 = try repo.importWgQuick(Self.secondConfig, named: "Default")
+        #expect(try repo.tunnel(id: id2).target == .appleTV)
+    }
 }

@@ -132,7 +132,7 @@ struct AddTunnelView: View {
                     var firstError: String?
                     for entry in entries {
                         do {
-                            _ = try env.repository.importWgQuick(entry.config, named: entry.name)
+                            _ = try env.repository.importWgQuick(entry.config, named: entry.name, target: .phone)
                             imported += 1
                         } catch TunnelRepositoryError.duplicate {
                             skipped += 1
@@ -203,7 +203,7 @@ struct AddTunnelView: View {
         isImporting = true
         errorMessage = nil
         do {
-            _ = try env.repository.importWgQuick(wgQuickText, named: name.trimmingCharacters(in: .whitespaces))
+            _ = try env.repository.importWgQuick(wgQuickText, named: name.trimmingCharacters(in: .whitespaces), target: .phone)
             dismiss()
         } catch let error as TunnelRepositoryError {
             errorMessage = humanMessage(for: error)

@@ -98,7 +98,7 @@ struct TunnelListView: View {
                 Text("Tunnel hinzufügen")
                     .font(KW.Font.titleTV)
                     .foregroundStyle(Color.kwText)
-                Text("Importiere einen Tunnel einmal in der iPhone-App — er erscheint via iCloud automatisch hier. Oder lies ihn manuell ein.")
+                Text("Am iPhone einen Tunnel importieren und auf Apple TV verschieben — er erscheint dann via iCloud hier. Oder unten manuell einlesen.")
                     .font(KW.Font.bodyTV)
                     .foregroundStyle(Color.kwTextDim)
                     .multilineTextAlignment(.center)
@@ -214,7 +214,12 @@ struct TunnelListView: View {
 
     private func reload() {
         do {
-            tunnels = try env.repository.allTunnels().sorted { $0.createdAt < $1.createdAt }
+            // Nur Tunnel, die diesem Apple TV zugewiesen sind. iPhone-Tunnel
+            // (target == .phone) erscheinen hier nicht — sie werden am iPhone
+            // per „Auf Apple TV verschieben" hierher geholt.
+            tunnels = try env.repository.allTunnels()
+                .filter { $0.target == .appleTV }
+                .sorted { $0.createdAt < $1.createdAt }
             loadError = nil
         } catch {
             loadError = String(describing: error)

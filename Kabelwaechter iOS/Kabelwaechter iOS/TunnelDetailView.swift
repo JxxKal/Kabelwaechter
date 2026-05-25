@@ -43,6 +43,7 @@ struct TunnelDetailView: View {
                     } else if tunnel?.isConfiguredHere == false {
                         syncingBanner
                     }
+                    moveButton
                     deleteButton
                 }
                 .padding(KW.Space.lg)
@@ -99,6 +100,20 @@ struct TunnelDetailView: View {
         .kwPanel()
     }
 
+    private var moveButton: some View {
+        let toTV = (tunnel?.target ?? .appleTV) == .phone
+        return Button {
+            toggleTarget()
+        } label: {
+            Label(
+                toTV ? "Auf Apple TV verschieben" : "Auf iPhone zurückholen",
+                systemImage: toTV ? "tv" : "iphone"
+            )
+        }
+        .buttonStyle(KWButtonStyle(tone: .kwCyan))
+        .padding(.top, KW.Space.sm)
+    }
+
     private var deleteButton: some View {
         Button(role: .destructive) {
             confirmingDelete = true
@@ -106,7 +121,17 @@ struct TunnelDetailView: View {
             Text("Tunnel löschen")
         }
         .buttonStyle(KWButtonStyle(tone: .kwError))
-        .padding(.top, KW.Space.sm)
+    }
+
+    private func toggleTarget() {
+        guard let current = tunnel?.target else { return }
+        let newTarget: TunnelTarget = current == .phone ? .appleTV : .phone
+        do {
+            try env.repository.setTarget(newTarget, forTunnelID: tunnelID)
+            reload()
+        } catch {
+            loadError = String(describing: error)
+        }
     }
 
     @ViewBuilder

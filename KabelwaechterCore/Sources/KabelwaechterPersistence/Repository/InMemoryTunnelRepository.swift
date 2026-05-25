@@ -12,7 +12,7 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
 
     public init() {}
 
-    public func importWgQuick(_ wgQuickConfig: String, named name: String) throws -> UUID {
+    public func importWgQuick(_ wgQuickConfig: String, named name: String, target: TunnelTarget) throws -> UUID {
         let parsed: TunnelConfiguration
         do {
             parsed = try TunnelConfiguration(fromWgQuickConfig: wgQuickConfig, called: name)
@@ -22,6 +22,7 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
         let tunnelID = UUID()
         let stored = try parsed.toStoredTunnel(tunnelID: tunnelID)
         if stored.name.isEmpty { stored.name = name }
+        stored.target = target
         if !stored.serverPublicKey.isEmpty {
             let addrs = Set(stored.addresses)
             if let existing = tunnels.values.first(where: {
@@ -35,7 +36,7 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
     }
 
     public func updateTunnel(id: UUID, name: String, wgQuickConfig: String) throws {
-        guard tunnels[id] != nil else {
+        guard let existing = tunnels[id] else {
             throw TunnelRepositoryError.tunnelNotFound
         }
         let parsed: TunnelConfiguration
@@ -47,7 +48,15 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
         let fresh = try parsed.toStoredTunnel(tunnelID: id)
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         if !trimmed.isEmpty { fresh.name = trimmed }
+        fresh.target = existing.target // Ziel bleibt beim Bearbeiten erhalten
         tunnels[id] = fresh
+    }
+
+    public func setTarget(_ target: TunnelTarget, forTunnelID id: UUID) throws {
+        guard let stored = tunnels[id] else {
+            throw TunnelRepositoryError.tunnelNotFound
+        }
+        stored.target = target
     }
 
     public func allTunnels() throws -> [TunnelView] {
@@ -81,7 +90,8 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
             name: stored.name,
             isConfiguredHere: !stored.privateKey.isEmpty,
             serverEndpoint: stored.serverEndpoint,
-            createdAt: stored.createdAt
+            createdAt: stored.createdAt,
+            target: stored.target
         )
     }
 }

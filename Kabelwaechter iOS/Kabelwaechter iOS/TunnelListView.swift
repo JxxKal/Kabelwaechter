@@ -88,18 +88,32 @@ struct TunnelListView: View {
         } else if tunnels.isEmpty {
             emptyState
         } else {
-            VStack(alignment: .leading, spacing: KW.Space.sm) {
-                Text("ALLE TUNNEL · \(tunnels.count)")
-                    .font(KW.Font.label)
-                    .tracking(2)
-                    .foregroundStyle(Color.kwTextFaint)
-                    .padding(.top, KW.Space.sm)
-                ForEach(tunnels, id: \.id) { tunnel in
-                    NavigationLink(value: tunnel.id) {
-                        TunnelRow(tunnel: tunnel)
-                    }
-                    .buttonStyle(.plain)
+            VStack(alignment: .leading, spacing: KW.Space.xl) {
+                if !phoneTunnels.isEmpty {
+                    tunnelSection("MEINE TUNNEL · \(phoneTunnels.count)", tunnels: phoneTunnels, isAppleTV: false)
                 }
+                if !tvTunnels.isEmpty {
+                    tunnelSection("APPLE TV · \(tvTunnels.count)", tunnels: tvTunnels, isAppleTV: true)
+                }
+            }
+            .padding(.top, KW.Space.sm)
+        }
+    }
+
+    private var phoneTunnels: [TunnelView] { tunnels.filter { $0.target == .phone } }
+    private var tvTunnels: [TunnelView] { tunnels.filter { $0.target == .appleTV } }
+
+    private func tunnelSection(_ title: String, tunnels: [TunnelView], isAppleTV: Bool) -> some View {
+        VStack(alignment: .leading, spacing: KW.Space.sm) {
+            Text(title)
+                .font(KW.Font.label)
+                .tracking(2)
+                .foregroundStyle(isAppleTV ? Color.kwCyan : Color.kwTextFaint)
+            ForEach(tunnels, id: \.id) { tunnel in
+                NavigationLink(value: tunnel.id) {
+                    TunnelRow(tunnel: tunnel, isAppleTV: isAppleTV)
+                }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -132,14 +146,24 @@ struct TunnelListView: View {
 /// Listenzeile für einen Tunnel — Navy-Panel, Hairline, Status-Dot, Chevron.
 private struct TunnelRow: View {
     let tunnel: TunnelView
+    var isAppleTV: Bool = false
 
     var body: some View {
         HStack(spacing: KW.Space.md) {
-            // Neutrales Cyan = „Tunnel vorhanden/gesynct". KEIN Signal-Grün:
-            // das iPhone verbindet nicht, der Tunnel ist nur am Apple TV aktiv.
-            Circle()
-                .fill(Color.kwCyan)
-                .frame(width: 8, height: 8)
+            // Kein Signal-Grün (= „aktiv", nur am Apple TV gültig). Apple-TV-
+            // Tunnel bekommen ein tv-Symbol (für die TV bestimmt, hier nicht
+            // verbindbar), eigene iPhone-Tunnel einen neutralen Cyan-Punkt.
+            if isAppleTV {
+                Image(systemName: "tv")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Color.kwCyan)
+                    .frame(width: 10)
+            } else {
+                Circle()
+                    .fill(Color.kwCyan)
+                    .frame(width: 8, height: 8)
+                    .frame(width: 10)
+            }
             VStack(alignment: .leading, spacing: 4) {
                 Text(tunnel.name.isEmpty ? "Unbenannt" : tunnel.name)
                     .font(KW.Font.body.weight(.semibold))

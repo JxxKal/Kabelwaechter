@@ -16,13 +16,16 @@ public struct TunnelView: Equatable, Sendable {
     public let isConfiguredHere: Bool
     public let serverEndpoint: String
     public let createdAt: Date
+    /// Zielgerät — steuert Gruppierung (iOS) und ob die TV ihn verbindet.
+    public let target: TunnelTarget
 
-    public init(id: UUID, name: String, isConfiguredHere: Bool, serverEndpoint: String, createdAt: Date) {
+    public init(id: UUID, name: String, isConfiguredHere: Bool, serverEndpoint: String, createdAt: Date, target: TunnelTarget) {
         self.id = id
         self.name = name
         self.isConfiguredHere = isConfiguredHere
         self.serverEndpoint = serverEndpoint
         self.createdAt = createdAt
+        self.target = target
     }
 }
 
@@ -55,8 +58,12 @@ public enum TunnelRepositoryError: Error, Equatable {
 public protocol TunnelRepositoring {
 
     /// Importiert eine wg-quick-Config als neuen `StoredTunnel` (inkl. Key).
+    /// - Parameter target: Zielgerät (iOS-Import → `.phone`, tvOS → `.appleTV`).
     /// - Returns: die neue Tunnel-UUID.
-    func importWgQuick(_ wgQuickConfig: String, named name: String) throws -> UUID
+    func importWgQuick(_ wgQuickConfig: String, named name: String, target: TunnelTarget) throws -> UUID
+
+    /// Setzt das Zielgerät eines Tunnels („Auf Apple TV verschieben" / zurück).
+    func setTarget(_ target: TunnelTarget, forTunnelID id: UUID) throws
 
     /// Aktualisiert einen bestehenden Tunnel (gleiche ID, damit CloudKit es als
     /// Änderung synct statt als neuen Record): überschreibt Name + alle Felder
@@ -77,4 +84,11 @@ public protocol TunnelRepositoring {
     /// Löscht einen Tunnel komplett (auf allen iCloud-Geräten).
     /// Idempotent — ein nicht vorhandener Tunnel wird stillschweigend ignoriert.
     func deleteTunnel(id: UUID) throws
+}
+
+public extension TunnelRepositoring {
+    /// Bequemlichkeit: Import mit Default-Ziel `.appleTV` (Bestands-Verhalten).
+    func importWgQuick(_ wgQuickConfig: String, named name: String) throws -> UUID {
+        try importWgQuick(wgQuickConfig, named: name, target: .appleTV)
+    }
 }

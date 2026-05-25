@@ -16,6 +16,15 @@ import SwiftData
 /// CloudKit-Einschränkungen, denen das Schema folgt: alle Attribute haben
 /// Defaults (`@Model`-Required-without-Default ist mit CloudKit unzulässig);
 /// keine `@Attribute(.unique)`-Constraints; keine Required-Relationships.
+/// Zielgerät eines Tunnels — bestimmt, wo er verbindet und wie er in der
+/// iOS-Liste gruppiert wird. `appleTV` (Default, auch für Bestandsdaten):
+/// die Apple TV baut ihn auf, das iPhone zeigt ihn separiert/nicht-verbindbar.
+/// `phone`: das iPhone baut ihn auf. Umschaltbar per „Verschieben".
+public enum TunnelTarget: String, Codable, Sendable, CaseIterable {
+    case phone
+    case appleTV
+}
+
 @Model
 public final class StoredTunnel {
     /// Tunnel-Identität — stabil über alle Geräte (kommt mit dem CloudKit-
@@ -71,6 +80,16 @@ public final class StoredTunnel {
     /// Erstellungszeitpunkt, hilfreich für Sortierung und Debugging.
     public var createdAt: Date = Date()
 
+    /// Zielgerät (Rolle) als Roh-String für CloudKit-Kompatibilität. Default
+    /// `appleTV` — so bleiben bereits gesyncte Bestandsdaten Apple-TV-Tunnel.
+    public var targetRaw: String = TunnelTarget.appleTV.rawValue
+
+    /// Typisierter Zugriff auf `targetRaw`.
+    public var target: TunnelTarget {
+        get { TunnelTarget(rawValue: targetRaw) ?? .appleTV }
+        set { targetRaw = newValue.rawValue }
+    }
+
     public init(
         id: UUID = UUID(),
         name: String = "",
@@ -84,7 +103,8 @@ public final class StoredTunnel {
         allowedIPs: [String] = [],
         presharedKey: Data? = nil,
         persistentKeepalive: Int? = nil,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        target: TunnelTarget = .appleTV
     ) {
         self.id = id
         self.name = name
@@ -99,5 +119,6 @@ public final class StoredTunnel {
         self.presharedKey = presharedKey
         self.persistentKeepalive = persistentKeepalive
         self.createdAt = createdAt
+        self.targetRaw = target.rawValue
     }
 }

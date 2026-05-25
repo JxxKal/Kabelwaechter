@@ -21,7 +21,7 @@ public final class TunnelRepository: TunnelRepositoring {
 
     // MARK: - Import
 
-    public func importWgQuick(_ wgQuickConfig: String, named name: String) throws -> UUID {
+    public func importWgQuick(_ wgQuickConfig: String, named name: String, target: TunnelTarget) throws -> UUID {
         let parsed: TunnelConfiguration
         do {
             parsed = try TunnelConfiguration(fromWgQuickConfig: wgQuickConfig, called: name)
@@ -34,6 +34,7 @@ public final class TunnelRepository: TunnelRepositoring {
         // Falls der Parser den Namen nicht gesetzt hat (init named: nil),
         // sorgt der explizite `name`-Parameter dafür, dass die Liste etwas zeigt.
         if stored.name.isEmpty { stored.name = name }
+        stored.target = target
 
         if let existing = try duplicate(of: stored) {
             throw TunnelRepositoryError.duplicate(existingName: existing.name)
@@ -42,6 +43,14 @@ public final class TunnelRepository: TunnelRepositoring {
         context.insert(stored)
         try context.save()
         return tunnelID
+    }
+
+    public func setTarget(_ target: TunnelTarget, forTunnelID id: UUID) throws {
+        guard let stored = try fetch(id: id) else {
+            throw TunnelRepositoryError.tunnelNotFound
+        }
+        stored.target = target
+        try context.save()
     }
 
     /// Sucht einen bereits vorhandenen Tunnel mit gleicher Peer-Identität
@@ -131,7 +140,8 @@ public final class TunnelRepository: TunnelRepositoring {
             name: stored.name,
             isConfiguredHere: !stored.privateKey.isEmpty,
             serverEndpoint: stored.serverEndpoint,
-            createdAt: stored.createdAt
+            createdAt: stored.createdAt,
+            target: stored.target
         )
     }
 }

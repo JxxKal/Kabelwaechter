@@ -328,37 +328,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXLegacyTarget section */
-		604B3C18688D734B5940D2AF /* WireguardGoBridgeiOS */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin /usr/bin/make $(ACTION)";
-			buildConfigurationList = 55C3A8176040CF1B49F75759 /* Build configuration list for PBXLegacyTarget "WireguardGoBridgeiOS" */;
-			buildPhases = (
-			);
-			buildToolPath = /usr/bin/env;
-			buildWorkingDirectory = "$(BUILD_DIR)/../../SourcePackages/checkouts/wireguard-apple-tvos/Sources/WireGuardKitGo";
-			dependencies = (
-			);
-			name = WireguardGoBridgeiOS;
-			passBuildSettingsInEnvironment = 1;
-			productName = WireguardGoBridgeiOS;
-		};
-		E3CCC1672FC343580045F7FD /* WireguardGoBridgetvOS */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin /usr/bin/make $(ACTION) PLATFORM_NAME=iphoneos";
-			buildConfigurationList = E3CCC1682FC343580045F7FD /* Build configuration list for PBXLegacyTarget "WireguardGoBridgetvOS" */;
-			buildPhases = (
-			);
-			buildToolPath = /usr/bin/env;
-			buildWorkingDirectory = "$(BUILD_DIR)/../../SourcePackages/checkouts/wireguard-apple-tvos/Sources/WireGuardKitGo";
-			dependencies = (
-			);
-			name = WireguardGoBridgetvOS;
-			passBuildSettingsInEnvironment = 1;
-			productName = WireguardGoBridgetvOS;
-		};
-/* End PBXLegacyTarget section */
-
 /* Begin PBXNativeTarget section */
 		66CC1527C0B57E9E94C79642 /* KabelwaechterNEiOS */ = {
 			isa = PBXNativeTarget;
@@ -611,8 +580,6 @@
 				E337E3B72FC339820039D356 /* Kabelwaechter tvOSTests */,
 				E337E3C12FC339820039D356 /* Kabelwaechter tvOSUITests */,
 				E337E3D72FC33A990039D356 /* KabelwaechterNEtvOS */,
-				E3CCC1672FC343580045F7FD /* WireguardGoBridgetvOS */,
-				604B3C18688D734B5940D2AF /* WireguardGoBridgeiOS */,
 				66CC1527C0B57E9E94C79642 /* KabelwaechterNEiOS */,
 			);
 		};
@@ -1436,15 +1403,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		55C3A8176040CF1B49F75759 /* Build configuration list for PBXLegacyTarget "WireguardGoBridgeiOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				557B075DF6923B01FDBCEAC4 /* Debug */,
-				56484236A983B69D31E5445E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		DDAD1678387CC0B1CCC516CE /* Build configuration list for PBXNativeTarget "KabelwaechterNEiOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1522,15 +1480,6 @@
 			buildConfigurations = (
 				E337E3E52FC33A990039D356 /* Debug */,
 				E337E3E62FC33A990039D356 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E3CCC1682FC343580045F7FD /* Build configuration list for PBXLegacyTarget "WireguardGoBridgetvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E3CCC1692FC343580045F7FD /* Debug */,
-				E3CCC16A2FC343580045F7FD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

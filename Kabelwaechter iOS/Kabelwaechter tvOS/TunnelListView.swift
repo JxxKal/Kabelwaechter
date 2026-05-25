@@ -93,17 +93,7 @@ struct TunnelListView: View {
                     .frame(maxWidth: 900)
             }
         } else if tunnels.isEmpty {
-            VStack(spacing: KW.Space.lg) {
-                Text("[ NOCH KEINE TUNNEL ]").kwLabel()
-                Text("Tunnel hinzufügen")
-                    .font(KW.Font.titleTV)
-                    .foregroundStyle(Color.kwText)
-                Text("Am iPhone einen Tunnel importieren und auf Apple TV verschieben — er erscheint dann via iCloud hier. Oder unten manuell einlesen.")
-                    .font(KW.Font.bodyTV)
-                    .foregroundStyle(Color.kwTextDim)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: 1000)
-            }
+            emptyState
         } else if let active = activeTunnel {
             VStack(spacing: KW.Space.lg) {
                 Text("ACTIVE PEER")
@@ -129,6 +119,61 @@ struct TunnelListView: View {
                     .font(KW.Font.titleTV)
                     .foregroundStyle(Color.kwText)
             }
+        }
+    }
+
+    // MARK: - Empty state (Companion-App-QR)
+
+    // QR-Ziel: die iOS-Companion-App. TODO: nach Veröffentlichung die echte
+    // App-Store-URL (oder einen TestFlight-Einladungslink) eintragen.
+    private let companionAppURL = "https://apps.apple.com/app/kabelwaechter"
+
+    private var emptyState: some View {
+        VStack(spacing: KW.Space.xl) {
+            Text("[ NOCH KEINE TUNNEL ]")
+                .font(KW.Font.labelTV)
+                .tracking(6)
+                .foregroundStyle(Color.kwCyan)
+            HStack(alignment: .center, spacing: KW.Space.xxl) {
+                VStack(spacing: KW.Space.md) {
+                    QRCodeView(companionAppURL)
+                        .frame(width: 300, height: 300)
+                        .padding(KW.Space.lg)
+                        .background(Color.kwText)
+                        .overlay { CornerFrame(color: .kwCyan, size: 20, thickness: 2, inset: -8) }
+                    Text("SCAN · MIT · IPHONE")
+                        .font(KW.Font.labelTV)
+                        .tracking(4)
+                        .foregroundStyle(Color.kwTextDim)
+                }
+                VStack(alignment: .leading, spacing: KW.Space.lg) {
+                    Text("Kabelwächter fürs iPhone")
+                        .font(KW.Font.h2TV)
+                        .foregroundStyle(Color.kwText)
+                    stepRow("01", "iPhone-App installieren (QR scannen)")
+                    stepRow("02", "Tunnel in der App importieren")
+                    stepRow("03", "Auf Apple TV verschieben → erscheint hier via iCloud")
+                    Text("Tunnel werden über die iPhone-App verwaltet. Alternativ unten manuell eine wg-quick einlesen.")
+                        .font(KW.Font.bodyTV)
+                        .foregroundStyle(Color.kwTextDim)
+                        .frame(maxWidth: 560, alignment: .leading)
+                        .padding(.top, KW.Space.sm)
+                }
+            }
+        }
+    }
+
+    private func stepRow(_ number: String, _ text: String) -> some View {
+        HStack(spacing: KW.Space.md) {
+            Text(number)
+                .font(KW.Font.telemTV)
+                .foregroundStyle(Color.kwCyan)
+                .padding(.horizontal, KW.Space.sm)
+                .padding(.vertical, KW.Space.xxs)
+                .overlay(Rectangle().stroke(Color.kwCyan.opacity(0.5), lineWidth: KW.Border.hairline))
+            Text(text)
+                .font(KW.Font.bodyTV)
+                .foregroundStyle(Color.kwText)
         }
     }
 

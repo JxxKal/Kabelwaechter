@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 import KabelwaechterPersistence
 import KabelwaechterUI
 
@@ -13,6 +14,8 @@ struct AddTunnelView: View {
     @State private var wgQuickText: String = ""
     @State private var errorMessage: String?
     @State private var isImporting = false
+    @State private var showScanner = false
+    @State private var showFileImporter = false
 
     var body: some View {
         NavigationStack {
@@ -21,9 +24,10 @@ struct AddTunnelView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: KW.Space.lg) {
-                        Text("Importiere eine wg-quick-Konfiguration. Sie synct via iCloud automatisch auf deinen Apple TV.")
+                        Text("Importiere eine wg-quick-Konfiguration — per QR-Code, aus einer Datei (.conf oder .zip) oder eingefügt. Sie synct via iCloud automatisch auf deinen Apple TV.")
                             .font(KW.Font.body)
                             .foregroundStyle(Color.kwTextDim)
+                        importOptions
                         nameField
                         configField
                     }
@@ -52,8 +56,98 @@ struct AddTunnelView: View {
             } message: {
                 Text(errorMessage ?? "")
             }
+            .sheet(isPresented: $showScanner) {
+                ZStack(alignment: .topTrailing) {
+                    QRScannerView(
+                        onScan: { code in
+                            wgQuickText = code
+                            if name.trimmingCharacters(in: .whitespaces).isEmpty { name = "QR-Tunnel" }
+                            showScanner = false
+                        },
+                        onError: { msg in
+                            errorMessage = msg
+                            showScanner = false
+                        }
+                    )
+                    .ignoresSafeArea()
+                    Button("Schließen") { showScanner = false }
+                        .font(KW.Font.body.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(KW.Space.md)
+                }
+            }
+            .fileImporter(isPresented: $showFileImporter, allowedContentTypes: importTypes) { result in
+                handleFileImport(result)
+            }
         }
         .preferredColorScheme(.dark)
+    }
+
+    private var importOptions: some View {
+        HStack(spacing: KW.Space.md) {
+            optionButton("QR scannen", icon: "qrcode.viewfinder") { showScanner = true }
+            optionButton("Aus Dateien", icon: "folder") { showFileImporter = true }
+        }
+    }
+
+    private func optionButton(_ title: String, icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: KW.Space.xs) {
+                Image(systemName: icon).font(.title2)
+                Text(title).font(KW.Font.bodySm)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(KW.Space.md)
+            .background(Color.kwCyan.opacity(0.08))
+            .overlay(Rectangle().stroke(Color.kwLineDim, lineWidth: KW.Border.hairline))
+            .foregroundStyle(Color.kwCyan)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var importTypes: [UTType] {
+        var types: [UTType] = [.plainText, .text, .zip]
+        if let conf = UTType(filenameExtension: "conf") { types.append(conf) }
+        return types
+    }
+
+    private func handleFileImport(_ result: Result<URL, Error>) {
+        switch result {
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+        case .success(let url):
+            do {
+                let entries = try WgQuickImport.entries(from: url)
+                if entries.isEmpty {
+                    errorMessage = "Keine wg-quick-Konfiguration in der Datei gefunden."
+                } else if entries.count == 1 {
+                    // Einzelne Config → ins Feld zum Prüfen/Benennen + Speichern.
+                    wgQuickText = entries[0].config
+                    if name.trimmingCharacters(in: .whitespaces).isEmpty { name = entries[0].name }
+                } else {
+                    // Archiv mit mehreren Tunneln → direkt alle importieren.
+                    var imported = 0
+                    var firstError: String?
+                    for entry in entries {
+                        do {
+                            _ = try env.repository.importWgQuick(entry.config, named: entry.name)
+                            imported += 1
+                        } catch let e as TunnelRepositoryError {
+                            if firstError == nil { firstError = humanMessage(for: e) }
+                        } catch {
+                            if firstError == nil { firstError = String(describing: error) }
+                        }
+                    }
+                    if imported > 0 {
+                        dismiss()
+                    } else {
+                        errorMessage = firstError ?? "Import fehlgeschlagen."
+                    }
+                }
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
     }
 
     private var nameField: some View {

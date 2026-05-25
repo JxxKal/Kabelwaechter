@@ -123,9 +123,9 @@ struct TunnelListView: View {
 
     // MARK: - Empty state (Companion-App-QR)
 
-    // QR-Ziel: die iOS-Companion-App. TODO: nach Veröffentlichung die echte
-    // App-Store-URL (oder einen TestFlight-Einladungslink) eintragen.
-    private let companionAppURL = "https://apps.apple.com/app/kabelwaechter"
+    // QR-Ziel: die iOS-Companion-App. Aktuell der TestFlight-Einladungslink der
+    // iOS-Beta; nach App-Store-Veröffentlichung auf die Store-URL umstellen.
+    private let companionAppURL = "https://testflight.apple.com/join/23kyR7WK"
 
     private var emptyState: some View {
         VStack(spacing: KW.Space.xl) {

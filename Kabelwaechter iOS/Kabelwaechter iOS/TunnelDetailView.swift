@@ -118,7 +118,7 @@ struct TunnelDetailView: View {
                 .font(KW.Font.label)
                 .tracking(2)
                 .foregroundStyle(statusColor(for: status))
-            HStack(spacing: KW.Space.md) {
+            VStack(spacing: KW.Space.sm) {
                 Button {
                     Task { await toggleConnection(status) }
                 } label: {
@@ -133,10 +133,9 @@ struct TunnelDetailView: View {
                 Button {
                     Task { await toggleAutoConnect() }
                 } label: {
-                    Text(autoConnect ? "Auto: An" : "Auto: Aus")
+                    Text(autoConnect ? "Auto-Connect: An" : "Auto-Connect: Aus")
                 }
                 .buttonStyle(KWButtonStyle(tone: autoConnect ? .kwSignal : .kwTextDim))
-                .frame(width: 150)
             }
             if let connectError {
                 Text(connectError)

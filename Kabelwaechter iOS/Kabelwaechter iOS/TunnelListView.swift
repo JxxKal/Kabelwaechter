@@ -1,11 +1,12 @@
 import SwiftUI
 import CoreData
+import NetworkExtension
 import KabelwaechterPersistence
 import KabelwaechterUI
 
-/// Hauptansicht der Companion-App im „Centered Hub"-Design (Variant A),
-/// angepasst an die Editor-Rolle: das iPhone verbindet selbst nie (Decision
-/// #8), darum kein Connect/Status — nur Liste, Import und Detail/Config.
+/// Hauptansicht der Companion-App im „Centered Hub"-Design (Variant A).
+/// Zwei Sektionen: eigene (phone) Tunnel — seit der iOS-NE hier verbindbar —
+/// und (separiert) die Apple-TV-Tunnel.
 struct TunnelListView: View {
 
     @Environment(CompanionAppEnvironment.self) private var env
@@ -17,9 +18,11 @@ struct TunnelListView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                // Nur das Hintergrund-Grid (keine Ringe — iOS verbindet nie).
-                CyberBackdrop(showScan: false) { Color.clear }
-                    .ignoresSafeArea()
+                // Grid-Hintergrund; Ringe nur, wenn ein phone-Tunnel verbunden ist.
+                CyberBackdrop(showScan: false) {
+                    TunnelViz(state: heroState, intensity: 0.7)
+                }
+                .ignoresSafeArea()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: KW.Space.lg) {
@@ -38,9 +41,34 @@ struct TunnelListView: View {
             }
         }
         .preferredColorScheme(.dark)
-        .task { reload() }
+        .task {
+            try? await env.tunnelManager.refresh()
+            reload()
+        }
         .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
             reload()
+        }
+    }
+
+    /// Viz-Zustand des Hintergrunds: verbunden > verbindet > idle — nur über
+    /// die eigenen (phone) Tunnel, die das iPhone selbst aufbaut.
+    private var heroState: KWConnectionState {
+        var connecting = false
+        for t in tunnels where t.target == .phone {
+            switch connectionState(for: t.id) {
+            case .connected: return .connected
+            case .connecting: connecting = true
+            default: break
+            }
+        }
+        return connecting ? .connecting : .idle
+    }
+
+    private func connectionState(for id: UUID) -> KWConnectionState {
+        switch env.tunnelManager.status(forTunnelID: id) {
+        case .connected:                return .connected
+        case .connecting, .reasserting: return .connecting
+        default:                        return .idle
         }
     }
 
@@ -111,7 +139,11 @@ struct TunnelListView: View {
                 .foregroundStyle(isAppleTV ? Color.kwCyan : Color.kwTextFaint)
             ForEach(tunnels, id: \.id) { tunnel in
                 NavigationLink(value: tunnel.id) {
-                    TunnelRow(tunnel: tunnel, isAppleTV: isAppleTV)
+                    TunnelRow(
+                        tunnel: tunnel,
+                        isAppleTV: isAppleTV,
+                        state: isAppleTV ? .idle : connectionState(for: tunnel.id)
+                    )
                 }
                 .buttonStyle(.plain)
             }
@@ -147,12 +179,22 @@ struct TunnelListView: View {
 private struct TunnelRow: View {
     let tunnel: TunnelView
     var isAppleTV: Bool = false
+    var state: KWConnectionState = .idle
+
+    /// Punktfarbe eigener (phone) Tunnel: grün = verbunden, amber = verbindet,
+    /// sonst Cyan (vorhanden/verbindbar). Signal-Grün nur bei echter Aktivität.
+    private var dotColor: Color {
+        switch state {
+        case .connected:  return .kwSignal
+        case .connecting: return .kwWarn
+        default:          return .kwCyan
+        }
+    }
 
     var body: some View {
         HStack(spacing: KW.Space.md) {
-            // Kein Signal-Grün (= „aktiv", nur am Apple TV gültig). Apple-TV-
-            // Tunnel bekommen ein tv-Symbol (für die TV bestimmt, hier nicht
-            // verbindbar), eigene iPhone-Tunnel einen neutralen Cyan-Punkt.
+            // Apple-TV-Tunnel: tv-Symbol (für die TV, hier nicht verbindbar).
+            // Eigene Tunnel: Status-Punkt (grün, wenn auf dem iPhone verbunden).
             if isAppleTV {
                 Image(systemName: "tv")
                     .font(.system(size: 13))
@@ -160,8 +202,9 @@ private struct TunnelRow: View {
                     .frame(width: 10)
             } else {
                 Circle()
-                    .fill(Color.kwCyan)
+                    .fill(dotColor)
                     .frame(width: 8, height: 8)
+                    .shadow(color: state == .connected ? Color.kwSignal : .clear, radius: 4)
                     .frame(width: 10)
             }
             VStack(alignment: .leading, spacing: 4) {

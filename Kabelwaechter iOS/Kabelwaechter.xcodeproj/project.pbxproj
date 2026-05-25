@@ -34,13 +34,6 @@
 			remoteGlobalIDString = 66CC1527C0B57E9E94C79642;
 			remoteInfo = KabelwaechterNEiOS;
 		};
-		24F655782F6ECF9CFE3F9A3D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 604B3C18688D734B5940D2AF;
-			remoteInfo = WireguardGoBridgeiOS;
-		};
 		E337E3872FC3383E0039D356 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
@@ -75,13 +68,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = E337E3D72FC33A990039D356;
 			remoteInfo = KabelwaechterNEtvOS;
-		};
-		E3CCC16B2FC3443A0045F7FD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E3CCC1672FC343580045F7FD;
-			remoteInfo = WireguardGoBridgetvOS;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -378,6 +364,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DDAD1678387CC0B1CCC516CE /* Build configuration list for PBXNativeTarget "KabelwaechterNEiOS" */;
 			buildPhases = (
+				F5242115A33711E5C623B0D0 /* Build WireGuard Go Bridge */,
 				1359CFB21AAABC3AB8DAC404 /* Sources */,
 				377CD6C95D19DF5FB8BE5F9E /* Frameworks */,
 				E28932A728ADE35532BFD067 /* Resources */,
@@ -385,7 +372,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				3AB01D06F5D0EB5B71E7B09C /* PBXTargetDependency */,
 			);
 			name = KabelwaechterNEiOS;
 			packageProductDependencies = (
@@ -538,6 +524,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E337E3E42FC33A990039D356 /* Build configuration list for PBXNativeTarget "KabelwaechterNEtvOS" */;
 			buildPhases = (
+				91A5FA4B1F1D99E554D823D2 /* Build WireGuard Go Bridge */,
 				E337E3D42FC33A990039D356 /* Sources */,
 				E337E3D52FC33A990039D356 /* Frameworks */,
 				E337E3D62FC33A990039D356 /* Resources */,
@@ -545,7 +532,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				E3CCC16C2FC3443A0045F7FD /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				E337E3DC2FC33A990039D356 /* KabelwaechterNEtvOS */,
@@ -691,6 +677,47 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		91A5FA4B1F1D99E554D823D2 /* Build WireGuard Go Bridge */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build WireGuard Go Bridge";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/libwg-go.a",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nSRC=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/wireguard-apple-tvos/Sources/WireGuardKitGo\"\nOUT=\"${BUILD_DIR%/Build/*}/kwgobridge/${PLATFORM_NAME}-${CONFIGURATION}\"\nexport PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:${PATH}\"\ncd \"$SRC\"\nmake PLATFORM_NAME=iphoneos CONFIGURATION_BUILD_DIR=\"$OUT/out\" CONFIGURATION_TEMP_DIR=\"$OUT/tmp\"\nmkdir -p \"$BUILT_PRODUCTS_DIR\"\ncp \"$OUT/out/libwg-go.a\" \"$BUILT_PRODUCTS_DIR/libwg-go.a\"\n";
+		};
+		F5242115A33711E5C623B0D0 /* Build WireGuard Go Bridge */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build WireGuard Go Bridge";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/libwg-go.a",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nSRC=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/wireguard-apple-tvos/Sources/WireGuardKitGo\"\nOUT=\"${BUILD_DIR%/Build/*}/kwgobridge/${PLATFORM_NAME}-${CONFIGURATION}\"\nexport PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:${PATH}\"\ncd \"$SRC\"\nmake CONFIGURATION_BUILD_DIR=\"$OUT/out\" CONFIGURATION_TEMP_DIR=\"$OUT/tmp\"\nmkdir -p \"$BUILT_PRODUCTS_DIR\"\ncp \"$OUT/out/libwg-go.a\" \"$BUILT_PRODUCTS_DIR/libwg-go.a\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1359CFB21AAABC3AB8DAC404 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -753,12 +780,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3AB01D06F5D0EB5B71E7B09C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = WireguardGoBridgeiOS;
-			target = 604B3C18688D734B5940D2AF /* WireguardGoBridgeiOS */;
-			targetProxy = 24F655782F6ECF9CFE3F9A3D /* PBXContainerItemProxy */;
-		};
 		4F9430F804377637B85F8A64 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = KabelwaechterNEiOS;
@@ -790,11 +811,6 @@
 			target = E337E3D72FC33A990039D356 /* KabelwaechterNEtvOS */;
 			targetProxy = E337E3E12FC33A990039D356 /* PBXContainerItemProxy */;
 		};
-		E3CCC16C2FC3443A0045F7FD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E3CCC1672FC343580045F7FD /* WireguardGoBridgetvOS */;
-			targetProxy = E3CCC16B2FC3443A0045F7FD /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -804,6 +820,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = KabelwaechterNEiOS/KabelwaechterNEiOS.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KabelwaechterNEiOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -859,6 +876,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = KabelwaechterNEiOS/KabelwaechterNEiOS.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KabelwaechterNEiOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -887,9 +905,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8D5SQU94MF;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Kabelwaechter iOS/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "KBLW Setup";
+				INFOPLIST_KEY_CFBundleDisplayName = KBLW;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -923,9 +942,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8D5SQU94MF;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Kabelwaechter iOS/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "KBLW Setup";
+				INFOPLIST_KEY_CFBundleDisplayName = KBLW;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1323,6 +1343,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KabelwaechterNEtvOS/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = KabelwaechterNEtvOS;
@@ -1354,6 +1375,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KabelwaechterNEtvOS/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = KabelwaechterNEtvOS;

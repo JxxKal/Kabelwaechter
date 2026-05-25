@@ -18,9 +18,13 @@ final class CompanionAppEnvironment {
     /// Zugang zu Tunneln. Production: SwiftData-backed `TunnelRepository`
     /// mit CloudKit-Container. Preview/Test: `InMemoryTunnelRepository`.
     let repository: any TunnelRepositoring
+    /// VPN-Steuerung — seit der iOS-NE kann das iPhone phone-Tunnel selbst
+    /// aufbauen (Decision #8 revidiert).
+    let tunnelManager: TunnelManager
 
     init(repository: any TunnelRepositoring) {
         self.repository = repository
+        self.tunnelManager = TunnelManager(repository: repository)
     }
 
     // MARK: - Factories

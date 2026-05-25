@@ -26,20 +26,11 @@ struct AddTunnelView: View {
                             .foregroundStyle(Color.kwTextDim)
                         nameField
                         configField
-                        if let errorMessage {
-                            Text(errorMessage)
-                                .font(KW.Font.bodySm)
-                                .foregroundStyle(Color.kwError)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(KW.Space.md)
-                                .background(Color.kwError.opacity(0.12))
-                                .overlay(Rectangle().stroke(Color.kwError.opacity(0.5), lineWidth: KW.Border.hairline))
-                        }
                     }
                     .padding(KW.Space.lg)
                 }
             }
-            .navigationTitle("Tunnel hinzufügen")
+            .navigationTitle("Neuer Tunnel")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
@@ -52,6 +43,14 @@ struct AddTunnelView: View {
                         .foregroundStyle(canImport ? Color.kwCyan : Color.kwTextFaint)
                         .disabled(!canImport || isImporting)
                 }
+            }
+            .alert("Import fehlgeschlagen", isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { if !$0 { errorMessage = nil } }
+            )) {
+                Button("OK", role: .cancel) { errorMessage = nil }
+            } message: {
+                Text(errorMessage ?? "")
             }
         }
         .preferredColorScheme(.dark)

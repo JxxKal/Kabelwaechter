@@ -17,15 +17,9 @@ struct TunnelListView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                Color.kwBg0.ignoresSafeArea()
-
-                // Dekorative Viz oben, nach unten ausgeblendet
-                TunnelViz(state: .idle, intensity: 0.55)
-                    .frame(height: 360)
-                    .opacity(0.5)
-                    .mask(LinearGradient(colors: [.black, .black, .clear], startPoint: .top, endPoint: .bottom))
-                    .ignoresSafeArea(edges: .top)
-                    .allowsHitTesting(false)
+                // Nur das Hintergrund-Grid (keine Ringe — iOS verbindet nie).
+                CyberBackdrop(showScan: false) { Color.clear }
+                    .ignoresSafeArea()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: KW.Space.lg) {
@@ -73,7 +67,6 @@ struct TunnelListView: View {
             }
             .accessibilityLabel(Text("Tunnel hinzufügen"))
         }
-        .padding(.top, KW.Space.xl)
     }
 
     // MARK: - Content
@@ -142,10 +135,11 @@ private struct TunnelRow: View {
 
     var body: some View {
         HStack(spacing: KW.Space.md) {
+            // Neutrales Cyan = „Tunnel vorhanden/gesynct". KEIN Signal-Grün:
+            // das iPhone verbindet nicht, der Tunnel ist nur am Apple TV aktiv.
             Circle()
-                .fill(tunnel.isConfiguredHere ? Color.kwSignal : Color.kwTextFaint)
+                .fill(Color.kwCyan)
                 .frame(width: 8, height: 8)
-                .shadow(color: tunnel.isConfiguredHere ? Color.kwSignal : .clear, radius: 4)
             VStack(alignment: .leading, spacing: 4) {
                 Text(tunnel.name.isEmpty ? "Unbenannt" : tunnel.name)
                     .font(KW.Font.body.weight(.semibold))

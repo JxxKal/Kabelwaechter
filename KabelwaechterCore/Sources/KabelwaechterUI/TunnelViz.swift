@@ -33,15 +33,15 @@ public struct TunnelViz: View {
 
     private static let ringCount = 9
 
-    /// Ausbreitungsgeschwindigkeit der Ringe — schneller wenn verbunden,
-    /// nervös beim Handshake, fast still im Leerlauf.
+    /// Ringe erscheinen **nur**, wenn der Tunnel aufgebaut wird oder steht.
+    /// Ohne Verbindung (idle/error) bleibt nur das Hintergrund-Grid stehen.
+    private var ringsVisible: Bool {
+        state == .connected || state == .connecting
+    }
+
+    /// Ruhige, sanfte Ausbreitung — beim Handshake einen Tick lebendiger.
     private var speed: Double {
-        switch state {
-        case .connecting: return 0.42
-        case .connected:  return 0.62
-        case .error:      return 0.16
-        case .idle:       return 0.14
-        }
+        state == .connecting ? 0.24 : 0.15
     }
 
     private var ringColor: Color {
@@ -53,24 +53,31 @@ public struct TunnelViz: View {
     }
 
     public var body: some View {
-        // 30 fps statt 60 — auf älterer Apple-TV-Hardware (A8) reicht das
-        // visuell und lässt dem UI-Thread (Focus-Engine!) Luft.
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
-            let t = timeline.date.timeIntervalSinceReferenceDate
-            Canvas { ctx, size in
-                let center = CGPoint(x: size.width / 2, y: size.height / 2)
-                let maxR = min(size.width, size.height) * 0.62
+        Group {
+            if ringsVisible {
+                // 30 fps statt 60 — auf älterer Apple-TV-Hardware (A8) reicht
+                // das visuell und lässt dem UI-Thread (Focus-Engine!) Luft.
+                TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+                    let t = timeline.date.timeIntervalSinceReferenceDate
+                    Canvas { ctx, size in
+                        let center = CGPoint(x: size.width / 2, y: size.height / 2)
+                        let maxR = min(size.width, size.height) * 0.62
 
-                drawCoreGlow(in: &ctx, center: center, maxR: maxR)
-                if variant != .particles {
-                    drawRays(in: &ctx, center: center, reach: max(size.width, size.height))
+                        drawCoreGlow(in: &ctx, center: center, maxR: maxR)
+                        if variant != .particles {
+                            drawRays(in: &ctx, center: center, reach: max(size.width, size.height))
+                        }
+                        switch variant {
+                        case .rings:     drawRings(in: &ctx, center: center, maxR: maxR, t: t)
+                        case .grid:      drawGrid(in: &ctx, center: center, maxR: maxR, t: t)
+                        case .particles: drawParticles(in: &ctx, center: center, maxR: maxR, t: t)
+                        }
+                        drawReticle(in: &ctx, center: center)
+                    }
                 }
-                switch variant {
-                case .rings:     drawRings(in: &ctx, center: center, maxR: maxR, t: t)
-                case .grid:      drawGrid(in: &ctx, center: center, maxR: maxR, t: t)
-                case .particles: drawParticles(in: &ctx, center: center, maxR: maxR, t: t)
-                }
-                drawReticle(in: &ctx, center: center)
+            } else {
+                // Kein Tunnel → keine Ringe, nur das Hintergrund-Grid bleibt.
+                Color.clear
             }
         }
         .allowsHitTesting(false) // rein dekorativ — nie Eingaben abfangen

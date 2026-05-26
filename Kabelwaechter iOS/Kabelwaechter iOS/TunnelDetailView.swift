@@ -34,6 +34,7 @@ struct TunnelDetailView: View {
                     if tunnel?.target == .phone, tunnel?.isConfiguredHere == true {
                         connectControl
                     }
+                    moveButton
                     if let fullConfig {
                         section("Server") {
                             row("Public Key", value: fullConfig.peers.first?.publicKey.base64EncodedString() ?? "—")
@@ -52,7 +53,6 @@ struct TunnelDetailView: View {
                     } else if tunnel?.isConfiguredHere == false {
                         syncingBanner
                     }
-                    moveButton
                     deleteButton
                 }
                 .padding(KW.Space.lg)
@@ -254,9 +254,9 @@ struct TunnelDetailView: View {
             toggleTarget()
         } label: {
             Label(title, systemImage: toTV ? "tv" : "iphone")
+                .frame(maxWidth: .infinity)
         }
-        .buttonStyle(KWButtonStyle(tone: .kwCyan))
-        .padding(.top, KW.Space.sm)
+        .buttonStyle(KWButtonStyle(tone: .kwCyan, filled: true))
     }
 
     private var deleteButton: some View {

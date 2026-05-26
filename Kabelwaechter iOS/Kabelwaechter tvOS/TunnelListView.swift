@@ -193,7 +193,7 @@ struct TunnelListView: View {
                         accent: .kwCyan,
                         highlighted: connectionState(for: tunnel.id) == .connected
                     ))
-                    .frame(width: 420)
+                    .frame(width: 560)
                     .focused($focusedCard, equals: tunnel.id)
                 }
             }
@@ -221,11 +221,13 @@ struct TunnelListView: View {
             (tunnel.name.isEmpty ? Text("Unbenannt") : Text(verbatim: tunnel.name))
                 .font(KW.Font.h2TV)
                 .foregroundStyle(Color.kwText)
-                .lineLimit(1)
+                .lineLimit(2)
+                .minimumScaleFactor(0.7)
             Text(tunnel.serverEndpoint)
                 .font(KW.Font.telemTV)
                 .foregroundStyle(Color.kwTextFaint)
                 .lineLimit(1)
+                .minimumScaleFactor(0.8)
                 .truncationMode(.middle)
         }
     }

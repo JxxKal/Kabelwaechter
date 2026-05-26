@@ -90,7 +90,7 @@ struct TunnelDetailView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: KW.Space.xs) {
             Text("[ TUNNEL ]").kwLabel()
-            Text(tunnel?.name ?? "Lädt…")
+            ((tunnel?.name).map { Text(verbatim: $0) } ?? Text("Lädt…"))
                 .font(KW.Font.title)
                 .foregroundStyle(Color.kwText)
             if let endpoint = tunnel?.serverEndpoint, !endpoint.isEmpty {
@@ -137,7 +137,7 @@ struct TunnelDetailView: View {
                 Button {
                     Task { await toggleAutoConnect() }
                 } label: {
-                    Text(autoConnect ? "Auto-Connect: An" : "Auto-Connect: Aus")
+                    autoConnect ? Text("Auto-Connect: An") : Text("Auto-Connect: Aus")
                 }
                 .buttonStyle(KWButtonStyle(tone: autoConnect ? .kwSignal : .kwTextDim))
             }
@@ -179,9 +179,9 @@ struct TunnelDetailView: View {
 
     private static func relHandshake(_ d: Date) -> String {
         let s = max(0, Int(Date().timeIntervalSince(d)))
-        if s < 60 { return "vor \(s)s" }
-        if s < 3600 { return "vor \(s / 60)m" }
-        return "vor \(s / 3600)h"
+        if s < 60 { return String(localized: "vor \(s)s") }
+        if s < 3600 { return String(localized: "vor \(s / 60)m") }
+        return String(localized: "vor \(s / 3600)h")
     }
 
     /// Pollt die Live-Stats alle 2s, solange verbunden.
@@ -193,7 +193,7 @@ struct TunnelDetailView: View {
         }
     }
 
-    private func connectLabel(for status: NEVPNStatus) -> String {
+    private func connectLabel(for status: NEVPNStatus) -> LocalizedStringKey {
         switch status {
         case .connected:              return "× Trennen"
         case .connecting:             return "Verbindet…"
@@ -203,7 +203,7 @@ struct TunnelDetailView: View {
         }
     }
 
-    private func statusText(for status: NEVPNStatus) -> String {
+    private func statusText(for status: NEVPNStatus) -> LocalizedStringKey {
         switch status {
         case .connected:    return "VERBUNDEN"
         case .connecting:   return "VERBINDET…"
@@ -249,13 +249,11 @@ struct TunnelDetailView: View {
 
     private var moveButton: some View {
         let toTV = (tunnel?.target ?? .appleTV) == .phone
+        let title: LocalizedStringKey = toTV ? "Auf Apple TV verschieben" : "Auf iPhone zurückholen"
         return Button {
             toggleTarget()
         } label: {
-            Label(
-                toTV ? "Auf Apple TV verschieben" : "Auf iPhone zurückholen",
-                systemImage: toTV ? "tv" : "iphone"
-            )
+            Label(title, systemImage: toTV ? "tv" : "iphone")
         }
         .buttonStyle(KWButtonStyle(tone: .kwCyan))
         .padding(.top, KW.Space.sm)
@@ -297,7 +295,7 @@ struct TunnelDetailView: View {
         }
     }
 
-    private func row(_ label: String, value: String) -> some View {
+    private func row(_ label: LocalizedStringKey, value: String) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label)
                 .font(KW.Font.label)

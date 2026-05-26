@@ -90,7 +90,7 @@ struct AddTunnelView: View {
         }
     }
 
-    private func optionButton(_ title: String, icon: String, action: @escaping () -> Void) -> some View {
+    private func optionButton(_ title: LocalizedStringKey, icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: KW.Space.xs) {
                 Image(systemName: icon).font(.title2)
@@ -119,7 +119,7 @@ struct AddTunnelView: View {
             do {
                 let entries = try WgQuickImport.entries(from: url)
                 if entries.isEmpty {
-                    errorMessage = "Keine wg-quick-Konfiguration in der Datei gefunden."
+                    errorMessage = String(localized: "Keine wg-quick-Konfiguration in der Datei gefunden.")
                 } else if entries.count == 1 {
                     // Einzelne Config → ins Feld zum Prüfen/Benennen + Speichern.
                     wgQuickText = entries[0].config
@@ -145,9 +145,9 @@ struct AddTunnelView: View {
                     if imported > 0 {
                         dismiss()
                     } else if skipped > 0, firstError == nil {
-                        errorMessage = "Alle \(skipped) Tunnel im Archiv sind bereits vorhanden."
+                        errorMessage = String(localized: "Alle \(skipped) Tunnel im Archiv sind bereits vorhanden.")
                     } else {
-                        errorMessage = firstError ?? "Import fehlgeschlagen."
+                        errorMessage = firstError ?? String(localized: "Import fehlgeschlagen.")
                     }
                 }
             } catch {
@@ -216,11 +216,11 @@ struct AddTunnelView: View {
     private func humanMessage(for error: TunnelRepositoryError) -> String {
         switch error {
         case .invalidWgQuickConfig(let detail):
-            return "Konfiguration ist ungültig: \(detail)"
+            return String(localized: "Konfiguration ist ungültig: \(detail)")
         case .multiPeerNotSupported:
-            return "Mehrere [Peer]-Blöcke werden noch nicht unterstützt."
+            return String(localized: "Mehrere [Peer]-Blöcke werden noch nicht unterstützt.")
         case .duplicate(let existingName):
-            return "Dieser Tunnel ist bereits vorhanden als „\(existingName)“."
+            return String(localized: "Dieser Tunnel ist bereits vorhanden als „\(existingName)“.")
         case .tunnelNotFound, .notConfiguredOnThisDevice:
             return String(describing: error)
         }

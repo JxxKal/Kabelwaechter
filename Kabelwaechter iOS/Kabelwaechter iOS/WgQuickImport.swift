@@ -19,8 +19,8 @@ enum WgQuickImport {
 
         var errorDescription: String? {
             switch self {
-            case .notReadable: return "Datei ist kein lesbarer Text."
-            case .badZip: return "ZIP-Archiv konnte nicht gelesen werden."
+            case .notReadable: return String(localized: "Datei ist kein lesbarer Text.")
+            case .badZip: return String(localized: "ZIP-Archiv konnte nicht gelesen werden.")
             }
         }
     }

@@ -43,10 +43,12 @@ struct AddTunnelView: View {
                         Button("Abbrechen") { dismiss() }
                             .buttonStyle(KWButtonStyle(tone: .kwTextDim))
                             .frame(width: 320)
-                        Button(isImporting ? "Speichert…" : "Speichern", action: importTunnel)
-                            .buttonStyle(KWButtonStyle(tone: .kwCyan, filled: true))
-                            .frame(maxWidth: .infinity)
-                            .disabled(!canImport || isImporting)
+                        Button(action: importTunnel) {
+                            isImporting ? Text("Speichert…") : Text("Speichern")
+                        }
+                        .buttonStyle(KWButtonStyle(tone: .kwCyan, filled: true))
+                        .frame(maxWidth: .infinity)
+                        .disabled(!canImport || isImporting)
                     }
                 }
                 .padding(KW.Space.page + KW.Space.lg)
@@ -67,7 +69,7 @@ struct AddTunnelView: View {
         .kwPanel()
     }
 
-    private func field(label: String, placeholder: String, text: Binding<String>, mono: Bool, multiline: Bool = false) -> some View {
+    private func field(label: LocalizedStringKey, placeholder: LocalizedStringKey, text: Binding<String>, mono: Bool, multiline: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: KW.Space.sm) {
             Text(label).kwLabel()
             TextField(placeholder, text: text, axis: multiline ? .vertical : .horizontal)
@@ -122,11 +124,11 @@ struct AddTunnelView: View {
     private func humanMessage(for error: TunnelRepositoryError) -> String {
         switch error {
         case .invalidWgQuickConfig(let detail):
-            return "Konfiguration ist ungültig.\n\n\(detail)\n\nHäufigste Ursache auf dem Apple TV: fehlende Zeilenumbrüche — die ganze Config landet in einer Zeile. Mit einer Bluetooth-Tastatur Enter zwischen den Zeilen drücken."
+            return String(localized: "Konfiguration ist ungültig.\n\n\(detail)\n\nHäufigste Ursache auf dem Apple TV: fehlende Zeilenumbrüche — die ganze Config landet in einer Zeile. Mit einer Bluetooth-Tastatur Enter zwischen den Zeilen drücken.")
         case .multiPeerNotSupported:
-            return "Mehrere [Peer]-Blöcke werden noch nicht unterstützt."
+            return String(localized: "Mehrere [Peer]-Blöcke werden noch nicht unterstützt.")
         case .duplicate(let existingName):
-            return "Dieser Tunnel ist bereits vorhanden als „\(existingName)“."
+            return String(localized: "Dieser Tunnel ist bereits vorhanden als „\(existingName)“.")
         case .tunnelNotFound, .notConfiguredOnThisDevice:
             return String(describing: error)
         }

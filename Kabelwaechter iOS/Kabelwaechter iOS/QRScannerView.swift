@@ -33,7 +33,7 @@ struct QRScannerView: UIViewControllerRepresentable {
                     if granted {
                         self.configureSession()
                     } else {
-                        self.onError?("Kein Kamera-Zugriff — in den iOS-Einstellungen für Kabelwächter erlauben.")
+                        self.onError?(String(localized: "Kein Kamera-Zugriff — in den iOS-Einstellungen für Kabelwächter erlauben."))
                     }
                 }
             }
@@ -43,14 +43,14 @@ struct QRScannerView: UIViewControllerRepresentable {
             guard let device = AVCaptureDevice.default(for: .video),
                   let input = try? AVCaptureDeviceInput(device: device),
                   session.canAddInput(input) else {
-                onError?("Kamera nicht verfügbar.")
+                onError?(String(localized: "Kamera nicht verfügbar."))
                 return
             }
             session.addInput(input)
 
             let output = AVCaptureMetadataOutput()
             guard session.canAddOutput(output) else {
-                onError?("Scanner konnte nicht initialisiert werden.")
+                onError?(String(localized: "Scanner konnte nicht initialisiert werden."))
                 return
             }
             session.addOutput(output)

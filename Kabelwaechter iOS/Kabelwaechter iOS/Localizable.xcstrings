@@ -1,7 +1,242 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
-
+    "Dieser Tunnel ist bereits vorhanden als „%@“." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "This tunnel already exists as “%@”." } } }
+    },
+    "Konfiguration ist ungültig: %@" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Invalid configuration: %@" } } }
+    },
+    "Mehrere [Peer]-Blöcke werden noch nicht unterstützt." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Multiple [Peer] blocks are not yet supported." } } }
+    },
+    "Tunnel konnte nicht geladen werden: %@" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Couldn't load the tunnel: %@" } } }
+    },
+    "vor %lldh" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "%lldh ago" } } }
+    },
+    "vor %lldm" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "%lldm ago" } } }
+    },
+    "vor %llds" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "%llds ago" } } }
+    },
+    "Abbrechen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } } }
+    },
+    "Adresse" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Address" } } }
+    },
+    "Alle %lld Tunnel im Archiv sind bereits vorhanden." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "All %lld tunnels in the archive already exist." } } }
+    },
+    "Änderungen syncen via iCloud auf deinen Apple TV. Ein laufender Tunnel übernimmt sie beim nächsten Verbinden." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Changes sync via iCloud to your Apple TV. A running tunnel applies them on the next connect." } } }
+    },
+    "Anzeige-Name" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Display name" } } }
+    },
+    "Auf Apple TV verschieben" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Move to Apple TV" } } }
+    },
+    "Auf iPhone zurückholen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Move back to iPhone" } } }
+    },
+    "Aus Dateien" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "From Files" } } }
+    },
+    "Auto-Connect: An" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Auto-Connect: On" } } }
+    },
+    "Auto-Connect: Aus" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Auto-Connect: Off" } } }
+    },
+    "Bearbeiten" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Edit" } } }
+    },
+    "Datei ist kein lesbarer Text." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "The file isn't readable text." } } }
+    },
+    "Der Tunnel ist via iCloud sichtbar, aber die vollständige Konfiguration ist noch nicht angekommen." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "The tunnel is visible via iCloud, but the full configuration hasn't arrived yet." } } }
+    },
+    "GETRENNT" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "DISCONNECTED" } } }
+    },
+    "Heimnetz" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Home network" } } }
+    },
+    "iCLOUD-SYNC LÄUFT…" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "iCLOUD SYNC…" } } }
+    },
+    "Import fehlgeschlagen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Import failed" } } }
+    },
+    "Import fehlgeschlagen." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Import failed." } } }
+    },
+    "Importiere eine wg-quick-Konfiguration — per QR-Code, aus einer Datei (.conf oder .zip) oder eingefügt. Sie synct via iCloud automatisch auf deinen Apple TV." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Import a wg-quick configuration — via QR code, from a file (.conf or .zip), or pasted. It syncs to your Apple TV automatically via iCloud." } } }
+    },
+    "Kamera nicht verfügbar." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Camera not available." } } }
+    },
+    "Kein Kamera-Zugriff — in den iOS-Einstellungen für Kabelwächter erlauben." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No camera access — allow it for Kabelwächter in iOS Settings." } } }
+    },
+    "Keine wg-quick-Konfiguration in der Datei gefunden." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No wg-quick configuration found in the file." } } }
+    },
+    "Lädt…" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Loading…" } } }
+    },
+    "Löschen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete" } } }
+    },
+    "MEINE TUNNEL · %lld" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "MY TUNNELS · %lld" } } }
+    },
+    "Neuer Tunnel" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "New Tunnel" } } }
+    },
+    "QR scannen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Scan QR" } } }
+    },
+    "RECONNECT…" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "RECONNECTING…" } } }
+    },
+    "Reconnect…" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Reconnecting…" } } }
+    },
+    "Scanner konnte nicht initialisiert werden." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "The scanner couldn't be initialized." } } }
+    },
+    "Schließen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } } }
+    },
+    "Sichern" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Save" } } }
+    },
+    "Speichern" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Save" } } }
+    },
+    "Speichern fehlgeschlagen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Save failed" } } }
+    },
+    "STATUS UNBEKANNT" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "STATUS UNKNOWN" } } }
+    },
+    "Tippe auf ＋, um eine WireGuard-Konfiguration einzulesen. Sie synct via iCloud automatisch auf deinen Apple TV." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap ＋ to import a WireGuard configuration. It syncs to your Apple TV automatically via iCloud." } } }
+    },
+    "Trennt…" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Disconnecting…" } } }
+    },
+    "TRENNT…" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "DISCONNECTING…" } } }
+    },
+    "Tunnel hinzufügen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Tunnel" } } }
+    },
+    "Tunnel löschen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete Tunnel" } } }
+    },
+    "Tunnel löschen?" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete tunnel?" } } }
+    },
+    "Unbenannt" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Unnamed" } } }
+    },
+    "VERBINDET…" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "CONNECTING…" } } }
+    },
+    "Verbindet…" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Connecting…" } } }
+    },
+    "VERBUNDEN" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "CONNECTED" } } }
+    },
+    "wg-quick-Konfiguration" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "wg-quick configuration" } } }
+    },
+    "Wird auf allen iCloud-Geräten entfernt." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Will be removed from all your iCloud devices." } } }
+    },
+    "ZIP-Archiv konnte nicht gelesen werden." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "The ZIP archive couldn't be read." } } }
+    },
+    "× Trennen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "× Disconnect" } } }
+    },
+    "▶ Verbinden" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "▶ Connect" } } }
+    },
+    "[ FEHLER ]" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "[ ERROR ]" } } }
+    },
+    "[ NOCH KEINE TUNNEL ]" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "[ NO TUNNELS YET ]" } } }
+    }
   },
   "version" : "1.0"
 }

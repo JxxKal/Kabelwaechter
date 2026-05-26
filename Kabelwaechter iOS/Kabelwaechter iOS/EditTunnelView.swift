@@ -104,7 +104,7 @@ struct EditTunnelView: View {
             wgQuickText = config.asWgQuickConfig()
             loaded = true
         } catch {
-            errorMessage = "Tunnel konnte nicht geladen werden: \(error.localizedDescription)"
+            errorMessage = String(localized: "Tunnel konnte nicht geladen werden: \(error.localizedDescription)")
         }
     }
 
@@ -129,11 +129,11 @@ struct EditTunnelView: View {
     private func humanMessage(for error: TunnelRepositoryError) -> String {
         switch error {
         case .invalidWgQuickConfig(let detail):
-            return "Konfiguration ist ungültig: \(detail)"
+            return String(localized: "Konfiguration ist ungültig: \(detail)")
         case .multiPeerNotSupported:
-            return "Mehrere [Peer]-Blöcke werden noch nicht unterstützt."
+            return String(localized: "Mehrere [Peer]-Blöcke werden noch nicht unterstützt.")
         case .duplicate(let existingName):
-            return "Dieser Tunnel ist bereits vorhanden als „\(existingName)“."
+            return String(localized: "Dieser Tunnel ist bereits vorhanden als „\(existingName)“.")
         case .tunnelNotFound, .notConfiguredOnThisDevice:
             return String(describing: error)
         }

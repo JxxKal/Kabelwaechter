@@ -62,7 +62,9 @@ struct TunnelListView: View {
             HStack(spacing: KW.Space.md) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("[ KABELWÄCHTER ]").kwLabel()
-                    Text(tunnels.isEmpty ? "Keine Tunnel" : "\(tunnels.count) Tunnel · via iCloud")
+                    (tunnels.isEmpty
+                        ? Text("Keine Tunnel")
+                        : Text("\(tunnels.count) Tunnel · via iCloud"))
                         .font(KW.Font.telemTV)
                         .foregroundStyle(Color.kwTextDim)
                 }
@@ -162,7 +164,7 @@ struct TunnelListView: View {
         }
     }
 
-    private func stepRow(_ number: String, _ text: String) -> some View {
+    private func stepRow(_ number: String, _ text: LocalizedStringKey) -> some View {
         HStack(spacing: KW.Space.md) {
             Text(number)
                 .font(KW.Font.telemTV)
@@ -216,7 +218,7 @@ struct TunnelListView: View {
                     .frame(width: 12, height: 12)
                     .shadow(color: state == .idle ? .clear : state.color, radius: 6)
             }
-            Text(tunnel.name.isEmpty ? "Unbenannt" : tunnel.name)
+            (tunnel.name.isEmpty ? Text("Unbenannt") : Text(verbatim: tunnel.name))
                 .font(KW.Font.h2TV)
                 .foregroundStyle(Color.kwText)
                 .lineLimit(1)

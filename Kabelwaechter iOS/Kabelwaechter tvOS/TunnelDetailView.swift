@@ -144,37 +144,41 @@ struct TunnelDetailView: View {
                     .foregroundStyle(Color.kwError)
                     .lineLimit(2)
             }
-            HStack(spacing: KW.Space.lg) {
-                Button {
-                    Task { await toggleConnection(currentStatus: status) }
-                } label: {
-                    Text(connectLabel(for: status))
-                }
-                .buttonStyle(KWButtonStyle(
-                    tone: status == .connected ? .kwSignal : .kwCyan,
-                    filled: status == .disconnected || status == .invalid
-                ))
-                .disabled(!configured || status == .connecting || status == .disconnecting)
-                .frame(maxWidth: .infinity)
 
+            // Primär: Verbinden als „Held" über die volle Breite.
+            Button {
+                Task { await toggleConnection(currentStatus: status) }
+            } label: {
+                Text(connectLabel(for: status))
+            }
+            .buttonStyle(KWButtonStyle(
+                tone: status == .connected ? .kwSignal : .kwCyan,
+                filled: status == .disconnected || status == .invalid
+            ))
+            .disabled(!configured || status == .connecting || status == .disconnecting)
+            .frame(maxWidth: .infinity)
+
+            // Sekundär-Paar: Auto-Connect + Löschen, gleich breit nebeneinander.
+            HStack(spacing: KW.Space.lg) {
                 Button {
                     Task { await toggleAutoConnect() }
                 } label: {
-                    Text(autoConnect ? "Auto-Connect: An" : "Auto-Connect: Aus")
+                    autoConnect ? Text("Auto-Connect: An") : Text("Auto-Connect: Aus")
                 }
                 .buttonStyle(KWButtonStyle(tone: autoConnect ? .kwSignal : .kwTextDim))
                 .disabled(!configured)
-                .frame(width: 460)
-            }
+                .frame(maxWidth: .infinity)
 
-            Button(role: .destructive) {
-                confirmingDelete = true
-            } label: {
-                Text("Löschen")
+                Button(role: .destructive) {
+                    confirmingDelete = true
+                } label: {
+                    Text("Tunnel löschen")
+                }
+                .buttonStyle(KWButtonStyle(tone: .kwError))
+                .frame(maxWidth: .infinity)
             }
-            .buttonStyle(KWButtonStyle(tone: .kwError))
-            .frame(width: 280)
         }
+        .frame(maxWidth: 1000)
     }
 
     // MARK: - Logic
@@ -210,7 +214,7 @@ struct TunnelDetailView: View {
         autoConnect = env.tunnelManager.isAutoConnect(tunnelID: tunnelID)
     }
 
-    private func connectLabel(for status: NEVPNStatus) -> String {
+    private func connectLabel(for status: NEVPNStatus) -> LocalizedStringKey {
         switch status {
         case .connected:                 return "× Trennen"
         case .connecting:                return "Verbindet…"
@@ -256,9 +260,9 @@ struct TunnelDetailView: View {
 
     private static func relHandshake(_ d: Date) -> String {
         let s = max(0, Int(Date().timeIntervalSince(d)))
-        if s < 60 { return "vor \(s)s" }
-        if s < 3600 { return "vor \(s / 60)m" }
-        return "vor \(s / 3600)h"
+        if s < 60 { return String(localized: "vor \(s)s") }
+        if s < 3600 { return String(localized: "vor \(s / 60)m") }
+        return String(localized: "vor \(s / 3600)h")
     }
 
     private func reload() {

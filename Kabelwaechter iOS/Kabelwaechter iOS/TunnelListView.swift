@@ -131,7 +131,7 @@ struct TunnelListView: View {
     private var phoneTunnels: [TunnelView] { tunnels.filter { $0.target == .phone } }
     private var tvTunnels: [TunnelView] { tunnels.filter { $0.target == .appleTV } }
 
-    private func tunnelSection(_ title: String, tunnels: [TunnelView], isAppleTV: Bool) -> some View {
+    private func tunnelSection(_ title: LocalizedStringKey, tunnels: [TunnelView], isAppleTV: Bool) -> some View {
         VStack(alignment: .leading, spacing: KW.Space.sm) {
             Text(title)
                 .font(KW.Font.label)
@@ -208,7 +208,7 @@ private struct TunnelRow: View {
                     .frame(width: 10)
             }
             VStack(alignment: .leading, spacing: 4) {
-                Text(tunnel.name.isEmpty ? "Unbenannt" : tunnel.name)
+                (tunnel.name.isEmpty ? Text("Unbenannt") : Text(verbatim: tunnel.name))
                     .font(KW.Font.body.weight(.semibold))
                     .foregroundStyle(Color.kwText)
                 Text(tunnel.serverEndpoint)

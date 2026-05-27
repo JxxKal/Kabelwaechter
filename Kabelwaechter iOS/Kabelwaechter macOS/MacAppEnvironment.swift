@@ -12,9 +12,12 @@ import KabelwaechterPersistence
 final class MacAppEnvironment {
 
     let repository: any TunnelRepositoring
+    /// VPN-Steuerung über die macOS Network Extension (Milestone B).
+    let tunnelManager: TunnelManager
 
     init(repository: any TunnelRepositoring) {
         self.repository = repository
+        self.tunnelManager = TunnelManager(repository: repository)
     }
 
     /// Production: SwiftData-`ModelContainer` mit CloudKit-Private-Database
@@ -22,6 +25,8 @@ final class MacAppEnvironment {
     /// der signierte Build mit iCloud-Entitlement initialisiert CloudKit sauber.
     @MainActor
     static func makeProduction() throws -> MacAppEnvironment {
+        // Default-Gerätename = Mac-Name (editierbar), für die Tunnel-Zuweisung.
+        DeviceIdentity.resolvedName(default: Host.current().localizedName ?? "Mac")
         let container = try TunnelContainers.makeTunnelContainer(
             cloudKitContainerID: KabelwaechterConstants.iCloudContainerIdentifier
         )

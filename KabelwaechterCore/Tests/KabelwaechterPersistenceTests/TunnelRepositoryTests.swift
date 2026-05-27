@@ -227,4 +227,37 @@ struct TunnelRepositoryTests {
         let id2 = try repo.importWgQuick(Self.secondConfig, named: "Default")
         #expect(try repo.tunnel(id: id2).target == .appleTV)
     }
+
+    @Test("Geräte-Zuweisung: Import → frei, assign → Besitzer, free → frei (InMemory)")
+    func assignment_inMemory() throws {
+        try assertAssignment(repo: Self.makeInMemoryRepo())
+    }
+
+    @Test("Geräte-Zuweisung: Import → frei, assign → Besitzer, free → frei (SwiftData)")
+    func assignment_swiftData() throws {
+        try assertAssignment(repo: try Self.makeSwiftDataRepo())
+    }
+
+    private func assertAssignment(repo: any TunnelRepositoring) throws {
+        // Frisch importiert → frei (keinem Gerät zugewiesen).
+        let id = try repo.importWgQuick(Self.validConfig, named: "Frei", target: .phone)
+        #expect(try repo.tunnel(id: id).isFree)
+        #expect(try repo.tunnel(id: id).ownerDeviceID == nil)
+
+        // Zuweisen → Besitzer + Name gesetzt.
+        try repo.assign(tunnelID: id, toDeviceID: "DEV-1", named: "Mac von Jan")
+        let assigned = try repo.tunnel(id: id)
+        #expect(!assigned.isFree)
+        #expect(assigned.isOwned(by: "DEV-1"))
+        #expect(!assigned.isOwned(by: "DEV-2"))
+        #expect(assigned.ownerDeviceName == "Mac von Jan")
+
+        // Bearbeiten erhält die Zuweisung.
+        try repo.updateTunnel(id: id, name: "Frei2", wgQuickConfig: Self.validConfig)
+        #expect(try repo.tunnel(id: id).isOwned(by: "DEV-1"))
+
+        // Freigeben → wieder frei.
+        try repo.freeTunnel(id: id)
+        #expect(try repo.tunnel(id: id).isFree)
+    }
 }

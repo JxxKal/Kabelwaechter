@@ -53,6 +53,24 @@ public final class TunnelRepository: TunnelRepositoring {
         try context.save()
     }
 
+    public func assign(tunnelID id: UUID, toDeviceID deviceID: String, named deviceName: String) throws {
+        guard let stored = try fetch(id: id) else {
+            throw TunnelRepositoryError.tunnelNotFound
+        }
+        stored.ownerDeviceID = deviceID
+        stored.ownerDeviceName = deviceName
+        try context.save()
+    }
+
+    public func freeTunnel(id: UUID) throws {
+        guard let stored = try fetch(id: id) else {
+            throw TunnelRepositoryError.tunnelNotFound
+        }
+        stored.ownerDeviceID = nil
+        stored.ownerDeviceName = nil
+        try context.save()
+    }
+
     /// Sucht einen bereits vorhandenen Tunnel mit gleicher Peer-Identität
     /// (gleicher Server-PublicKey + gleiche Interface-Address-Menge).
     private func duplicate(of candidate: StoredTunnel) throws -> StoredTunnel? {
@@ -141,7 +159,9 @@ public final class TunnelRepository: TunnelRepositoring {
             isConfiguredHere: !stored.privateKey.isEmpty,
             serverEndpoint: stored.serverEndpoint,
             createdAt: stored.createdAt,
-            target: stored.target
+            target: stored.target,
+            ownerDeviceID: stored.ownerDeviceID,
+            ownerDeviceName: stored.ownerDeviceName
         )
     }
 }

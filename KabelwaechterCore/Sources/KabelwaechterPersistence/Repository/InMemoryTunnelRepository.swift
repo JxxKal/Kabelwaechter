@@ -49,6 +49,8 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         if !trimmed.isEmpty { fresh.name = trimmed }
         fresh.target = existing.target // Ziel bleibt beim Bearbeiten erhalten
+        fresh.ownerDeviceID = existing.ownerDeviceID // Geräte-Zuweisung erhalten
+        fresh.ownerDeviceName = existing.ownerDeviceName
         tunnels[id] = fresh
     }
 
@@ -57,6 +59,22 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
             throw TunnelRepositoryError.tunnelNotFound
         }
         stored.target = target
+    }
+
+    public func assign(tunnelID id: UUID, toDeviceID deviceID: String, named deviceName: String) throws {
+        guard let stored = tunnels[id] else {
+            throw TunnelRepositoryError.tunnelNotFound
+        }
+        stored.ownerDeviceID = deviceID
+        stored.ownerDeviceName = deviceName
+    }
+
+    public func freeTunnel(id: UUID) throws {
+        guard let stored = tunnels[id] else {
+            throw TunnelRepositoryError.tunnelNotFound
+        }
+        stored.ownerDeviceID = nil
+        stored.ownerDeviceName = nil
     }
 
     public func allTunnels() throws -> [TunnelView] {
@@ -91,7 +109,9 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
             isConfiguredHere: !stored.privateKey.isEmpty,
             serverEndpoint: stored.serverEndpoint,
             createdAt: stored.createdAt,
-            target: stored.target
+            target: stored.target,
+            ownerDeviceID: stored.ownerDeviceID,
+            ownerDeviceName: stored.ownerDeviceName
         )
     }
 }

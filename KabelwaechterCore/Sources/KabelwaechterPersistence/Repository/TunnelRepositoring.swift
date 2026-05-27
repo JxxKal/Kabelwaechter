@@ -17,16 +17,32 @@ public struct TunnelView: Equatable, Sendable {
     public let serverEndpoint: String
     public let createdAt: Date
     /// Zielgerät — steuert Gruppierung (iOS) und ob die TV ihn verbindet.
+    /// (Altes {phone,appleTV}-Modell; bleibt für Migration/Bestand bestehen.)
     public let target: TunnelTarget
 
-    public init(id: UUID, name: String, isConfiguredHere: Bool, serverEndpoint: String, createdAt: Date, target: TunnelTarget) {
+    /// Besitzer-Gerät (Phase 7 / Milestone C). `nil` = frei/nicht zugewiesen.
+    public let ownerDeviceID: String?
+    /// Anzeigename des Besitzer-Geräts (für die Section-Überschrift auf anderen
+    /// Geräten).
+    public let ownerDeviceName: String?
+
+    public init(id: UUID, name: String, isConfiguredHere: Bool, serverEndpoint: String, createdAt: Date, target: TunnelTarget, ownerDeviceID: String? = nil, ownerDeviceName: String? = nil) {
         self.id = id
         self.name = name
         self.isConfiguredHere = isConfiguredHere
         self.serverEndpoint = serverEndpoint
         self.createdAt = createdAt
         self.target = target
+        self.ownerDeviceID = ownerDeviceID
+        self.ownerDeviceName = ownerDeviceName
     }
+
+    /// `true`, wenn der Tunnel keinem Gerät zugewiesen ist (frei).
+    public var isFree: Bool { ownerDeviceID == nil }
+
+    /// `true`, wenn der Tunnel dem Gerät mit `deviceID` gehört (→ „Meine Tunnel",
+    /// verbindbar).
+    public func isOwned(by deviceID: String) -> Bool { ownerDeviceID == deviceID }
 }
 
 /// Fehler, die `TunnelRepositoring`-Operationen produzieren können.
@@ -64,6 +80,16 @@ public protocol TunnelRepositoring {
 
     /// Setzt das Zielgerät eines Tunnels („Auf Apple TV verschieben" / zurück).
     func setTarget(_ target: TunnelTarget, forTunnelID id: UUID) throws
+
+    /// Weist einen Tunnel einem Gerät zu („Auf diesem Gerät verwenden"). Der
+    /// `ownerDeviceName` wird denormalisiert mitgespeichert (Section-Überschrift
+    /// auf anderen Geräten). Erst nach Zuweisung an das eigene Gerät dürfen
+    /// Verbinden/Auto-Connect aktiviert werden.
+    func assign(tunnelID id: UUID, toDeviceID deviceID: String, named deviceName: String) throws
+
+    /// Gibt einen Tunnel frei (Besitzer entfernen) → erscheint wieder als „frei"
+    /// und kann von einem anderen Gerät beansprucht werden.
+    func freeTunnel(id: UUID) throws
 
     /// Aktualisiert einen bestehenden Tunnel (gleiche ID, damit CloudKit es als
     /// Änderung synct statt als neuen Record): überschreibt Name + alle Felder

@@ -90,6 +90,21 @@ public final class StoredTunnel {
         set { targetRaw = newValue.rawValue }
     }
 
+    // MARK: Geräte-Zuweisung (Phase 7 / Milestone C)
+
+    /// Welches Gerät den Tunnel „verwendet" (verbindet). `nil` = **frei**/nicht
+    /// zugewiesen (z.B. frisch via iCloud importiert) → jedes Gerät kann ihn
+    /// sich selbst zuordnen („Auf diesem Gerät verwenden"). Auf dem Besitzer-
+    /// Gerät steht er unter „Meine Tunnel" (verbindbar), auf anderen Geräten in
+    /// einer Section mit `ownerDeviceName`. Additiv zum alten `target`-Modell
+    /// ({phone,appleTV}), das vorerst für die Migration bestehen bleibt.
+    public var ownerDeviceID: String?
+
+    /// Anzeigename des Besitzer-Geräts — denormalisiert mitgesynct, damit jedes
+    /// Gerät die Section-Überschrift rendern kann, ohne ein Geräte-Register zu
+    /// syncen.
+    public var ownerDeviceName: String?
+
     public init(
         id: UUID = UUID(),
         name: String = "",
@@ -104,7 +119,9 @@ public final class StoredTunnel {
         presharedKey: Data? = nil,
         persistentKeepalive: Int? = nil,
         createdAt: Date = Date(),
-        target: TunnelTarget = .appleTV
+        target: TunnelTarget = .appleTV,
+        ownerDeviceID: String? = nil,
+        ownerDeviceName: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -120,5 +137,7 @@ public final class StoredTunnel {
         self.persistentKeepalive = persistentKeepalive
         self.createdAt = createdAt
         self.targetRaw = target.rawValue
+        self.ownerDeviceID = ownerDeviceID
+        self.ownerDeviceName = ownerDeviceName
     }
 }

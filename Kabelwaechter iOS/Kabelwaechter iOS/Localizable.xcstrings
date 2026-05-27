@@ -13,7 +13,7 @@
       "extractionState" : "manual",
       "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "This tunnel isn't assigned to any device." } } }
     },
-    "Für die Apple TV vorgesehen." : {
+    "Für das Apple TV vorgesehen." : {
       "extractionState" : "manual",
       "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Intended for the Apple TV." } } }
     },

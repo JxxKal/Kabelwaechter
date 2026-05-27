@@ -261,7 +261,7 @@ struct TunnelDetailView: View {
                 Text("In Verwendung auf \(owner).")
                     .font(KW.Font.bodySm).foregroundStyle(Color.kwTextDim)
             } else if tunnel?.target == .appleTV {
-                Text("Für die Apple TV vorgesehen.")
+                Text("Für das Apple TV vorgesehen.")
                     .font(KW.Font.bodySm).foregroundStyle(Color.kwTextDim)
             } else {
                 Text("Dieser Tunnel ist keinem Gerät zugewiesen.")

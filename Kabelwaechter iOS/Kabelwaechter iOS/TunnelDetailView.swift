@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import NetworkExtension
 import KabelwaechterCore
 import KabelwaechterPersistence
@@ -31,8 +32,10 @@ struct TunnelDetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: KW.Space.lg) {
                     header
-                    if tunnel?.target == .phone, tunnel?.isConfiguredHere == true {
+                    if isOwnedHere {
                         connectControl
+                    } else {
+                        claimControl
                     }
                     moveButton
                     if let fullConfig {
@@ -247,16 +250,42 @@ struct TunnelDetailView: View {
         autoConnect = env.tunnelManager.isAutoConnect(tunnelID: tunnelID)
     }
 
-    private var moveButton: some View {
-        let toTV = (tunnel?.target ?? .appleTV) == .phone
-        let title: LocalizedStringKey = toTV ? "Auf Apple TV verschieben" : "Auf iPhone zurückholen"
-        return Button {
-            toggleTarget()
-        } label: {
-            Label(title, systemImage: toTV ? "tv" : "iphone")
-                .frame(maxWidth: .infinity)
+    private var isOwnedHere: Bool { tunnel?.ownerDeviceID == DeviceIdentity.id }
+
+    /// Wenn der Tunnel nicht diesem iPhone gehört: Status + „Auf diesem Gerät
+    /// verwenden" (beanspruchen → dann verbindbar).
+    private var claimControl: some View {
+        VStack(alignment: .leading, spacing: KW.Space.sm) {
+            if !(tunnel?.isFree ?? true), let owner = tunnel?.ownerDeviceName {
+                Text("In Verwendung auf \(owner).")
+                    .font(KW.Font.bodySm).foregroundStyle(Color.kwTextDim)
+            } else if tunnel?.target == .appleTV {
+                Text("Für die Apple TV vorgesehen.")
+                    .font(KW.Font.bodySm).foregroundStyle(Color.kwTextDim)
+            } else {
+                Text("Dieser Tunnel ist keinem Gerät zugewiesen.")
+                    .font(KW.Font.bodySm).foregroundStyle(Color.kwTextDim)
+            }
+            Button { claim() } label: {
+                Text("Auf diesem Gerät verwenden").frame(maxWidth: .infinity)
+            }
+            .buttonStyle(KWButtonStyle(tone: .kwCyan, filled: true))
         }
-        .buttonStyle(KWButtonStyle(tone: .kwCyan, filled: true))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .kwPanel()
+    }
+
+    @ViewBuilder
+    private var moveButton: some View {
+        if tunnel?.target != .appleTV {
+            Button {
+                moveToAppleTV()
+            } label: {
+                Label("Auf Apple TV verschieben", systemImage: "tv")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(KWButtonStyle(tone: .kwCyan))
+        }
     }
 
     private var deleteButton: some View {
@@ -268,11 +297,23 @@ struct TunnelDetailView: View {
         .buttonStyle(KWButtonStyle(tone: .kwError))
     }
 
-    private func toggleTarget() {
-        guard let current = tunnel?.target else { return }
-        let newTarget: TunnelTarget = current == .phone ? .appleTV : .phone
+    /// Diesem iPhone zuordnen (beanspruchen) → wird „Meine Tunnel" + verbindbar.
+    private func claim() {
+        let name = DeviceIdentity.resolvedName(default: UIDevice.current.name)
         do {
-            try env.repository.setTarget(newTarget, forTunnelID: tunnelID)
+            try env.repository.assign(tunnelID: tunnelID, toDeviceID: DeviceIdentity.id, named: name)
+            reload()
+        } catch {
+            loadError = String(describing: error)
+        }
+    }
+
+    /// An die Apple TV schicken: vom iPhone lösen + Legacy-Ziel `appleTV` setzen.
+    private func moveToAppleTV() {
+        Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
+        do {
+            try env.repository.freeTunnel(id: tunnelID)
+            try env.repository.setTarget(.appleTV, forTunnelID: tunnelID)
             reload()
         } catch {
             loadError = String(describing: error)

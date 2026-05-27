@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 import Observation
 import KabelwaechterCore
 import KabelwaechterPersistence
@@ -43,7 +44,27 @@ final class CompanionAppEnvironment {
             cloudKitContainerID: cloudKitContainerIDIfAvailable
         )
         let repo = TunnelRepository(container: container)
+        migratePhoneTunnelsIfNeeded(repo)
         return CompanionAppEnvironment(repository: repo)
+    }
+
+    /// Einmalige Migration aufs Besitzer-Modell (Phase 7 / C.3): bestehende
+    /// `phone`-Tunnel ohne Besitzer werden diesem iPhone zugeordnet, damit sie
+    /// „Meine Tunnel" bleiben. `appleTV`-Tunnel bleiben unangetastet (die Apple
+    /// TV beansprucht sie selbst).
+    @MainActor
+    private static func migratePhoneTunnelsIfNeeded(_ repo: TunnelRepository) {
+        let key = "kw.ios.ownerMigrationV1"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        let name = DeviceIdentity.resolvedName(default: UIDevice.current.name)
+        do {
+            for t in try repo.allTunnels() where t.target == .phone && t.isFree {
+                try repo.assign(tunnelID: t.id, toDeviceID: DeviceIdentity.id, named: name)
+            }
+            UserDefaults.standard.set(true, forKey: key)
+        } catch {
+            // best-effort; beim nächsten Start erneut versucht.
+        }
     }
 
     /// Liefert die iCloud-Container-ID nur dann, wenn CloudKit auf diesem

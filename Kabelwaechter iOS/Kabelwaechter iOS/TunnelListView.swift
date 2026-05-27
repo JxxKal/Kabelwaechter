@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 import CoreData
 import NetworkExtension
+import KabelwaechterCore
 import KabelwaechterPersistence
 import KabelwaechterUI
 
@@ -112,7 +113,7 @@ struct TunnelListView: View {
     /// die eigenen (phone) Tunnel, die das iPhone selbst aufbaut.
     private var heroState: KWConnectionState {
         var connecting = false
-        for t in tunnels where t.target == .phone {
+        for t in tunnels where t.isOwned(by: DeviceIdentity.id) {
             switch connectionState(for: t.id) {
             case .connected: return .connected
             case .connecting: connecting = true
@@ -175,40 +176,58 @@ struct TunnelListView: View {
             emptyState
         } else {
             VStack(alignment: .leading, spacing: KW.Space.xl) {
-                if !phoneTunnels.isEmpty {
-                    tunnelSection("MEINE TUNNEL · \(phoneTunnels.count)", tunnels: phoneTunnels, isAppleTV: false)
+                if !myTunnels.isEmpty {
+                    tunnelSection(String(localized: "MEINE TUNNEL · \(myTunnels.count)"), tunnels: myTunnels, mine: true, icon: "iphone")
                 }
-                if !tvTunnels.isEmpty {
-                    tunnelSection("APPLE TV · \(tvTunnels.count)", tunnels: tvTunnels, isAppleTV: true)
+                if !freeTunnels.isEmpty {
+                    tunnelSection(String(localized: "FREI · \(freeTunnels.count)"), tunnels: freeTunnels, mine: false, icon: "tray")
+                }
+                if !appleTVTunnels.isEmpty {
+                    tunnelSection("APPLE TV · \(appleTVTunnels.count)", tunnels: appleTVTunnels, mine: false, icon: "tv")
+                }
+                ForEach(otherGroups, id: \.id) { group in
+                    tunnelSection(group.name, tunnels: group.tunnels, mine: false, icon: "desktopcomputer")
                 }
             }
             .padding(.top, KW.Space.sm)
         }
     }
 
-    private var phoneTunnels: [TunnelView] { tunnels.filter { $0.target == .phone } }
-    private var tvTunnels: [TunnelView] { tunnels.filter { $0.target == .appleTV } }
+    private var myTunnels: [TunnelView] { tunnels.filter { $0.isOwned(by: DeviceIdentity.id) } }
+    private var freeTunnels: [TunnelView] {
+        tunnels.filter { $0.isFree && $0.target != .appleTV && !$0.isOwned(by: DeviceIdentity.id) }
+    }
+    // Übergangs-Brücke: Legacy-Ziel appleTV (bis tvOS aufs Besitzer-Modell umgestellt ist).
+    private var appleTVTunnels: [TunnelView] {
+        tunnels.filter { $0.target == .appleTV && !$0.isOwned(by: DeviceIdentity.id) }
+    }
+    private var otherGroups: [(id: String, name: String, tunnels: [TunnelView])] {
+        let others = tunnels.filter { !$0.isFree && !$0.isOwned(by: DeviceIdentity.id) && $0.target != .appleTV }
+        return Dictionary(grouping: others) { $0.ownerDeviceID ?? "" }
+            .map { (id, ts) in (id, ts.first?.ownerDeviceName ?? "Anderes Gerät", ts.sorted { $0.createdAt < $1.createdAt }) }
+            .sorted { $0.1 < $1.1 }
+    }
 
-    private func tunnelSection(_ title: LocalizedStringKey, tunnels: [TunnelView], isAppleTV: Bool) -> some View {
+    private func tunnelSection(_ title: String, tunnels: [TunnelView], mine: Bool, icon: String) -> some View {
         VStack(alignment: .leading, spacing: KW.Space.sm) {
-            Text(title)
+            Text(verbatim: title)
                 .font(KW.Font.label)
                 .tracking(2)
-                .foregroundStyle(isAppleTV ? Color.kwCyan : Color.kwTextFaint)
+                .foregroundStyle(mine ? Color.kwTextFaint : Color.kwCyan)
             ForEach(tunnels, id: \.id) { tunnel in
-                rowLink(tunnel, isAppleTV: isAppleTV)
+                rowLink(tunnel, mine: mine, icon: icon)
             }
         }
     }
 
-    /// Zeilen-Aktion je nach Idiom: iPhone pusht (NavigationLink), iPad selektiert
-    /// (setzt `selectedTunnelID` → Detail-Spalte).
+    /// Zeilen-Aktion je nach Idiom: iPhone pusht (NavigationLink), iPad selektiert.
     @ViewBuilder
-    private func rowLink(_ tunnel: TunnelView, isAppleTV: Bool) -> some View {
+    private func rowLink(_ tunnel: TunnelView, mine: Bool, icon: String) -> some View {
         let row = TunnelRow(
             tunnel: tunnel,
-            isAppleTV: isAppleTV,
-            state: isAppleTV ? .idle : connectionState(for: tunnel.id),
+            mine: mine,
+            icon: icon,
+            state: mine ? connectionState(for: tunnel.id) : .idle,
             selected: isPad && selectedTunnelID == tunnel.id
         )
         if isPad {
@@ -245,7 +264,7 @@ struct TunnelListView: View {
                     selectedTunnelID = nil
                 }
                 if selectedTunnelID == nil {
-                    selectedTunnelID = tunnels.first(where: { $0.target == .phone })?.id ?? tunnels.first?.id
+                    selectedTunnelID = myTunnels.first?.id ?? tunnels.first?.id
                 }
             }
         } catch {
@@ -257,7 +276,8 @@ struct TunnelListView: View {
 /// Listenzeile für einen Tunnel — Navy-Panel, Hairline, Status-Dot, Chevron.
 private struct TunnelRow: View {
     let tunnel: TunnelView
-    var isAppleTV: Bool = false
+    var mine: Bool = false
+    var icon: String = "tv"
     var state: KWConnectionState = .idle
     var selected: Bool = false
 
@@ -273,18 +293,18 @@ private struct TunnelRow: View {
 
     var body: some View {
         HStack(spacing: KW.Space.md) {
-            // Apple-TV-Tunnel: tv-Symbol (für die TV, hier nicht verbindbar).
-            // Eigene Tunnel: Status-Punkt (grün, wenn auf dem iPhone verbunden).
-            if isAppleTV {
-                Image(systemName: "tv")
-                    .font(.system(size: 13))
-                    .foregroundStyle(Color.kwCyan)
-                    .frame(width: 10)
-            } else {
+            // Eigene Tunnel: Status-Punkt (grün, wenn verbunden). Andere
+            // (frei / Apple TV / anderes Gerät): neutrales Symbol, nicht verbindbar hier.
+            if mine {
                 Circle()
                     .fill(dotColor)
                     .frame(width: 8, height: 8)
                     .shadow(color: state == .connected ? Color.kwSignal : .clear, radius: 4)
+                    .frame(width: 10)
+            } else {
+                Image(systemName: icon)
+                    .font(.system(size: 13))
+                    .foregroundStyle(Color.kwCyan)
                     .frame(width: 10)
             }
             VStack(alignment: .leading, spacing: 4) {

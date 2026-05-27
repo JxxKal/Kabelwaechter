@@ -1,6 +1,26 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
+    "Auf diesem Gerät verwenden" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Use on this device" } } }
+    },
+    "Dieser Tunnel ist keinem Gerät zugewiesen." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "This tunnel isn't assigned to any device." } } }
+    },
+    "Für die Apple TV vorgesehen." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Intended for the Apple TV." } } }
+    },
+    "In Verwendung auf %@." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "In use on %@." } } }
+    },
+    "FREI · %lld" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "FREE · %lld" } } }
+    },
     "[ KEIN TUNNEL GEWÄHLT ]" : {
       "extractionState" : "manual",
       "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "[ NO TUNNEL SELECTED ]" } } }

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import CoreData
 import NetworkExtension
 import KabelwaechterPersistence
@@ -7,6 +8,11 @@ import KabelwaechterUI
 /// Hauptansicht der Companion-App im „Centered Hub"-Design (Variant A).
 /// Zwei Sektionen: eigene (phone) Tunnel — seit der iOS-NE hier verbindbar —
 /// und (separiert) die Apple-TV-Tunnel.
+///
+/// Layout adaptiv (Phase 6): iPhone behält den `NavigationStack` (Push-Detail),
+/// das iPad bekommt ein `NavigationSplitView` (Sidebar + Detail-Spalte). Die
+/// Liste/Header/Sektionen (`listSurface`) sind geteilt — nur der Container und
+/// die Zeilen-Aktion (Push vs. Selektion) unterscheiden sich je nach Idiom.
 struct TunnelListView: View {
 
     @Environment(CompanionAppEnvironment.self) private var env
@@ -14,31 +20,13 @@ struct TunnelListView: View {
     @State private var tunnels: [TunnelView] = []
     @State private var loadError: String?
     @State private var showingAddSheet = false
+    @State private var selectedTunnelID: UUID?
+
+    private var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
 
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .top) {
-                // Grid-Hintergrund; Ringe nur, wenn ein phone-Tunnel verbunden ist.
-                CyberBackdrop(showScan: false) {
-                    TunnelViz(state: heroState, intensity: 0.7)
-                }
-                .ignoresSafeArea()
-
-                ScrollView {
-                    VStack(alignment: .leading, spacing: KW.Space.lg) {
-                        header
-                        content
-                    }
-                    .padding(KW.Space.lg)
-                }
-            }
-            .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(for: UUID.self) { id in
-                TunnelDetailView(tunnelID: id)
-            }
-            .sheet(isPresented: $showingAddSheet, onDismiss: reload) {
-                AddTunnelView()
-            }
+        Group {
+            if isPad { splitLayout } else { stackLayout }
         }
         .preferredColorScheme(.dark)
         .task {
@@ -47,6 +35,76 @@ struct TunnelListView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
             reload()
+        }
+        .sheet(isPresented: $showingAddSheet, onDismiss: reload) {
+            AddTunnelView()
+        }
+    }
+
+    // MARK: - Layouts
+
+    /// iPhone: unverändertes Push-Verhalten.
+    private var stackLayout: some View {
+        NavigationStack {
+            listSurface
+                .navigationDestination(for: UUID.self) { id in
+                    TunnelDetailView(tunnelID: id)
+                }
+        }
+    }
+
+    /// iPad: Sidebar (Liste) + Detail-Spalte (selektionsbasiert).
+    private var splitLayout: some View {
+        NavigationSplitView {
+            listSurface
+                .navigationSplitViewColumnWidth(min: 340, ideal: 400, max: 520)
+        } detail: {
+            NavigationStack {
+                if let id = selectedTunnelID {
+                    TunnelDetailView(tunnelID: id).id(id)
+                } else {
+                    detailPlaceholder
+                }
+            }
+        }
+        .navigationSplitViewStyle(.balanced)
+    }
+
+    /// Geteilte Listenfläche: Cyber-Backdrop + scrollbarer Header/Inhalt.
+    private var listSurface: some View {
+        ZStack(alignment: .top) {
+            // Grid-Hintergrund; Ringe nur, wenn ein phone-Tunnel verbunden ist.
+            CyberBackdrop(showScan: false) {
+                TunnelViz(state: heroState, intensity: 0.7)
+            }
+            .ignoresSafeArea()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: KW.Space.lg) {
+                    header
+                    content
+                }
+                .padding(KW.Space.lg)
+            }
+        }
+        .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private var detailPlaceholder: some View {
+        ZStack {
+            CyberBackdrop(showScan: false) {
+                TunnelViz(state: heroState, intensity: 0.5)
+            }
+            .ignoresSafeArea()
+            VStack(spacing: KW.Space.md) {
+                Text("[ KEIN TUNNEL GEWÄHLT ]")
+                    .font(KW.Font.label)
+                    .tracking(2)
+                    .foregroundStyle(Color.kwCyan)
+                Text("Wähle links einen Tunnel.")
+                    .font(KW.Font.body)
+                    .foregroundStyle(Color.kwTextDim)
+            }
         }
     }
 
@@ -138,15 +196,27 @@ struct TunnelListView: View {
                 .tracking(2)
                 .foregroundStyle(isAppleTV ? Color.kwCyan : Color.kwTextFaint)
             ForEach(tunnels, id: \.id) { tunnel in
-                NavigationLink(value: tunnel.id) {
-                    TunnelRow(
-                        tunnel: tunnel,
-                        isAppleTV: isAppleTV,
-                        state: isAppleTV ? .idle : connectionState(for: tunnel.id)
-                    )
-                }
-                .buttonStyle(.plain)
+                rowLink(tunnel, isAppleTV: isAppleTV)
             }
+        }
+    }
+
+    /// Zeilen-Aktion je nach Idiom: iPhone pusht (NavigationLink), iPad selektiert
+    /// (setzt `selectedTunnelID` → Detail-Spalte).
+    @ViewBuilder
+    private func rowLink(_ tunnel: TunnelView, isAppleTV: Bool) -> some View {
+        let row = TunnelRow(
+            tunnel: tunnel,
+            isAppleTV: isAppleTV,
+            state: isAppleTV ? .idle : connectionState(for: tunnel.id),
+            selected: isPad && selectedTunnelID == tunnel.id
+        )
+        if isPad {
+            Button { selectedTunnelID = tunnel.id } label: { row }
+                .buttonStyle(.plain)
+        } else {
+            NavigationLink(value: tunnel.id) { row }
+                .buttonStyle(.plain)
         }
     }
 
@@ -169,6 +239,15 @@ struct TunnelListView: View {
         do {
             tunnels = try env.repository.allTunnels().sorted { $0.createdAt < $1.createdAt }
             loadError = nil
+            // Auf dem iPad eine sinnvolle Vorauswahl/Bereinigung der Detail-Spalte.
+            if isPad {
+                if let sel = selectedTunnelID, !tunnels.contains(where: { $0.id == sel }) {
+                    selectedTunnelID = nil
+                }
+                if selectedTunnelID == nil {
+                    selectedTunnelID = tunnels.first(where: { $0.target == .phone })?.id ?? tunnels.first?.id
+                }
+            }
         } catch {
             loadError = String(describing: error)
         }
@@ -180,6 +259,7 @@ private struct TunnelRow: View {
     let tunnel: TunnelView
     var isAppleTV: Bool = false
     var state: KWConnectionState = .idle
+    var selected: Bool = false
 
     /// Punktfarbe eigener (phone) Tunnel: grün = verbunden, amber = verbindet,
     /// sonst Cyan (vorhanden/verbindbar). Signal-Grün nur bei echter Aktivität.
@@ -224,8 +304,8 @@ private struct TunnelRow: View {
         }
         .padding(KW.Space.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.kwBg2.opacity(0.7))
-        .overlay(Rectangle().stroke(Color.kwLineDim, lineWidth: KW.Border.hairline))
+        .background((selected ? Color.kwCyan.opacity(0.12) : Color.kwBg2.opacity(0.7)))
+        .overlay(Rectangle().stroke(selected ? Color.kwCyan : Color.kwLineDim, lineWidth: selected ? 2 : KW.Border.hairline))
     }
 }
 

@@ -1,6 +1,14 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
+    "[ KEIN TUNNEL GEWÄHLT ]" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "[ NO TUNNEL SELECTED ]" } } }
+    },
+    "Wähle links einen Tunnel." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Select a tunnel on the left." } } }
+    },
     "Dieser Tunnel ist bereits vorhanden als „%@“." : {
       "extractionState" : "manual",
       "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "This tunnel already exists as “%@”." } } }

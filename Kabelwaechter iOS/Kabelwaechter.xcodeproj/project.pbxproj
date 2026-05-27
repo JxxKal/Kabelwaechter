@@ -13,6 +13,7 @@
 		1D54793D6602D9CF46DAEDF8 /* KabelwaechterNEmac.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E0A3F98137305B788A924CEB /* KabelwaechterNEmac.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
 		268CCAB5921204AA273E9E06 /* TunnelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FB3C7335736BB52683446F /* TunnelManager.swift */; };
 		3540D07C073EBAAD7E1DD2D6 /* MacAppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3404CDE8E1FA7BC9F4CE6D79 /* MacAppEnvironment.swift */; };
+		5B363045221AD827F32CD766 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EF212CC22E116530E05786E /* Assets.xcassets */; };
 		61DA437074077E062565AA8F /* WireGuardKit in Frameworks */ = {isa = PBXBuildFile; productRef = B114031E7879A91B1D32DF9D /* WireGuardKit */; };
 		64B0FE015ED20F3B34D97847 /* KabelwaechterUI in Frameworks */ = {isa = PBXBuildFile; productRef = C13E77571A0B803CCDE9F059 /* KabelwaechterUI */; };
 		7446294C0C01C566E40B2BCE /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70CCF3AE35C48BEA85E589B /* PacketTunnelProvider.swift */; };
@@ -140,6 +141,7 @@
 		4FE81CDDAB68A94A676E0F40 /* CoreToWireGuardKit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreToWireGuardKit.swift; sourceTree = "<group>"; };
 		674B3A1FC81BE8377CB99C54 /* MacContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacContentView.swift; sourceTree = "<group>"; };
 		67D5D3E2958534CACA44D4BA /* KabelwaechterNEiOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KabelwaechterNEiOS.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EF212CC22E116530E05786E /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		70B4E8217B71CD969C7CF4BD /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/NetworkExtension.framework; sourceTree = DEVELOPER_DIR; };
 		73EB77D930AA2E29F608FFC0 /* KabelwaechterNEmac.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = KabelwaechterNEmac.entitlements; sourceTree = "<group>"; };
 		8939DEC6DEE360F516AFD4D1 /* Kabelwaechter_macOS.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = Kabelwaechter_macOS.entitlements; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 				674B3A1FC81BE8377CB99C54 /* MacContentView.swift */,
 				8939DEC6DEE360F516AFD4D1 /* Kabelwaechter_macOS.entitlements */,
 				41FB3C7335736BB52683446F /* TunnelManager.swift */,
+				6EF212CC22E116530E05786E /* Assets.xcassets */,
 			);
 			name = "Kabelwaechter macOS";
 			path = "Kabelwaechter macOS";
@@ -745,6 +748,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B363045221AD827F32CD766 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1088,7 +1092,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = KBLW;
+				INFOPLIST_KEY_CFBundleDisplayName = "Kabelwächter";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1097,7 +1101,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.mac;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Kabelwaechter;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1118,7 +1122,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = KBLW;
+				INFOPLIST_KEY_CFBundleDisplayName = "Kabelwächter";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1127,7 +1131,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.mac;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Kabelwaechter;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;

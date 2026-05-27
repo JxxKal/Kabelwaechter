@@ -51,12 +51,14 @@ struct MacContentView: View {
                 if !freeTunnels.isEmpty {
                     Section("Frei") { ForEach(freeTunnels, id: \.id, content: row) }
                 }
+                if !appleTVTunnels.isEmpty {
+                    Section("Apple TV") { ForEach(appleTVTunnels, id: \.id, content: row) }
+                }
                 ForEach(otherGroups, id: \.id) { group in
                     Section(group.name) { ForEach(group.tunnels, id: \.id, content: row) }
                 }
             }
         }
-        .navigationTitle("Kabelwächter")
     }
 
     private func row(_ tunnel: TunnelView) -> some View {
@@ -79,9 +81,16 @@ struct MacContentView: View {
     }
 
     private var myTunnels: [TunnelView] { tunnels.filter { $0.isOwned(by: DeviceIdentity.id) } }
-    private var freeTunnels: [TunnelView] { tunnels.filter { $0.isFree } }
+    // „Frei" = keinem Gerät zugewiesen und nicht (legacy) für die Apple TV markiert.
+    private var freeTunnels: [TunnelView] {
+        tunnels.filter { $0.isFree && $0.target != .appleTV && !$0.isOwned(by: DeviceIdentity.id) }
+    }
+    // Übergangs-Brücke: Legacy-Ziel `appleTV`, bis tvOS aufs Besitzer-Modell umgestellt ist (C.2).
+    private var appleTVTunnels: [TunnelView] {
+        tunnels.filter { $0.target == .appleTV && !$0.isOwned(by: DeviceIdentity.id) }
+    }
     private var otherGroups: [(id: String, name: String, tunnels: [TunnelView])] {
-        let others = tunnels.filter { !$0.isFree && !$0.isOwned(by: DeviceIdentity.id) }
+        let others = tunnels.filter { !$0.isFree && !$0.isOwned(by: DeviceIdentity.id) && $0.target != .appleTV }
         return Dictionary(grouping: others) { $0.ownerDeviceID ?? "" }
             .map { (id, ts) in (id, ts.first?.ownerDeviceName ?? "Anderes Gerät", ts.sorted { $0.createdAt < $1.createdAt }) }
             .sorted { $0.1 < $1.1 }
@@ -130,28 +139,66 @@ private struct TunnelDetailPane: View {
     @State private var connectError: String?
     @State private var autoConnect = false
     @State private var stats: TunnelManager.TunnelStats?
+    @State private var confirmingDelete = false
 
     private var isMine: Bool { tunnel?.ownerDeviceID == DeviceIdentity.id }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: KW.Space.lg) {
-                header
-                ownershipControl
-                if let config { configView(config) }
-                else if tunnel?.isConfiguredHere == false {
-                    Text("iCloud-Sync läuft – die vollständige Konfiguration ist noch nicht angekommen.")
-                        .font(KW.Font.bodySm).foregroundStyle(Color.kwTextDim)
-                }
-                Spacer(minLength: 0)
+        ZStack {
+            CyberBackdrop(showScan: false) {
+                TunnelViz(state: vizState, intensity: isMine ? 0.8 : 0.4)
             }
-            .padding(KW.Space.gutter)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .ignoresSafeArea()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: KW.Space.lg) {
+                    header
+                    ownershipControl
+                    commonActions
+                    if let config { configView(config) }
+                    else if tunnel?.isConfiguredHere == false {
+                        Text("iCloud-Sync läuft – die vollständige Konfiguration ist noch nicht angekommen.")
+                            .font(KW.Font.bodySm).foregroundStyle(Color.kwTextDim)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(KW.Space.gutter)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
-        .background(Color.kwBg0)
         .task { load() }
         .task(id: env.tunnelManager.status(forTunnelID: tunnelID)) {
             await pollStats()
+        }
+        .alert("Tunnel löschen?", isPresented: $confirmingDelete) {
+            Button("Löschen", role: .destructive) { deleteTunnel() }
+            Button("Abbrechen", role: .cancel) {}
+        } message: {
+            Text("Wird auf allen iCloud-Geräten entfernt.")
+        }
+    }
+
+    /// Hintergrund-Viz-Zustand: nur „aktiv", wenn dieser Mac den Tunnel besitzt.
+    private var vizState: KWConnectionState {
+        guard isMine else { return .idle }
+        switch env.tunnelManager.status(forTunnelID: tunnelID) {
+        case .connected: return .connected
+        case .connecting, .reasserting: return .connecting
+        default: return .idle
+        }
+    }
+
+    /// Aktionen, die für jeden Tunnel gelten: an die Apple TV schicken (Legacy-
+    /// Brücke) und komplett löschen.
+    @ViewBuilder
+    private var commonActions: some View {
+        HStack(spacing: KW.Space.md) {
+            if tunnel?.target != .appleTV {
+                Button("Auf Apple TV verschieben") { moveToAppleTV() }
+                    .buttonStyle(.bordered)
+            }
+            Button("Tunnel löschen", role: .destructive) { confirmingDelete = true }
+                .buttonStyle(.bordered)
         }
     }
 
@@ -275,6 +322,23 @@ private struct TunnelDetailPane: View {
     private func free() {
         Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
         do { try env.repository.freeTunnel(id: tunnelID); load(); onChange() }
+        catch { connectError = String(describing: error) }
+    }
+
+    /// An die Apple TV schicken: vom Mac lösen + Legacy-Ziel `appleTV` setzen,
+    /// damit die (noch nicht aufs Besitzer-Modell umgestellte) tvOS-App ihn zeigt.
+    private func moveToAppleTV() {
+        Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
+        do {
+            try env.repository.freeTunnel(id: tunnelID)
+            try env.repository.setTarget(.appleTV, forTunnelID: tunnelID)
+            load(); onChange()
+        } catch { connectError = String(describing: error) }
+    }
+
+    private func deleteTunnel() {
+        Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
+        do { try env.repository.deleteTunnel(id: tunnelID); onChange() }
         catch { connectError = String(describing: error) }
     }
 

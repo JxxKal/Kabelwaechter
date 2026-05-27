@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B2C4946694D23C3F7CB3B230"
-               BuildableName = "Kabelwaechter macOS.app"
+               BuildableName = "Kabelwaechter.app"
                BlueprintName = "Kabelwaechter macOS"
                ReferencedContainer = "container:Kabelwaechter.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B2C4946694D23C3F7CB3B230"
-            BuildableName = "Kabelwaechter macOS.app"
+            BuildableName = "Kabelwaechter.app"
             BlueprintName = "Kabelwaechter macOS"
             ReferencedContainer = "container:Kabelwaechter.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B2C4946694D23C3F7CB3B230"
-            BuildableName = "Kabelwaechter macOS.app"
+            BuildableName = "Kabelwaechter.app"
             BlueprintName = "Kabelwaechter macOS"
             ReferencedContainer = "container:Kabelwaechter.xcodeproj">
          </BuildableReference>

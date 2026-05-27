@@ -22,6 +22,8 @@ struct TunnelListView: View {
     @State private var loadError: String?
     @State private var showingAddSheet = false
     @State private var selectedTunnelID: UUID?
+    @State private var showOnboarding = !DeviceIdentity.isNameConfirmed
+    @State private var showDeviceSettings = false
 
     private var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
 
@@ -39,6 +41,12 @@ struct TunnelListView: View {
         }
         .sheet(isPresented: $showingAddSheet, onDismiss: reload) {
             AddTunnelView()
+        }
+        .sheet(isPresented: $showOnboarding) {
+            DeviceNameSheet(isOnboarding: true, onDone: reload).environment(env)
+        }
+        .sheet(isPresented: $showDeviceSettings) {
+            DeviceNameSheet(isOnboarding: false, onDone: reload).environment(env)
         }
     }
 
@@ -142,6 +150,16 @@ struct TunnelListView: View {
                     .foregroundStyle(Color.kwText)
             }
             Spacer()
+            Button {
+                showDeviceSettings = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Color.kwTextDim)
+                    .frame(width: 40, height: 40)
+                    .overlay(Rectangle().stroke(Color.kwLineDim, lineWidth: KW.Border.hairline))
+            }
+            .accessibilityLabel(Text("Gerät"))
             Button {
                 showingAddSheet = true
             } label: {

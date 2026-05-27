@@ -1,6 +1,38 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
+    "Diesem Gerät einen Namen geben" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Name this device" } } }
+    },
+    "Der Name identifiziert dieses Gerät auf deinen anderen Apple-Geräten. Tunnel, die du hier verwendest, erscheinen auf Mac, iPad und Apple TV unter diesem Namen — und du kannst jeden Tunnel frei einem Gerät zuordnen (immer nur eins gleichzeitig aktiv)." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "The name identifies this device on your other Apple devices. Tunnels you use here appear on Mac, iPad and Apple TV under this name — and you can freely assign each tunnel to a device (only one active at a time)." } } }
+    },
+    "Tipp: Per QR-Code (＋) geht der Import am schnellsten. Tunnel synchronisieren via iCloud auf deine anderen Geräte." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Tip: importing via QR code (＋) is fastest. Tunnels sync to your other devices via iCloud." } } }
+    },
+    "Gerätename" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Device name" } } }
+    },
+    "z.B. iPhone von Jan" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "e.g. Jan's iPhone" } } }
+    },
+    "Einrichten" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Set up" } } }
+    },
+    "Gerät" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Device" } } }
+    },
+    "Los geht's" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Get started" } } }
+    },
     "Vom Gerät lösen" : {
       "extractionState" : "manual",
       "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove from this device" } } }

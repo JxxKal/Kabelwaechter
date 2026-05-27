@@ -7,16 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00D5EB00ED4C0C973E2397B4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5B8B5400F7C3885DF6582C1 /* Cocoa.framework */; };
+		0DE580376C99614FD2E22EE5 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B4E8217B71CD969C7CF4BD /* NetworkExtension.framework */; };
 		10A85F122B8388E6BCFC5C15 /* MacContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 674B3A1FC81BE8377CB99C54 /* MacContentView.swift */; };
+		1D54793D6602D9CF46DAEDF8 /* KabelwaechterNEmac.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E0A3F98137305B788A924CEB /* KabelwaechterNEmac.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
 		3540D07C073EBAAD7E1DD2D6 /* MacAppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3404CDE8E1FA7BC9F4CE6D79 /* MacAppEnvironment.swift */; };
+		61DA437074077E062565AA8F /* WireGuardKit in Frameworks */ = {isa = PBXBuildFile; productRef = B114031E7879A91B1D32DF9D /* WireGuardKit */; };
 		64B0FE015ED20F3B34D97847 /* KabelwaechterUI in Frameworks */ = {isa = PBXBuildFile; productRef = C13E77571A0B803CCDE9F059 /* KabelwaechterUI */; };
 		7446294C0C01C566E40B2BCE /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70CCF3AE35C48BEA85E589B /* PacketTunnelProvider.swift */; };
 		755D4B46DB59BB266DF67CF8 /* WireGuardKit in Frameworks */ = {isa = PBXBuildFile; productRef = 71A54132E72363220E6A7B94 /* WireGuardKit */; };
+		7D98AD939D3E27136D7EFBC0 /* CoreToWireGuardKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEF9F6AC1CA911CE94227D2 /* CoreToWireGuardKit.swift */; };
 		7EED6A3D7E1E854190CE4917 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5B8B5400F7C3885DF6582C1 /* Cocoa.framework */; };
 		91FAC417D50356D097545858 /* CoreToWireGuardKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE81CDDAB68A94A676E0F40 /* CoreToWireGuardKit.swift */; };
 		925B0E3EDF57DBE0E5F1A905 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = 756292111AB838DC42BC8E51 /* KabelwaechterCore */; };
 		B57FC15FA15FC30DA79ECC55 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 914645D96858AA445C0FF438 /* NetworkExtension.framework */; };
 		C3708FE0ACEF4E7124845087 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = F920B092C4621151C023632E /* KabelwaechterCore */; };
+		C4C8BA2F4750097466A61CFC /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E5889354AC6B395D5CD2E9 /* PacketTunnelProvider.swift */; };
 		C5E0FC906CB73FD60C030461 /* KabelwaechterNEiOS.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 67D5D3E2958534CACA44D4BA /* KabelwaechterNEiOS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D04B6B9DAE05227C743719F4 /* KabelwaechterMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8AB607ED54B1C23A14384E /* KabelwaechterMacApp.swift */; };
 		DAA5D1FCE804DFCD1C7DDDD2 /* KabelwaechterUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6B900F218F0F6D2D7482FCFF /* KabelwaechterUI */; };
@@ -30,6 +36,7 @@
 		E337E3F32FC700020039D356 /* KabelwaechterPersistence in Frameworks */ = {isa = PBXBuildFile; productRef = E337E3F22FC700020039D356 /* KabelwaechterPersistence */; };
 		E3CCC1662FC342680045F7FD /* WireGuardKit in Frameworks */ = {isa = PBXBuildFile; productRef = E3CCC1652FC342680045F7FD /* WireGuardKit */; };
 		E9BFBEB840CAC4F7F80C8326 /* KabelwaechterPersistence in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1FC2B355CFDB97B29E8FB1 /* KabelwaechterPersistence */; };
+		F2DE955A7E696D5C501379B9 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = D5AC34CD940E1A25B0FEDFC2 /* KabelwaechterCore */; };
 		F7C138D11D474589E3C4637D /* KabelwaechterUI in Frameworks */ = {isa = PBXBuildFile; productRef = DC19856B5386CD0DC88C8E7F /* KabelwaechterUI */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +47,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 66CC1527C0B57E9E94C79642;
 			remoteInfo = KabelwaechterNEiOS;
+		};
+		903C9D5226AB36036754B253 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E337E36D2FC3383C0039D356 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CE2702D3F73399C6BA1C27A3;
+			remoteInfo = KabelwaechterNEmac;
 		};
 		E337E3872FC3383E0039D356 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -79,6 +93,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		7CDE608E5A58C36BE7F8186C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				1D54793D6602D9CF46DAEDF8 /* KabelwaechterNEmac.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C5C896483B086C55154987E4 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -109,12 +134,16 @@
 		2A8AB607ED54B1C23A14384E /* KabelwaechterMacApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KabelwaechterMacApp.swift; sourceTree = "<group>"; };
 		3404CDE8E1FA7BC9F4CE6D79 /* MacAppEnvironment.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacAppEnvironment.swift; sourceTree = "<group>"; };
 		3455E855FB32D775A8FD595A /* KabelwaechterNEiOS.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = KabelwaechterNEiOS.entitlements; sourceTree = "<group>"; };
+		46E5889354AC6B395D5CD2E9 /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
 		4FE81CDDAB68A94A676E0F40 /* CoreToWireGuardKit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreToWireGuardKit.swift; sourceTree = "<group>"; };
 		674B3A1FC81BE8377CB99C54 /* MacContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacContentView.swift; sourceTree = "<group>"; };
 		67D5D3E2958534CACA44D4BA /* KabelwaechterNEiOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KabelwaechterNEiOS.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		70B4E8217B71CD969C7CF4BD /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/NetworkExtension.framework; sourceTree = DEVELOPER_DIR; };
+		73EB77D930AA2E29F608FFC0 /* KabelwaechterNEmac.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = KabelwaechterNEmac.entitlements; sourceTree = "<group>"; };
 		8939DEC6DEE360F516AFD4D1 /* Kabelwaechter_macOS.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = Kabelwaechter_macOS.entitlements; sourceTree = "<group>"; };
 		914645D96858AA445C0FF438 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/NetworkExtension.framework; sourceTree = DEVELOPER_DIR; };
 		B70CCF3AE35C48BEA85E589B /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
+		E0A3F98137305B788A924CEB /* KabelwaechterNEmac.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KabelwaechterNEmac.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337E3752FC3383C0039D356 /* Kabelwaechter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kabelwaechter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337E3862FC3383E0039D356 /* KabelwaechterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KabelwaechterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337E3902FC3383E0039D356 /* KabelwaechterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KabelwaechterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,7 +153,9 @@
 		E337E3D82FC33A990039D356 /* KabelwaechterNEtvOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KabelwaechterNEtvOS.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337E3DA2FC33A990039D356 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		F5B8B5400F7C3885DF6582C1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		F63D5D5429DE6651578BC658 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FBBC8C732540D87F8B3EFE7A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FFEF9F6AC1CA911CE94227D2 /* CoreToWireGuardKit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreToWireGuardKit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -218,6 +249,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		661EA8B2E22870B862D0859A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00D5EB00ED4C0C973E2397B4 /* Cocoa.framework in Frameworks */,
+				F2DE955A7E696D5C501379B9 /* KabelwaechterCore in Frameworks */,
+				61DA437074077E062565AA8F /* WireGuardKit in Frameworks */,
+				0DE580376C99614FD2E22EE5 /* NetworkExtension.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6C2AA51532F486A4D6503513 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -302,6 +344,18 @@
 			path = "Kabelwaechter macOS";
 			sourceTree = "<group>";
 		};
+		9D662C73F4981D9AF78A4720 /* KabelwaechterNEmac */ = {
+			isa = PBXGroup;
+			children = (
+				46E5889354AC6B395D5CD2E9 /* PacketTunnelProvider.swift */,
+				FFEF9F6AC1CA911CE94227D2 /* CoreToWireGuardKit.swift */,
+				F63D5D5429DE6651578BC658 /* Info.plist */,
+				73EB77D930AA2E29F608FFC0 /* KabelwaechterNEmac.entitlements */,
+			);
+			name = KabelwaechterNEmac;
+			path = KabelwaechterNEmac;
+			sourceTree = "<group>";
+		};
 		B79A4C02B9C183104210BE0F /* iOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -315,6 +369,7 @@
 			isa = PBXGroup;
 			children = (
 				F5B8B5400F7C3885DF6582C1 /* Cocoa.framework */,
+				70B4E8217B71CD969C7CF4BD /* NetworkExtension.framework */,
 			);
 			name = "OS X";
 			sourceTree = "<group>";
@@ -344,6 +399,7 @@
 				E337E3762FC3383C0039D356 /* Products */,
 				D4974076DC1DE27835FEF987 /* KabelwaechterNEiOS */,
 				7F4069F9D21A3A0DE3FB6D58 /* Kabelwaechter macOS */,
+				9D662C73F4981D9AF78A4720 /* KabelwaechterNEmac */,
 			);
 			sourceTree = "<group>";
 		};
@@ -359,6 +415,7 @@
 				E337E3D82FC33A990039D356 /* KabelwaechterNEtvOS.appex */,
 				67D5D3E2958534CACA44D4BA /* KabelwaechterNEiOS.appex */,
 				2734536D3EA2F8E36BFFE3DF /* Kabelwaechter macOS.app */,
+				E0A3F98137305B788A924CEB /* KabelwaechterNEmac.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -405,10 +462,12 @@
 				36E01065AA815F72BE1AFCCC /* Sources */,
 				6C2AA51532F486A4D6503513 /* Frameworks */,
 				27B08E032F627B66EB8AE962 /* Resources */,
+				7CDE608E5A58C36BE7F8186C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F7997B1341372440444C46AE /* PBXTargetDependency */,
 			);
 			name = "Kabelwaechter macOS";
 			packageProductDependencies = (
@@ -419,6 +478,28 @@
 			productName = "Kabelwaechter macOS";
 			productReference = 2734536D3EA2F8E36BFFE3DF /* Kabelwaechter macOS.app */;
 			productType = "com.apple.product-type.application";
+		};
+		CE2702D3F73399C6BA1C27A3 /* KabelwaechterNEmac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 024322944BA6DF7A60C113B2 /* Build configuration list for PBXNativeTarget "KabelwaechterNEmac" */;
+			buildPhases = (
+				982B5C8BD871C25FB23A1E24 /* Build WireGuard Go Bridge */,
+				452FDA5BD6A02433EB18E171 /* Sources */,
+				661EA8B2E22870B862D0859A /* Frameworks */,
+				8CC368FA4B94DF1306928DB3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KabelwaechterNEmac;
+			packageProductDependencies = (
+				D5AC34CD940E1A25B0FEDFC2 /* KabelwaechterCore */,
+				B114031E7879A91B1D32DF9D /* WireGuardKit */,
+			);
+			productName = KabelwaechterNEmac;
+			productReference = E0A3F98137305B788A924CEB /* KabelwaechterNEmac.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		E337E3742FC3383C0039D356 /* Kabelwaechter */ = {
 			isa = PBXNativeTarget;
@@ -651,12 +732,20 @@
 				E337E3D72FC33A990039D356 /* KabelwaechterNEtvOS */,
 				66CC1527C0B57E9E94C79642 /* KabelwaechterNEiOS */,
 				B2C4946694D23C3F7CB3B230 /* Kabelwaechter macOS */,
+				CE2702D3F73399C6BA1C27A3 /* KabelwaechterNEmac */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		27B08E032F627B66EB8AE962 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8CC368FA4B94DF1306928DB3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -741,6 +830,24 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\nSRC=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/wireguard-apple-tvos/Sources/WireGuardKitGo\"\nOUT=\"${BUILD_DIR%/Build/*}/kwgobridge/${PLATFORM_NAME}-${CONFIGURATION}\"\nexport PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:${PATH}\"\ncd \"$SRC\"\nmake PLATFORM_NAME=iphoneos CONFIGURATION_BUILD_DIR=\"$OUT/out\" CONFIGURATION_TEMP_DIR=\"$OUT/tmp\"\nmkdir -p \"$BUILT_PRODUCTS_DIR\"\ncp \"$OUT/out/libwg-go.a\" \"$BUILT_PRODUCTS_DIR/libwg-go.a\"\n";
 		};
+		982B5C8BD871C25FB23A1E24 /* Build WireGuard Go Bridge */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build WireGuard Go Bridge";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nSRC=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/wireguard-apple-tvos/Sources/WireGuardKitGo\"\nOUT=\"${BUILD_DIR%/Build/*}/kwgobridge/${PLATFORM_NAME}-${CONFIGURATION}\"\nexport PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:${PATH}\"\ncd \"$SRC\"\nmake CONFIGURATION_BUILD_DIR=\"$OUT/out\" CONFIGURATION_TEMP_DIR=\"$OUT/tmp\"\nmkdir -p \"$BUILT_PRODUCTS_DIR\"\ncp \"$OUT/out/libwg-go.a\" \"$BUILT_PRODUCTS_DIR/libwg-go.a\"\n";
+		};
 		F5242115A33711E5C623B0D0 /* Build WireGuard Go Bridge */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -779,6 +886,15 @@
 				D04B6B9DAE05227C743719F4 /* KabelwaechterMacApp.swift in Sources */,
 				3540D07C073EBAAD7E1DD2D6 /* MacAppEnvironment.swift in Sources */,
 				10A85F122B8388E6BCFC5C15 /* MacContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		452FDA5BD6A02433EB18E171 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C4C8BA2F4750097466A61CFC /* PacketTunnelProvider.swift in Sources */,
+				7D98AD939D3E27136D7EFBC0 /* CoreToWireGuardKit.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,6 +981,12 @@
 			target = E337E3D72FC33A990039D356 /* KabelwaechterNEtvOS */;
 			targetProxy = E337E3E12FC33A990039D356 /* PBXContainerItemProxy */;
 		};
+		F7997B1341372440444C46AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KabelwaechterNEmac;
+			target = CE2702D3F73399C6BA1C27A3 /* KabelwaechterNEmac */;
+			targetProxy = 903C9D5226AB36036754B253 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -892,6 +1014,62 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		1E8A482D1E552792327F384B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = KabelwaechterNEmac/KabelwaechterNEmac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KabelwaechterNEmac/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KabelwaechterNEmac;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.mac.networkextension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		406CB166995A8AB30D69579F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = KabelwaechterNEmac/KabelwaechterNEmac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = 8D5SQU94MF;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KabelwaechterNEmac/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KabelwaechterNEmac;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = de.jankaluza.kabelwaechter.mac.networkextension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
 		};
 		C76EB56EA3FA3B5D4754D4E7 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1491,6 +1669,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		024322944BA6DF7A60C113B2 /* Build configuration list for PBXNativeTarget "KabelwaechterNEmac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				406CB166995A8AB30D69579F /* Release */,
+				1E8A482D1E552792327F384B /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		83C3F562D904AB91811B971F /* Build configuration list for PBXNativeTarget "Kabelwaechter macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1622,10 +1809,20 @@
 			package = E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "KabelwaechterCore" */;
 			productName = KabelwaechterCore;
 		};
+		B114031E7879A91B1D32DF9D /* WireGuardKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E3CCC1642FC342680045F7FD /* XCRemoteSwiftPackageReference "wireguard-apple-tvos" */;
+			productName = WireGuardKit;
+		};
 		C13E77571A0B803CCDE9F059 /* KabelwaechterUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "KabelwaechterCore" */;
 			productName = KabelwaechterUI;
+		};
+		D5AC34CD940E1A25B0FEDFC2 /* KabelwaechterCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E337E3E92FC33EED0039D356 /* XCLocalSwiftPackageReference "KabelwaechterCore" */;
+			productName = KabelwaechterCore;
 		};
 		DC19856B5386CD0DC88C8E7F /* KabelwaechterUI */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -33,6 +33,12 @@ public enum KabelwaechterConstants {
         /// tvOS Network Extension (Packet Tunnel Provider) — der eigentliche VPN-Code
         public static let tvOSNetworkExtension = "de.jankaluza.kabelwaechter.tv.networkextension"
 
+        /// native macOS-App (Phase 7)
+        public static let macApp = "de.jankaluza.kabelwaechter.mac"
+
+        /// macOS Network Extension (Packet Tunnel Provider, App-Store-appex)
+        public static let macNetworkExtension = "de.jankaluza.kabelwaechter.mac.networkextension"
+
         /// Gemeinsamer Reverse-DNS-Präfix aller Bundle-IDs
         public static let prefix = "de.jankaluza.kabelwaechter"
     }

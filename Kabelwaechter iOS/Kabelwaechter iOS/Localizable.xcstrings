@@ -1,6 +1,10 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
+    "Vom Gerät lösen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove from this device" } } }
+    },
     "Auf diesem Gerät verwenden" : {
       "extractionState" : "manual",
       "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Use on this device" } } }

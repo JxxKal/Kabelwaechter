@@ -38,6 +38,7 @@ struct TunnelDetailView: View {
                         claimControl
                     }
                     moveButton
+                    freeButton
                     if let fullConfig {
                         section("Server") {
                             row("Public Key", value: fullConfig.peers.first?.publicKey.base64EncodedString() ?? "—")
@@ -288,6 +289,21 @@ struct TunnelDetailView: View {
         }
     }
 
+    /// Zuweisung aufheben → Tunnel wird „frei" und kann von einem anderen
+    /// Gerät (Mac/iPad/Apple TV) beansprucht werden.
+    @ViewBuilder
+    private var freeButton: some View {
+        if isOwnedHere {
+            Button {
+                free()
+            } label: {
+                Label("Vom Gerät lösen", systemImage: "minus.circle")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(KWButtonStyle(tone: .kwTextDim))
+        }
+    }
+
     private var deleteButton: some View {
         Button(role: .destructive) {
             confirmingDelete = true
@@ -302,6 +318,17 @@ struct TunnelDetailView: View {
         let name = DeviceIdentity.resolvedName(default: UIDevice.current.name)
         do {
             try env.repository.assign(tunnelID: tunnelID, toDeviceID: DeviceIdentity.id, named: name)
+            reload()
+        } catch {
+            loadError = String(describing: error)
+        }
+    }
+
+    /// Zuweisung aufheben (freigeben) — Verbindung trennen + Besitzer entfernen.
+    private func free() {
+        Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
+        do {
+            try env.repository.freeTunnel(id: tunnelID)
             reload()
         } catch {
             loadError = String(describing: error)

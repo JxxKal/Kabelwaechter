@@ -17,6 +17,8 @@ struct MacContentView: View {
     @State private var tunnels: [TunnelView] = []
     @State private var selection: UUID?
     @State private var loadError: String?
+    @State private var showOnboarding = !DeviceIdentity.isNameConfirmed
+    @State private var showImport = false
 
     var body: some View {
         NavigationSplitView {
@@ -26,12 +28,32 @@ struct MacContentView: View {
             detail
         }
         .preferredColorScheme(.dark)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    showImport = true
+                } label: {
+                    Label("Tunnel importieren", systemImage: "plus")
+                }
+            }
+        }
         .task {
             try? await env.tunnelManager.refresh()
             reload()
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
             reload()
+        }
+        .sheet(isPresented: $showOnboarding) {
+            MacOnboardingView(onDone: reload)
+                .interactiveDismissDisabled()
+        }
+        .sheet(isPresented: $showImport) {
+            MacAddTunnelView(onImported: { id in
+                reload()
+                selection = id
+            })
+            .environment(env)
         }
     }
 

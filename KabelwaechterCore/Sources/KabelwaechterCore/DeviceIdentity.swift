@@ -48,4 +48,12 @@ public enum DeviceIdentity {
         name = fallback
         return fallback
     }
+
+    /// `true`, sobald der User den Gerätenamen aktiv bestätigt hat (Onboarding).
+    /// Vorher zeigt die App das verpflichtende Namens-Onboarding — erst danach
+    /// erscheint das Gerät benannt auf den anderen iCloud-Geräten.
+    public static var isNameConfirmed: Bool {
+        get { defaults.bool(forKey: "kw.device.nameConfirmed") }
+        set { defaults.set(newValue, forKey: "kw.device.nameConfirmed") }
+    }
 }

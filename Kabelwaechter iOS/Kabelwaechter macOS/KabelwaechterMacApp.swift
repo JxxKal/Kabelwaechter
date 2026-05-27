@@ -33,6 +33,10 @@ struct KabelwaechterMacApp: App {
             .preferredColorScheme(.dark)
         }
         .defaultSize(width: 1040, height: 680)
+
+        Settings {
+            MacSettingsView()
+        }
     }
 
     @MainActor

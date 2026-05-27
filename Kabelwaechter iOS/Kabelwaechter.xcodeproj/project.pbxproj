@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00D5EB00ED4C0C973E2397B4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5B8B5400F7C3885DF6582C1 /* Cocoa.framework */; };
+		0993C5C938CA66739DE7C323 /* MacOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E96FB81C0E8BC815136623 /* MacOnboardingView.swift */; };
 		0DE580376C99614FD2E22EE5 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B4E8217B71CD969C7CF4BD /* NetworkExtension.framework */; };
 		10A85F122B8388E6BCFC5C15 /* MacContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 674B3A1FC81BE8377CB99C54 /* MacContentView.swift */; };
 		1D54793D6602D9CF46DAEDF8 /* KabelwaechterNEmac.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E0A3F98137305B788A924CEB /* KabelwaechterNEmac.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
@@ -39,7 +40,9 @@
 		E3CCC1662FC342680045F7FD /* WireGuardKit in Frameworks */ = {isa = PBXBuildFile; productRef = E3CCC1652FC342680045F7FD /* WireGuardKit */; };
 		E9BFBEB840CAC4F7F80C8326 /* KabelwaechterPersistence in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1FC2B355CFDB97B29E8FB1 /* KabelwaechterPersistence */; };
 		F2DE955A7E696D5C501379B9 /* KabelwaechterCore in Frameworks */ = {isa = PBXBuildFile; productRef = D5AC34CD940E1A25B0FEDFC2 /* KabelwaechterCore */; };
+		F72B2707060ED7894BFB0D14 /* MacAddTunnelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A7153E391C55F203FAD605 /* MacAddTunnelView.swift */; };
 		F7C138D11D474589E3C4637D /* KabelwaechterUI in Frameworks */ = {isa = PBXBuildFile; productRef = DC19856B5386CD0DC88C8E7F /* KabelwaechterUI */; };
+		FC377482DDD100E3B0F03207 /* MacSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF1FF64CA6AA33295D1F449 /* MacSettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -134,6 +137,7 @@
 		040AB44408A4F625836625EF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		2734536D3EA2F8E36BFFE3DF /* Kabelwaechter macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kabelwaechter macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A8AB607ED54B1C23A14384E /* KabelwaechterMacApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KabelwaechterMacApp.swift; sourceTree = "<group>"; };
+		2AF1FF64CA6AA33295D1F449 /* MacSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacSettingsView.swift; sourceTree = "<group>"; };
 		3404CDE8E1FA7BC9F4CE6D79 /* MacAppEnvironment.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacAppEnvironment.swift; sourceTree = "<group>"; };
 		3455E855FB32D775A8FD595A /* KabelwaechterNEiOS.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = KabelwaechterNEiOS.entitlements; sourceTree = "<group>"; };
 		41FB3C7335736BB52683446F /* TunnelManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TunnelManager.swift; sourceTree = "<group>"; };
@@ -147,6 +151,7 @@
 		8939DEC6DEE360F516AFD4D1 /* Kabelwaechter_macOS.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = Kabelwaechter_macOS.entitlements; sourceTree = "<group>"; };
 		914645D96858AA445C0FF438 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/NetworkExtension.framework; sourceTree = DEVELOPER_DIR; };
 		B70CCF3AE35C48BEA85E589B /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
+		B8E96FB81C0E8BC815136623 /* MacOnboardingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacOnboardingView.swift; sourceTree = "<group>"; };
 		E0A3F98137305B788A924CEB /* KabelwaechterNEmac.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KabelwaechterNEmac.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337E3752FC3383C0039D356 /* Kabelwaechter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kabelwaechter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337E3862FC3383E0039D356 /* KabelwaechterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KabelwaechterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -158,6 +163,7 @@
 		E337E3DA2FC33A990039D356 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		F5B8B5400F7C3885DF6582C1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		F63D5D5429DE6651578BC658 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F8A7153E391C55F203FAD605 /* MacAddTunnelView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacAddTunnelView.swift; sourceTree = "<group>"; };
 		FBBC8C732540D87F8B3EFE7A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FFEF9F6AC1CA911CE94227D2 /* CoreToWireGuardKit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreToWireGuardKit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -345,6 +351,9 @@
 				8939DEC6DEE360F516AFD4D1 /* Kabelwaechter_macOS.entitlements */,
 				41FB3C7335736BB52683446F /* TunnelManager.swift */,
 				6EF212CC22E116530E05786E /* Assets.xcassets */,
+				B8E96FB81C0E8BC815136623 /* MacOnboardingView.swift */,
+				2AF1FF64CA6AA33295D1F449 /* MacSettingsView.swift */,
+				F8A7153E391C55F203FAD605 /* MacAddTunnelView.swift */,
 			);
 			name = "Kabelwaechter macOS";
 			path = "Kabelwaechter macOS";
@@ -894,6 +903,9 @@
 				3540D07C073EBAAD7E1DD2D6 /* MacAppEnvironment.swift in Sources */,
 				10A85F122B8388E6BCFC5C15 /* MacContentView.swift in Sources */,
 				268CCAB5921204AA273E9E06 /* TunnelManager.swift in Sources */,
+				0993C5C938CA66739DE7C323 /* MacOnboardingView.swift in Sources */,
+				FC377482DDD100E3B0F03207 /* MacSettingsView.swift in Sources */,
+				F72B2707060ED7894BFB0D14 /* MacAddTunnelView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

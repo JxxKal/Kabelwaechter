@@ -67,6 +67,7 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
         }
         stored.ownerDeviceID = deviceID
         stored.ownerDeviceName = deviceName
+        stored.target = .phone // Legacy-Ziel neutralisieren (siehe TunnelRepository.assign)
     }
 
     public func freeTunnel(id: UUID) throws {

@@ -59,6 +59,10 @@ public final class TunnelRepository: TunnelRepositoring {
         }
         stored.ownerDeviceID = deviceID
         stored.ownerDeviceName = deviceName
+        // Legacy-Ziel neutralisieren: ein beanspruchter Tunnel ist besitzer-
+        // gesteuert, nicht mehr „für die Apple TV" (sonst landet er beim
+        // Freigeben über die Brücke wieder bei der TV).
+        stored.target = .phone
         try context.save()
     }
 

@@ -324,9 +324,11 @@ struct TunnelDetailView: View {
         }
     }
 
-    /// Zuweisung aufheben (freigeben) — Verbindung trennen + Besitzer entfernen.
+    /// Zuweisung aufheben (freigeben) — Verbindung trennen, System-Config
+    /// entfernen, Besitzer löschen. Ohne Config-Entfernung bliebe der Tunnel
+    /// in Settings → VPN sichtbar (Cleanup-Bug).
     private func free() {
-        Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
+        Task { await env.tunnelManager.remove(tunnelID: tunnelID) }
         do {
             try env.repository.freeTunnel(id: tunnelID)
             reload()
@@ -337,7 +339,7 @@ struct TunnelDetailView: View {
 
     /// An die Apple TV schicken: vom iPhone lösen + Legacy-Ziel `appleTV` setzen.
     private func moveToAppleTV() {
-        Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
+        Task { await env.tunnelManager.remove(tunnelID: tunnelID) }
         do {
             try env.repository.freeTunnel(id: tunnelID)
             try env.repository.setTarget(.appleTV, forTunnelID: tunnelID)
@@ -391,6 +393,7 @@ struct TunnelDetailView: View {
     }
 
     private func deleteTunnel() {
+        Task { await env.tunnelManager.remove(tunnelID: tunnelID) }
         try? env.repository.deleteTunnel(id: tunnelID)
         dismiss()
     }

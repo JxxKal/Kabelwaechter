@@ -42,6 +42,9 @@ struct MacContentView: View {
             reload()
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
+            // iCloud-Sync: verwaiste NEVPN-Configs (Tunnel an anderes Gerät
+            // übergeben oder gelöscht) aus System-Settings → VPN aufräumen.
+            Task { await env.tunnelManager.cleanupOrphanedManagers() }
             reload()
         }
         .sheet(isPresented: $showOnboarding) {
@@ -342,15 +345,18 @@ private struct TunnelDetailPane: View {
     }
 
     private func free() {
-        Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
+        // remove(...) trennt + entfernt die System-NEVPN-Config; sonst bliebe
+        // der Tunnel in macOS Systemeinstellungen → VPN sichtbar.
+        Task { await env.tunnelManager.remove(tunnelID: tunnelID) }
         do { try env.repository.freeTunnel(id: tunnelID); load(); onChange() }
         catch { connectError = String(describing: error) }
     }
 
-    /// An die Apple TV schicken: vom Mac lösen + Legacy-Ziel `appleTV` setzen,
-    /// damit die (noch nicht aufs Besitzer-Modell umgestellte) tvOS-App ihn zeigt.
+    /// An die Apple TV schicken: vom Mac lösen (inkl. System-Config-Entfernung)
+    /// und Legacy-Ziel `appleTV` setzen, damit die TV-App den Tunnel via Brücke
+    /// zeigt (für TVs, die noch nicht aufs Besitzer-Modell migriert sind).
     private func moveToAppleTV() {
-        Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
+        Task { await env.tunnelManager.remove(tunnelID: tunnelID) }
         do {
             try env.repository.freeTunnel(id: tunnelID)
             try env.repository.setTarget(.appleTV, forTunnelID: tunnelID)
@@ -359,7 +365,7 @@ private struct TunnelDetailPane: View {
     }
 
     private func deleteTunnel() {
-        Task { await env.tunnelManager.disconnect(tunnelID: tunnelID) }
+        Task { await env.tunnelManager.remove(tunnelID: tunnelID) }
         do { try env.repository.deleteTunnel(id: tunnelID); onChange() }
         catch { connectError = String(describing: error) }
     }

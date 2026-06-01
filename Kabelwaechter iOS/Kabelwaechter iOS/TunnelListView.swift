@@ -37,6 +37,9 @@ struct TunnelListView: View {
             reload()
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
+            // iCloud-Sync: erst NEVPN-Configs aufräumen, die durch fremde
+            // Besitzer- oder Lösch-Änderungen jetzt verwaist sind.
+            Task { await env.tunnelManager.cleanupOrphanedManagers() }
             reload()
         }
         .sheet(isPresented: $showingAddSheet, onDismiss: reload) {

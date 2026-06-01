@@ -224,12 +224,11 @@ struct TunnelDetailView: View {
         reload()
     }
 
-    /// Freigeben: laufende Verbindung trennen, Besitzer entfernen, zurück
-    /// zur Liste — der Tunnel taucht dort dann unter „FREI" auf.
+    /// Freigeben: laufende Verbindung trennen, System-Config aus tvOS
+    /// Settings → VPN entfernen, Besitzer löschen — der Tunnel taucht in
+    /// der Liste dann unter „FREI" auf, und Settings → VPN bleibt sauber.
     private func free(currentStatus status: NEVPNStatus) async {
-        if status == .connected || status == .connecting || status == .reasserting {
-            await env.tunnelManager.disconnect(tunnelID: tunnelID)
-        }
+        await env.tunnelManager.remove(tunnelID: tunnelID)
         try? env.repository.freeTunnel(id: tunnelID)
         dismiss()
     }
@@ -330,6 +329,7 @@ struct TunnelDetailView: View {
     }
 
     private func deleteTunnel() {
+        Task { await env.tunnelManager.remove(tunnelID: tunnelID) }
         try? env.repository.deleteTunnel(id: tunnelID)
         dismiss()
     }

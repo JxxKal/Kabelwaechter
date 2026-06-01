@@ -41,6 +41,7 @@ final class TunnelManager {
             managers[id] = manager
             statuses[id] = manager.connection.status
         }
+        await cleanupOrphanedManagers()
     }
 
     func status(forTunnelID id: UUID) -> NEVPNStatus? {
@@ -101,6 +102,42 @@ final class TunnelManager {
             try? await manager.saveToPreferences()
         }
         manager.connection.stopVPNTunnel()
+    }
+
+    /// Entfernt die System-NEVPN-Config zu diesem Tunnel. Wird bei
+    /// freigeben/löschen aufgerufen, damit der Mac nicht mit toten
+    /// Configs in System-Settings → VPN zurückbleibt.
+    func remove(tunnelID id: UUID) async {
+        guard let manager = managers[id] else { return }
+        let status = manager.connection.status
+        if status != .disconnected && status != .invalid {
+            manager.connection.stopVPNTunnel()
+        }
+        try? await manager.removeFromPreferences()
+        managers.removeValue(forKey: id)
+        statuses.removeValue(forKey: id)
+    }
+
+    /// Räumt Configs auf, die laut Repository nicht mehr diesem Gerät gehören
+    /// (Tunnel an anderes Gerät übergeben oder gelöscht). Wird bei refresh()
+    /// und nach `.NSPersistentStoreRemoteChange` aus dem App-Environment
+    /// aufgerufen — sonst zeigt System-Settings auf jedem Gerät den Tunnel
+    /// permanent, obwohl er ihm gar nicht (mehr) gehört.
+    func cleanupOrphanedManagers() async {
+        let me = DeviceIdentity.id
+        var byID: [UUID: TunnelView] = [:]
+        if let list = try? repository.allTunnels() {
+            for t in list { byID[t.id] = t }
+        }
+        for (id, _) in managers {
+            let keep: Bool = {
+                guard let t = byID[id] else { return false } // nicht mehr im Repo
+                return t.isOwned(by: me)                       // anderem Gerät zugewiesen / frei
+            }()
+            if !keep {
+                await remove(tunnelID: id)
+            }
+        }
     }
 
     // MARK: - Live-Statistiken

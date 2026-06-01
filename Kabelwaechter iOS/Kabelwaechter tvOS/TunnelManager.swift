@@ -70,6 +70,7 @@ final class TunnelManager {
             managers[id] = manager
             statuses[id] = manager.connection.status
         }
+        await cleanupOrphanedManagers()
     }
 
     /// Status für einen bestimmten Tunnel — vor `refresh()` aufgerufen liefert
@@ -154,6 +155,40 @@ final class TunnelManager {
             try? await manager.saveToPreferences()
         }
         manager.connection.stopVPNTunnel()
+    }
+
+    /// Entfernt die System-NEVPN-Config zu diesem Tunnel (tvOS Settings →
+    /// Allgemein → VPN). Aufrufer: free()/delete() in der Detailansicht +
+    /// `cleanupOrphanedManagers` nach iCloud-Sync.
+    func remove(tunnelID id: UUID) async {
+        guard let manager = managers[id] else { return }
+        let status = manager.connection.status
+        if status != .disconnected && status != .invalid {
+            manager.connection.stopVPNTunnel()
+        }
+        try? await manager.removeFromPreferences()
+        managers.removeValue(forKey: id)
+        statuses.removeValue(forKey: id)
+    }
+
+    /// Räumt System-Configs auf, die laut Repository nicht mehr dieser TV
+    /// gehören (anderes Gerät hat den Tunnel beansprucht oder iCloud-Löschung).
+    /// Gerufen bei refresh() + nach `.NSPersistentStoreRemoteChange`.
+    func cleanupOrphanedManagers() async {
+        let me = DeviceIdentity.id
+        var byID: [UUID: TunnelView] = [:]
+        if let list = try? repository.allTunnels() {
+            for t in list { byID[t.id] = t }
+        }
+        for (id, _) in managers {
+            let keep: Bool = {
+                guard let t = byID[id] else { return false }
+                return t.isOwned(by: me)
+            }()
+            if !keep {
+                await remove(tunnelID: id)
+            }
+        }
     }
 
     // MARK: - Live-Statistiken

@@ -60,6 +60,9 @@ struct TunnelListView: View {
             try? await env.tunnelManager.refresh()
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
+            // iCloud-Sync: verwaiste NEVPN-Configs (Tunnel an anderes Gerät
+            // übergeben oder gelöscht) aus tvOS Settings → VPN aufräumen.
+            Task { await env.tunnelManager.cleanupOrphanedManagers() }
             reload()
         }
     }

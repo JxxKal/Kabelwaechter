@@ -1,5 +1,7 @@
 import SwiftUI
+import UIKit
 import KabelwaechterCore
+import KabelwaechterPersistence
 import KabelwaechterUI
 
 @main
@@ -53,6 +55,17 @@ struct Kabelwaechter_iOSApp: App {
         // normalen makeProduction-Pfad.
         if ProcessInfo.processInfo.arguments.contains("--demo") {
             environment = CompanionAppEnvironment.makePreview()
+            return
+        }
+        // Screenshot-Modus: kuratierte Demo-Tunnel + erzwungener Geräte-Name,
+        // damit App-Store-Aufnahmen reproduzierbar sind. iPad-Idiom bekommt
+        // einen eigenen Namen, sonst sehen iPhone/iPad gleich aus.
+        if ProcessInfo.processInfo.arguments.contains("--screenshots")
+            || ProcessInfo.processInfo.environment["KW_SCREENSHOTS"] == "1" {
+            let isPad = UIDevice.current.userInterfaceIdiom == .pad
+            let deviceName = isPad ? "John's iPad" : "John's iPhone"
+            let repo = ScreenshotData.seedRepository(deviceName: deviceName, myOwnedTunnelName: "Home")
+            environment = CompanionAppEnvironment(repository: repo)
             return
         }
         do {

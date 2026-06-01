@@ -21,6 +21,14 @@ struct KabelwaechterMacApp: App {
     @State private var initError: String?
 
     init() {
+        // Screenshot-Modus für App-Store-Aufnahmen: kuratierte Demo-Tunnel
+        // + erzwungener Geräte-Name, kein CloudKit.
+        if ProcessInfo.processInfo.arguments.contains("--screenshots")
+            || ProcessInfo.processInfo.environment["KW_SCREENSHOTS"] == "1" {
+            let repo = ScreenshotData.seedRepository(deviceName: "John's Mac", myOwnedTunnelName: "Office VPN")
+            _environment = State(initialValue: MacAppEnvironment(repository: repo))
+            return
+        }
         // Eager bootstrap: damit auch die MenuBarExtra sofort den `env` hat
         // (sonst zeigt sie nur „Wird geladen", solange kein Window auf war).
         do {

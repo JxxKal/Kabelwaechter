@@ -1,5 +1,6 @@
 import SwiftUI
 import KabelwaechterCore
+import KabelwaechterPersistence
 import KabelwaechterUI
 
 @main
@@ -51,6 +52,13 @@ struct Kabelwaechter_tvOSApp: App {
         guard environment == nil, initError == nil else { return }
         if ProcessInfo.processInfo.arguments.contains("--demo") {
             environment = TVAppEnvironment.makePreview()
+            return
+        }
+        if ProcessInfo.processInfo.arguments.contains("--screenshots")
+            || ProcessInfo.processInfo.environment["KW_SCREENSHOTS"] == "1" {
+            let repo = ScreenshotData.seedRepository(deviceName: "Living Room Apple TV",
+                                                      myOwnedTunnelName: "Streaming")
+            environment = TVAppEnvironment(repository: repo)
             return
         }
         do {

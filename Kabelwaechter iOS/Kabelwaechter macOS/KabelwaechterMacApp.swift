@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import KabelwaechterCore
 import KabelwaechterPersistence
 
@@ -7,16 +8,31 @@ import KabelwaechterPersistence
 /// (Core/Persistence/UI) wiederverwendet. CloudKit-Sync teilt sich den
 /// iCloud-Container mit iOS/tvOS → der Mac sieht dieselben Tunnel.
 ///
-/// Milestone A: Fenster + Sync + Tunnel-Liste/Detail (read-only). Der
-/// VPN-Aufbau (Network Extension + Go-Bridge für macOS) folgt in Milestone B.
+/// Mit Phase 7 / Milestone D ergänzt um eine **MenuBarExtra** und einen
+/// `AppDelegate`, der die App bei geschlossenem Hauptfenster im Menu Bar
+/// weiterlaufen lässt — typisches Verhalten für VPN-Clients (verbinden,
+/// Tunnel wechseln, ohne das Window wieder aufzumachen).
 @main
 struct KabelwaechterMacApp: App {
+
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     @State private var environment: MacAppEnvironment?
     @State private var initError: String?
 
+    init() {
+        // Eager bootstrap: damit auch die MenuBarExtra sofort den `env` hat
+        // (sonst zeigt sie nur „Wird geladen", solange kein Window auf war).
+        do {
+            let env = try MacAppEnvironment.makeProduction()
+            _environment = State(initialValue: env)
+        } catch {
+            _initError = State(initialValue: String(describing: error))
+        }
+    }
+
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: "main") {
             Group {
                 if let environment {
                     MacContentView()
@@ -26,7 +42,6 @@ struct KabelwaechterMacApp: App {
                 } else {
                     ProgressView()
                         .controlSize(.large)
-                        .task { bootstrap() }
                 }
             }
             .frame(minWidth: 820, minHeight: 520)
@@ -37,16 +52,14 @@ struct KabelwaechterMacApp: App {
         Settings {
             MacSettingsView()
         }
-    }
 
-    @MainActor
-    private func bootstrap() {
-        guard environment == nil, initError == nil else { return }
-        do {
-            environment = try MacAppEnvironment.makeProduction()
-        } catch {
-            initError = String(describing: error)
+        MenuBarExtra {
+            MacMenuBarContent(environment: environment, initError: initError)
+                .preferredColorScheme(.dark)
+        } label: {
+            MacMenuBarLabel(environment: environment)
         }
+        .menuBarExtraStyle(.menu)
     }
 
     private func bootError(_ message: String) -> some View {
@@ -63,5 +76,15 @@ struct KabelwaechterMacApp: App {
                 .frame(maxWidth: 600)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+/// Hält die App nach Schließen des letzten Fensters am Leben — das Menu-Bar-
+/// Icon bleibt sichtbar, der eventuell verbundene Tunnel läuft weiter (der
+/// Tunnel lebt zwar ohnehin in der Network Extension, aber Statusanzeige +
+/// Quickswitch funktionieren nur, solange die App-Prozess läuft).
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
     }
 }

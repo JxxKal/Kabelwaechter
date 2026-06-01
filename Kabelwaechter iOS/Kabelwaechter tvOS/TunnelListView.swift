@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreData
 import NetworkExtension
+import KabelwaechterCore
 import KabelwaechterPersistence
 import KabelwaechterUI
 
@@ -16,6 +17,8 @@ struct TunnelListView: View {
     @State private var loadError: String?
     @State private var showingAddSheet = false
     @State private var selectedTunnelID: UUID?
+    @State private var showOnboarding = !DeviceIdentity.isNameConfirmed
+    @State private var showDeviceSettings = false
     @FocusState private var focusedCard: UUID?
 
     var body: some View {
@@ -44,6 +47,12 @@ struct TunnelListView: View {
             .fullScreenCover(isPresented: $showingAddSheet, onDismiss: reload) {
                 AddTunnelView()
             }
+            .fullScreenCover(isPresented: $showOnboarding) {
+                TVDeviceNameView(isOnboarding: true, onDone: reload).environment(env)
+            }
+            .fullScreenCover(isPresented: $showDeviceSettings) {
+                TVDeviceNameView(isOnboarding: false, onDone: reload).environment(env)
+            }
         }
         .preferredColorScheme(.dark)
         .task {
@@ -70,6 +79,19 @@ struct TunnelListView: View {
                 }
             }
             Spacer()
+            Button {
+                showDeviceSettings = true
+            } label: {
+                Group {
+                    if let n = DeviceIdentity.name { Text(verbatim: "⚙ \(n)") }
+                    else { Text("⚙ Gerät") }
+                }
+                .lineLimit(1)
+                .truncationMode(.tail)
+            }
+            .buttonStyle(KWButtonStyle(tone: .kwTextDim))
+            .frame(width: 360)
+
             Button {
                 showingAddSheet = true
             } label: {
@@ -206,12 +228,18 @@ struct TunnelListView: View {
 
     private func card(for tunnel: TunnelView) -> some View {
         let state = connectionState(for: tunnel.id)
+        let badge: String = {
+            if !tunnel.isConfiguredHere { return "SYNC…" }
+            if tunnel.isFree { return "FREI" }
+            return "TUNNEL"
+        }()
+        let badgeColor: Color = tunnel.isFree && tunnel.isConfiguredHere ? .kwCyan : .kwTextFaint
         return VStack(alignment: .leading, spacing: KW.Space.sm) {
             HStack {
-                Text(tunnel.isConfiguredHere ? "TUNNEL" : "SYNC…")
+                Text(badge)
                     .font(KW.Font.labelTV)
                     .tracking(2)
-                    .foregroundStyle(Color.kwTextFaint)
+                    .foregroundStyle(badgeColor)
                 Spacer()
                 Circle()
                     .fill(state.color)
@@ -262,12 +290,16 @@ struct TunnelListView: View {
 
     private func reload() {
         do {
-            // Nur Tunnel, die diesem Apple TV zugewiesen sind. iPhone-Tunnel
-            // (target == .phone) erscheinen hier nicht — sie werden am iPhone
-            // per „Auf Apple TV verschieben" hierher geholt.
+            let me = DeviceIdentity.id
+            // Owner-Modell: eigene Tunnel (beanspruchbar/verbindbar) + freie
+            // Tunnel (claimable über die Detailansicht). Tunnel anderer
+            // Besitzer werden auf dem TV bewusst nicht gezeigt — die Focus-Reihe
+            // soll klein bleiben. Legacy `target==.appleTV` ohne Besitzer fällt
+            // unter `isFree` (claimable, bis die Onboarding-Migration sie auf
+            // dieses TV beansprucht hat).
             tunnels = try env.repository.allTunnels()
-                .filter { $0.target == .appleTV }
-                .sorted { $0.createdAt < $1.createdAt }
+                .filter { $0.isOwned(by: me) || $0.isFree }
+                .sorted { ($0.isOwned(by: me) ? 0 : 1, $0.createdAt) < ($1.isOwned(by: me) ? 0 : 1, $1.createdAt) }
             loadError = nil
         } catch {
             loadError = String(describing: error)

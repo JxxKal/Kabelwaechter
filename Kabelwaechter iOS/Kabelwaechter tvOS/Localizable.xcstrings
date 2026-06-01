@@ -1,6 +1,58 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
+    "✓ Auf diesem Apple TV verwenden" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "✓ Use on this Apple TV" } } }
+    },
+    "Vom Gerät lösen" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Release from device" } } }
+    },
+    "Diesem Apple TV einen Namen geben" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Name this Apple TV" } } }
+    },
+    "Der Name identifiziert dieses Apple TV auf deinen anderen Apple-Geräten. Tunnel, die du hier verwendest, erscheinen auf iPhone, iPad und Mac unter diesem Namen — und du kannst jeden Tunnel frei einem Gerät zuordnen (immer nur eins gleichzeitig aktiv)." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "The name identifies this Apple TV on your other Apple devices. Tunnels you use here appear on iPhone, iPad and Mac under this name — and you can freely assign each tunnel to a device (only one active at a time)." } } }
+    },
+    "Tipp: Tunnel importierst du am schnellsten in der iPhone-App per QR-Code. Sie synchronisieren via iCloud auf dieses Apple TV." : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Tip: importing tunnels via QR code in the iPhone app is fastest. They sync to this Apple TV via iCloud." } } }
+    },
+    "Gerätename" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Device name" } } }
+    },
+    "z.B. Wohnzimmer Apple TV" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "e.g. Living Room Apple TV" } } }
+    },
+    "Los geht's" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Get started" } } }
+    },
+    "Sichern" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Save" } } }
+    },
+    "⚙ Gerät" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "⚙ Device" } } }
+    },
+    "[ WILLKOMMEN ]" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "[ WELCOME ]" } } }
+    },
+    "[ GERÄT ]" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "[ DEVICE ]" } } }
+    },
+    "FREI" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "FREE" } } }
+    },
     "Dieser Tunnel ist bereits vorhanden als „%@“." : {
       "extractionState" : "manual",
       "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "This tunnel already exists as “%@”." } } }

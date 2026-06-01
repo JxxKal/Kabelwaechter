@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import NetworkExtension
 import KabelwaechterCore
 import KabelwaechterPersistence
@@ -137,6 +138,8 @@ struct TunnelDetailView: View {
 
     private func bottomControls(status: NEVPNStatus) -> some View {
         let configured = tunnel?.isConfiguredHere == true
+        let isOwnedHere = tunnel?.isOwned(by: DeviceIdentity.id) == true
+        let isFree = tunnel?.isFree == true
         return VStack(spacing: KW.Space.md) {
             if let connectError {
                 Text(connectError)
@@ -145,28 +148,13 @@ struct TunnelDetailView: View {
                     .lineLimit(2)
             }
 
-            // Primär: Verbinden als „Held" über die volle Breite.
-            Button {
-                Task { await toggleConnection(currentStatus: status) }
-            } label: {
-                Text(connectLabel(for: status))
-            }
-            .buttonStyle(KWButtonStyle(
-                tone: status == .connected ? .kwSignal : .kwCyan,
-                filled: status == .disconnected || status == .invalid
-            ))
-            .disabled(!configured || status == .connecting || status == .disconnecting)
-            .frame(maxWidth: .infinity)
-
-            // Sekundär-Paar: Auto-Connect + Löschen, gleich breit nebeneinander.
-            HStack(spacing: KW.Space.lg) {
-                Button {
-                    Task { await toggleAutoConnect() }
-                } label: {
-                    autoConnect ? Text("Auto-Connect: An") : Text("Auto-Connect: Aus")
+            if isFree {
+                // Frei → Claim-Button als „Held"; Verbinden wird erst nach
+                // dem Beanspruchen aktiv.
+                Button(action: { claim() }) {
+                    Text("✓ Auf diesem Apple TV verwenden")
                 }
-                .buttonStyle(KWButtonStyle(tone: autoConnect ? .kwSignal : .kwTextDim))
-                .disabled(!configured)
+                .buttonStyle(KWButtonStyle(tone: .kwCyan, filled: true))
                 .frame(maxWidth: .infinity)
 
                 Button(role: .destructive) {
@@ -176,9 +164,74 @@ struct TunnelDetailView: View {
                 }
                 .buttonStyle(KWButtonStyle(tone: .kwError))
                 .frame(maxWidth: .infinity)
+            } else {
+                // Eigen → Verbinden + Auto-Connect + Vom-Gerät-lösen + Löschen.
+                Button {
+                    Task { await toggleConnection(currentStatus: status) }
+                } label: {
+                    Text(connectLabel(for: status))
+                }
+                .buttonStyle(KWButtonStyle(
+                    tone: status == .connected ? .kwSignal : .kwCyan,
+                    filled: status == .disconnected || status == .invalid
+                ))
+                .disabled(!configured || !isOwnedHere || status == .connecting || status == .disconnecting)
+                .frame(maxWidth: .infinity)
+
+                HStack(spacing: KW.Space.lg) {
+                    Button {
+                        Task { await toggleAutoConnect() }
+                    } label: {
+                        autoConnect ? Text("Auto-Connect: An") : Text("Auto-Connect: Aus")
+                    }
+                    .buttonStyle(KWButtonStyle(tone: autoConnect ? .kwSignal : .kwTextDim))
+                    .disabled(!configured || !isOwnedHere)
+                    .frame(maxWidth: .infinity)
+
+                    Button {
+                        Task { await free(currentStatus: status) }
+                    } label: {
+                        Text("Vom Gerät lösen")
+                    }
+                    .buttonStyle(KWButtonStyle(tone: .kwTextDim))
+                    .disabled(!isOwnedHere)
+                    .frame(maxWidth: .infinity)
+
+                    Button(role: .destructive) {
+                        confirmingDelete = true
+                    } label: {
+                        Text("Tunnel löschen")
+                    }
+                    .buttonStyle(KWButtonStyle(tone: .kwError))
+                    .frame(maxWidth: .infinity)
+                }
             }
         }
-        .frame(maxWidth: 1000)
+        .frame(maxWidth: 1200)
+    }
+
+    // MARK: - Owner-Aktionen
+
+    /// Beanspruchen: setzt diesen TV als Besitzer (Name aus `DeviceIdentity`).
+    /// Reload macht den Verbinden-Button sofort sichtbar.
+    private func claim() {
+        let name = DeviceIdentity.name ?? UIDevice.current.name
+        try? env.repository.assign(
+            tunnelID: tunnelID,
+            toDeviceID: DeviceIdentity.id,
+            named: name
+        )
+        reload()
+    }
+
+    /// Freigeben: laufende Verbindung trennen, Besitzer entfernen, zurück
+    /// zur Liste — der Tunnel taucht dort dann unter „FREI" auf.
+    private func free(currentStatus status: NEVPNStatus) async {
+        if status == .connected || status == .connecting || status == .reasserting {
+            await env.tunnelManager.disconnect(tunnelID: tunnelID)
+        }
+        try? env.repository.freeTunnel(id: tunnelID)
+        dismiss()
     }
 
     // MARK: - Logic

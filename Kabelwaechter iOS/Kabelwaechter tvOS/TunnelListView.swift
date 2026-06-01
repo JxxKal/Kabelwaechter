@@ -100,6 +100,11 @@ struct TunnelListView: View {
             .buttonStyle(KWButtonStyle(tone: .kwCyan))
             .frame(width: 320)
         }
+        // Eigener Focus-Section, sonst erreicht die Fernbedienung die obere
+        // Leiste nicht aus der unteren Karten-Reihe (die ist ebenfalls Section,
+        // und tvOS springt nur zwischen Sections – aber nur, wenn beide Seiten
+        // explizit Section sind).
+        .focusSection()
     }
 
     // MARK: - Center

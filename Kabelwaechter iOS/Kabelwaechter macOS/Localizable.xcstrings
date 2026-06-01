@@ -1,215 +1,6 @@
 {
   "sourceLanguage": "de",
   "strings": {
-    "✓ Auf diesem Apple TV verwenden": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "✓ Use on this Apple TV"
-          }
-        }
-      }
-    },
-    "Vom Gerät lösen": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Release from device"
-          }
-        }
-      }
-    },
-    "Diesem Apple TV einen Namen geben": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Name this Apple TV"
-          }
-        }
-      }
-    },
-    "Der Name identifiziert dieses Apple TV auf deinen anderen Apple-Geräten. Tunnel, die du hier verwendest, erscheinen auf iPhone, iPad und Mac unter diesem Namen — und du kannst jeden Tunnel frei einem Gerät zuordnen (immer nur eins gleichzeitig aktiv).": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The name identifies this Apple TV on your other Apple devices. Tunnels you use here appear on iPhone, iPad and Mac under this name — and you can freely assign each tunnel to a device (only one active at a time)."
-          }
-        }
-      }
-    },
-    "Tipp: Tunnel importierst du am schnellsten in der iPhone-App per QR-Code. Sie synchronisieren via iCloud auf dieses Apple TV.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tip: importing tunnels via QR code in the iPhone app is fastest. They sync to this Apple TV via iCloud."
-          }
-        }
-      }
-    },
-    "Gerätename": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Device name"
-          }
-        }
-      }
-    },
-    "z.B. Wohnzimmer Apple TV": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "e.g. Living Room Apple TV"
-          }
-        }
-      }
-    },
-    "Los geht's": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Get started"
-          }
-        }
-      }
-    },
-    "Sichern": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save"
-          }
-        }
-      }
-    },
-    "⚙ Gerät": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "⚙ Device"
-          }
-        }
-      }
-    },
-    "[ WILLKOMMEN ]": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "[ WELCOME ]"
-          }
-        }
-      }
-    },
-    "[ GERÄT ]": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "[ DEVICE ]"
-          }
-        }
-      }
-    },
-    "FREI": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FREE"
-          }
-        }
-      }
-    },
-    "Dieser Tunnel ist bereits vorhanden als „%@“.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This tunnel already exists as “%@”."
-          }
-        }
-      }
-    },
-    "Konfiguration ist ungültig.\n\n%@\n\nHäufigste Ursache auf dem Apple TV: fehlende Zeilenumbrüche — die ganze Config landet in einer Zeile. Mit einer Bluetooth-Tastatur Enter zwischen den Zeilen drücken.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The configuration is invalid.\n\n%@\n\nMost common cause on Apple TV: missing line breaks — the whole config ends up on a single line. Use a Bluetooth keyboard to press Enter between the lines."
-          }
-        }
-      }
-    },
-    "Mehrere [Peer]-Blöcke werden noch nicht unterstützt.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Multiple [Peer] blocks are not yet supported."
-          }
-        }
-      }
-    },
-    "vor %lldh": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lldh ago"
-          }
-        }
-      }
-    },
-    "vor %lldm": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lldm ago"
-          }
-        }
-      }
-    },
-    "vor %llds": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%llds ago"
-          }
-        }
-      }
-    },
     "Abbrechen": {
       "extractionState": "manual",
       "localizations": {
@@ -221,24 +12,68 @@
         }
       }
     },
-    "Anzeige-Name": {
+    "Anderes Gerät": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Display name"
+            "value": "Other device"
           }
         }
       }
     },
-    "Auf Apple TV verschieben → erscheint hier via iCloud": {
+    "Apple TV": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Move it to Apple TV → it appears here via iCloud"
+            "value": "Apple TV"
+          }
+        }
+      }
+    },
+    "Auf Apple TV verschieben": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to Apple TV"
+          }
+        }
+      }
+    },
+    "Auf diesem Mac verwenden": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use on this Mac"
+          }
+        }
+      }
+    },
+    "Aus Datei…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From File…"
+          }
+        }
+      }
+    },
+    "Auto-Connect": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-Connect"
           }
         }
       }
@@ -265,57 +100,167 @@
         }
       }
     },
-    "Die vollständige Konfiguration ist noch nicht angekommen. Verbinden wird aktiv, sobald der Sync durch ist.": {
+    "Diesem Mac einen Namen geben": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The full configuration hasn't arrived yet. Connect becomes available once the sync completes."
+            "value": "Name this Mac"
           }
         }
       }
     },
-    "Heimnetz": {
+    "Dieser Tunnel ist keinem Gerät zugewiesen.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Home network"
+            "value": "This tunnel isn't assigned to any device."
           }
         }
       }
     },
-    "iPhone-App installieren (QR scannen)": {
+    "Dieses Gerät": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Install the iPhone app (scan the QR code)"
+            "value": "This device"
           }
         }
       }
     },
-    "Kabelwächter fürs iPhone": {
+    "Frei": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kabelwächter for iPhone"
+            "value": "Free"
           }
         }
       }
     },
-    "Keine Tunnel": {
+    "Füge eine wg-quick-Konfiguration ein oder lade sie aus einer Datei. Der Tunnel synct via iCloud und kann diesem Mac zugewiesen werden.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No tunnels"
+            "value": "Paste a wg-quick configuration or load it from a file. The tunnel syncs via iCloud and can be assigned to this Mac."
+          }
+        }
+      }
+    },
+    "GETRENNT": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DISCONNECTED"
+          }
+        }
+      }
+    },
+    "Gerätename": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device name"
+          }
+        }
+      }
+    },
+    "Gespeichert": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved"
+          }
+        }
+      }
+    },
+    "Getrennt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnected"
+          }
+        }
+      }
+    },
+    "Importieren": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import"
+          }
+        }
+      }
+    },
+    "Kabelwächter beenden": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit Kabelwächter"
+          }
+        }
+      }
+    },
+    "Kabelwächter — getrennt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kabelwächter — disconnected"
+          }
+        }
+      }
+    },
+    "Kabelwächter — verbunden": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kabelwächter — connected"
+          }
+        }
+      }
+    },
+    "Keine Tunnel auf diesem Mac": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tunnels on this Mac"
+          }
+        }
+      }
+    },
+    "Los geht's": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get started"
           }
         }
       }
@@ -331,46 +276,35 @@
         }
       }
     },
-    "Manueller Import": {
+    "Mehrere [Peer]-Blöcke werden noch nicht unterstützt.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Manual import"
+            "value": "Multiple [Peer] blocks are not yet supported."
           }
         }
       }
     },
-    "Normalerweise importierst du den Tunnel in der iPhone-App — er erscheint dann via iCloud automatisch hier. Dieser manuelle Import ist für ein zweites Apple TV mit eigener Konfiguration.": {
+    "Meine Tunnel": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You normally import the tunnel in the iPhone app — it then appears here automatically via iCloud. This manual import is for a second Apple TV with its own configuration."
+            "value": "My Tunnels"
           }
         }
       }
     },
-    "Reconnect…": {
+    "Noch keine Tunnel. Importiere einen in der iPhone-App — er erscheint via iCloud hier und kann diesem Mac zugewiesen werden.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reconnecting…"
-          }
-        }
-      }
-    },
-    "SCAN · MIT · IPHONE": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SCAN · WITH · IPHONE"
+            "value": "No tunnels yet. Import one in the iPhone app — it arrives here via iCloud and can be assigned to this Mac."
           }
         }
       }
@@ -386,57 +320,68 @@
         }
       }
     },
-    "Speichert…": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saving…"
-          }
-        }
-      }
-    },
     "Startfehler": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Startup error"
+            "value": "Launch error"
           }
         }
       }
     },
-    "Tipp: Bluetooth-Tastatur verbinden. Die Config braucht echte Zeilenumbrüche zwischen [Interface], Schlüsseln und [Peer].": {
+    "TRENNT…": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tip: pair a Bluetooth keyboard. The config needs real line breaks between [Interface], the keys, and [Peer]."
+            "value": "DISCONNECTING…"
           }
         }
       }
     },
-    "Trennt…": {
+    "Tipp: Tunnel scannst du am schnellsten per QR-Code in der iPhone-App. Sie synchronisieren via iCloud automatisch hierher und können diesem Mac zugewiesen werden.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Disconnecting…"
+            "value": "Tip: scan tunnels via QR code in the iPhone app — they sync via iCloud automatically and can be assigned to this Mac."
           }
         }
       }
     },
-    "Tunnel in der App importieren": {
+    "Trennen": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Import a tunnel in the app"
+            "value": "Disconnect"
+          }
+        }
+      }
+    },
+    "Tunnel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tunnel"
+          }
+        }
+      }
+    },
+    "Tunnel importieren": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import tunnel"
           }
         }
       }
@@ -447,7 +392,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Delete Tunnel"
+            "value": "Delete tunnel"
           }
         }
       }
@@ -463,57 +408,79 @@
         }
       }
     },
-    "Tunnel wählen": {
+    "Tunnel verwalten…": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Select tunnel"
+            "value": "Manage Tunnels…"
           }
         }
       }
     },
-    "Tunnel werden über die iPhone-App verwaltet. Alternativ oben über ＋ Manuell eine wg-quick direkt eingeben.": {
+    "Unter diesem Namen erscheinen die Tunnel dieses Macs auf deinen anderen Apple-Geräten.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tunnels are managed in the iPhone app. Alternatively, enter a wg-quick config directly via ＋ Manual above."
+            "value": "Tunnels claimed by this Mac appear under this name on your other Apple devices."
           }
         }
       }
     },
-    "Unbenannt": {
+    "VERBINDET…": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Unnamed"
+            "value": "CONNECTING…"
           }
         }
       }
     },
-    "Verbindet…": {
+    "VERBUNDEN": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Connecting…"
+            "value": "CONNECTED"
           }
         }
       }
     },
-    "wg-quick-Konfiguration": {
+    "Verbinden": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "wg-quick configuration"
+            "value": "Connect"
+          }
+        }
+      }
+    },
+    "Verbunden": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected"
+          }
+        }
+      }
+    },
+    "Vom Mac entfernen": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove from this Mac"
           }
         }
       }
@@ -524,106 +491,29 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Will be removed from all your iCloud devices."
+            "value": "Will be removed from all iCloud devices."
           }
         }
       }
     },
-    "× Trennen": {
+    "Wird geladen…": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "× Disconnect"
+            "value": "Loading…"
           }
         }
       }
     },
-    "▶ Verbinden": {
+    "Wähle links einen Tunnel.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "▶ Connect"
-          }
-        }
-      }
-    },
-    "%lld Tunnel · via iCloud": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld tunnels · via iCloud"
-          }
-        }
-      }
-    },
-    "[ FEHLER ]": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "[ ERROR ]"
-          }
-        }
-      }
-    },
-    "[ iCLOUD-SYNC LÄUFT ]": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "[ iCLOUD SYNC ]"
-          }
-        }
-      }
-    },
-    "[ IMPORT FEHLGESCHLAGEN ]": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "[ IMPORT FAILED ]"
-          }
-        }
-      }
-    },
-    "[ NOCH KEINE TUNNEL ]": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "[ NO TUNNELS YET ]"
-          }
-        }
-      }
-    },
-    "[ TUNNEL HINZUFÜGEN ]": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "[ ADD TUNNEL ]"
-          }
-        }
-      }
-    },
-    "＋ Manuell": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "＋ Manual"
+            "value": "Choose a tunnel on the left."
           }
         }
       }
@@ -639,24 +529,68 @@
         }
       }
     },
-    "ACTIVE PEER": {
+    "[ KEIN TUNNEL GEWÄHLT ]": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ACTIVE PEER"
+            "value": "[ NO TUNNEL SELECTED ]"
           }
         }
       }
     },
-    "STANDBY": {
+    "anderem Gerät": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "STANDBY"
+            "value": "another device"
+          }
+        }
+      }
+    },
+    "iCloud-Sync läuft – die vollständige Konfiguration ist noch nicht angekommen.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iCloud sync in progress — the full configuration hasn't arrived yet."
+          }
+        }
+      }
+    },
+    "wg-quick-Konfiguration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wg-quick configuration"
+          }
+        }
+      }
+    },
+    "z.B. MacBook von Jan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Jan's MacBook"
+          }
+        }
+      }
+    },
+    "Über Kabelwächter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About Kabelwächter"
           }
         }
       }

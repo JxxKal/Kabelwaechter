@@ -5,6 +5,15 @@ import Observation
 import KabelwaechterCore
 import KabelwaechterPersistence
 
+extension Notification.Name {
+    /// Lokale Repository-Mutation (claim / free / move / delete). Wird vom
+    /// Detail-View nach jeder Aktion gefeuert, die Liste hört darauf und
+    /// re-rendert sofort — auch wenn (wie im Screenshot-/Preview-Mode) gar
+    /// kein iCloud-Sync läuft, der sonst über `.NSPersistentStoreRemoteChange`
+    /// kommt.
+    static let kwLocalRepositoryChanged = Notification.Name("kw.localRepository.changed")
+}
+
 /// Bündelt alle App-weiten Abhängigkeiten der iOS-Companion-App in einer
 /// Observable-Klasse, die per `.environment(...)` in den View-Tree gehängt
 /// und in Views via `@Environment(CompanionAppEnvironment.self)` konsumiert

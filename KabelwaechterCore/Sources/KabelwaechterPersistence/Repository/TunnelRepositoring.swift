@@ -107,6 +107,12 @@ public protocol TunnelRepositoring {
     /// keinen Private Key trägt.
     func tunnelConfiguration(id: UUID) throws -> TunnelConfiguration
 
+    /// Anzeige-Variante der Tunnel-Konfiguration für die Detail-View. Default
+    /// gibt die echte Config zurück. Implementierungen können maskierte
+    /// Werte liefern (z.B. `ScreenshotData` → synthetische Demo-Config für
+    /// App-Preview-Aufnahmen).
+    func displayConfiguration(id: UUID) throws -> TunnelConfiguration
+
     /// Löscht einen Tunnel komplett (auf allen iCloud-Geräten).
     /// Idempotent — ein nicht vorhandener Tunnel wird stillschweigend ignoriert.
     func deleteTunnel(id: UUID) throws
@@ -116,5 +122,12 @@ public extension TunnelRepositoring {
     /// Bequemlichkeit: Import mit Default-Ziel `.appleTV` (Bestands-Verhalten).
     func importWgQuick(_ wgQuickConfig: String, named name: String) throws -> UUID {
         try importWgQuick(wgQuickConfig, named: name, target: .appleTV)
+    }
+
+    /// Default: Anzeige-Variante == echte Config. Wird in
+    /// `InMemoryTunnelRepository` überschrieben, sobald ein
+    /// Display-Endpoint-Override existiert (Screenshot-/Preview-Modus).
+    func displayConfiguration(id: UUID) throws -> TunnelConfiguration {
+        try tunnelConfiguration(id: id)
     }
 }

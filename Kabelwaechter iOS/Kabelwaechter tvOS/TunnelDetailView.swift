@@ -222,6 +222,7 @@ struct TunnelDetailView: View {
             named: name
         )
         reload()
+        NotificationCenter.default.post(name: .kwLocalRepositoryChanged, object: nil)
     }
 
     /// Freigeben: laufende Verbindung trennen, System-Config aus tvOS
@@ -230,6 +231,7 @@ struct TunnelDetailView: View {
     private func free(currentStatus status: NEVPNStatus) async {
         await env.tunnelManager.remove(tunnelID: tunnelID)
         try? env.repository.freeTunnel(id: tunnelID)
+        NotificationCenter.default.post(name: .kwLocalRepositoryChanged, object: nil)
         dismiss()
     }
 
@@ -320,7 +322,7 @@ struct TunnelDetailView: View {
     private func reload() {
         do {
             tunnel = try env.repository.tunnel(id: tunnelID)
-            fullConfig = try? env.repository.tunnelConfiguration(id: tunnelID)
+            fullConfig = try? env.repository.displayConfiguration(id: tunnelID)
             autoConnect = env.tunnelManager.isAutoConnect(tunnelID: tunnelID)
             loadError = nil
         } catch {
@@ -331,6 +333,7 @@ struct TunnelDetailView: View {
     private func deleteTunnel() {
         Task { await env.tunnelManager.remove(tunnelID: tunnelID) }
         try? env.repository.deleteTunnel(id: tunnelID)
+        NotificationCenter.default.post(name: .kwLocalRepositoryChanged, object: nil)
         dismiss()
     }
 }

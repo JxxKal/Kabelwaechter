@@ -10,7 +10,23 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
 
     private var tunnels: [UUID: StoredTunnel] = [:]
 
+    /// Maskiert den im UI gezeigten Server-Endpoint (nur Display). Die
+    /// echte Verbindung läuft weiterhin über `stored.serverEndpoint`. Wird
+    /// von `ScreenshotData` für App-Preview-Videos genutzt, damit reale
+    /// Server-Adressen nicht in der Aufnahme landen.
+    private var displayEndpointOverride: [UUID: String] = [:]
+
     public init() {}
+
+    /// Setzt einen Anzeige-Override für den Server-Endpoint dieses Tunnels.
+    /// `nil` entfernt den Override wieder.
+    public func setDisplayEndpoint(_ endpoint: String?, forTunnelID id: UUID) {
+        if let endpoint, !endpoint.isEmpty {
+            displayEndpointOverride[id] = endpoint
+        } else {
+            displayEndpointOverride.removeValue(forKey: id)
+        }
+    }
 
     public func importWgQuick(_ wgQuickConfig: String, named name: String, target: TunnelTarget) throws -> UUID {
         let parsed: TunnelConfiguration
@@ -79,14 +95,14 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
     }
 
     public func allTunnels() throws -> [TunnelView] {
-        tunnels.values.map(Self.view(of:))
+        tunnels.values.map(view(of:))
     }
 
     public func tunnel(id: UUID) throws -> TunnelView {
         guard let stored = tunnels[id] else {
             throw TunnelRepositoryError.tunnelNotFound
         }
-        return Self.view(of: stored)
+        return view(of: stored)
     }
 
     public func tunnelConfiguration(id: UUID) throws -> TunnelConfiguration {
@@ -99,16 +115,37 @@ public final class InMemoryTunnelRepository: TunnelRepositoring {
         return TunnelConfiguration(stored: stored)
     }
 
+    /// Wenn ein Display-Endpoint-Override existiert (= Screenshot/Preview-Modus),
+    /// liefert das eine **maskierte** Config aus `ScreenshotData.displayWgQuick`
+    /// — sodass Detail-Views keine echten Keys/Endpoints zeigen. Sonst fällt
+    /// es auf die echte Config zurück (für UI-Caller, die nicht maskieren).
+    public func displayConfiguration(id: UUID) throws -> TunnelConfiguration {
+        guard let stored = tunnels[id] else {
+            throw TunnelRepositoryError.tunnelNotFound
+        }
+        if displayEndpointOverride[id] != nil {
+            let fake = ScreenshotData.displayWgQuick(for: stored.name)
+            do {
+                return try TunnelConfiguration(fromWgQuickConfig: fake, called: stored.name)
+            } catch {
+                // Falls die synth. Config doch nicht parst, lieber gar nix
+                // zeigen als echte Daten zu leaken.
+                throw TunnelRepositoryError.notConfiguredOnThisDevice
+            }
+        }
+        return try tunnelConfiguration(id: id)
+    }
+
     public func deleteTunnel(id: UUID) throws {
         tunnels.removeValue(forKey: id)
     }
 
-    private static func view(of stored: StoredTunnel) -> TunnelView {
+    private func view(of stored: StoredTunnel) -> TunnelView {
         TunnelView(
             id: stored.id,
             name: stored.name,
             isConfiguredHere: !stored.privateKey.isEmpty,
-            serverEndpoint: stored.serverEndpoint,
+            serverEndpoint: displayEndpointOverride[stored.id] ?? stored.serverEndpoint,
             createdAt: stored.createdAt,
             target: stored.target,
             ownerDeviceID: stored.ownerDeviceID,

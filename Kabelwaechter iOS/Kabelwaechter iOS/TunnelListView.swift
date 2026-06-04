@@ -42,6 +42,13 @@ struct TunnelListView: View {
             Task { await env.tunnelManager.cleanupOrphanedManagers() }
             reload()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .kwLocalRepositoryChanged)) { _ in
+            // Lokale Mutation aus dem Detail (claim/free/move/delete) →
+            // die Liste muss sich sofort neu sortieren, sonst hängt der
+            // Tunnel in der falschen Section bis zum nächsten iCloud-Tick.
+            Task { await env.tunnelManager.cleanupOrphanedManagers() }
+            reload()
+        }
         .sheet(isPresented: $showingAddSheet, onDismiss: reload) {
             AddTunnelView()
         }

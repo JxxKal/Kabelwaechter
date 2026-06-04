@@ -4,6 +4,12 @@ import Observation
 import KabelwaechterCore
 import KabelwaechterPersistence
 
+extension Notification.Name {
+    /// Lokale Repository-Mutation (claim / free / delete) — gleiche Idee wie
+    /// auf iOS: die Liste hört darauf, statt nur auf den iCloud-Tick.
+    static let kwLocalRepositoryChanged = Notification.Name("kw.localRepository.changed")
+}
+
 /// App-weite Abhängigkeiten der tvOS-App. Analog zu iOS-`CompanionAppEnvironment`,
 /// aber wird in Phase 3.2 zusätzlich um den `TunnelManager` (NEVPNManager-
 /// Wrapper) ergänzt.

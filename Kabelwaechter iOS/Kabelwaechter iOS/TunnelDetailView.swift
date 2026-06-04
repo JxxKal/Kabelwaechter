@@ -319,6 +319,7 @@ struct TunnelDetailView: View {
         do {
             try env.repository.assign(tunnelID: tunnelID, toDeviceID: DeviceIdentity.id, named: name)
             reload()
+            NotificationCenter.default.post(name: .kwLocalRepositoryChanged, object: nil)
         } catch {
             loadError = String(describing: error)
         }
@@ -332,6 +333,7 @@ struct TunnelDetailView: View {
         do {
             try env.repository.freeTunnel(id: tunnelID)
             reload()
+            NotificationCenter.default.post(name: .kwLocalRepositoryChanged, object: nil)
         } catch {
             loadError = String(describing: error)
         }
@@ -344,6 +346,7 @@ struct TunnelDetailView: View {
             try env.repository.freeTunnel(id: tunnelID)
             try env.repository.setTarget(.appleTV, forTunnelID: tunnelID)
             reload()
+            NotificationCenter.default.post(name: .kwLocalRepositoryChanged, object: nil)
         } catch {
             loadError = String(describing: error)
         }
@@ -384,7 +387,7 @@ struct TunnelDetailView: View {
     private func reload() {
         do {
             tunnel = try env.repository.tunnel(id: tunnelID)
-            fullConfig = try? env.repository.tunnelConfiguration(id: tunnelID)
+            fullConfig = try? env.repository.displayConfiguration(id: tunnelID)
             autoConnect = env.tunnelManager.isAutoConnect(tunnelID: tunnelID)
             loadError = nil
         } catch {
@@ -395,6 +398,7 @@ struct TunnelDetailView: View {
     private func deleteTunnel() {
         Task { await env.tunnelManager.remove(tunnelID: tunnelID) }
         try? env.repository.deleteTunnel(id: tunnelID)
+        NotificationCenter.default.post(name: .kwLocalRepositoryChanged, object: nil)
         dismiss()
     }
 }

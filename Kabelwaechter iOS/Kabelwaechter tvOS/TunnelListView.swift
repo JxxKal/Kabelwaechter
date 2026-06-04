@@ -65,6 +65,10 @@ struct TunnelListView: View {
             Task { await env.tunnelManager.cleanupOrphanedManagers() }
             reload()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .kwLocalRepositoryChanged)) { _ in
+            Task { await env.tunnelManager.cleanupOrphanedManagers() }
+            reload()
+        }
     }
 
     // MARK: - Top bar

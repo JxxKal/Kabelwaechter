@@ -332,7 +332,7 @@ private struct TunnelDetailPane: View {
     private func load() {
         do {
             tunnel = try env.repository.tunnel(id: tunnelID)
-            config = try? env.repository.tunnelConfiguration(id: tunnelID)
+            config = try? env.repository.displayConfiguration(id: tunnelID)
             autoConnect = env.tunnelManager.isAutoConnect(tunnelID: tunnelID)
         } catch { connectError = String(describing: error) }
     }

@@ -1,182 +1,224 @@
-# Kabelwaechter
+# Kabelwächter
 
-WireGuard VPN client for **Apple TV** and **iPhone** — both connect tunnels
-themselves; configs sync between devices via CloudKit.
+Open-source WireGuard VPN client for **iPhone, iPad, Mac and Apple TV** —
+tunnels sync between devices via iCloud, and every tunnel "belongs" to exactly
+one device at a time. Beanspruchen, freigeben, einem anderen Gerät übergeben —
+ein Klick.
 
 > Powered by [WireGuard](https://www.wireguard.com/). WireGuard is a registered
 > trademark of Jason A. Donenfeld.
 
 ## Status
 
-**Phase 3 — tvOS tunnel activation, validated on hardware.**
+**TestFlight-Beta live auf allen vier Plattformen.** App-Store-Submission ist
+metadaten-vollständig (Listing-Texte DE/EN, Screenshots in 6.5"/6.7"/iPad/Mac,
+App-Preview-Videos mit Brand-Intro), wartet nur noch auf den finalen „Submit
+for Review"-Knopf.
 
-End-to-end path from `Verbinden` button → `NETunnelProviderManager` →
-`PacketTunnelProvider` → `WireGuardAdapter.start(…)` is verified on a physical
-Apple TV: a tunnel imported once on the iPhone companion syncs in full (incl.
-private key, see [ADR-0003](docs/adr/0003-full-tunnel-sync.md)) to the Apple TV
-and connects. See [Deploy & Test on Apple TV](#deploy--test-on-apple-tv).
+| Plattform | Version | Beta-Link |
+|---|---|---|
+| iPhone / iPad | 1.0.3 (5) — APPROVED | <https://testflight.apple.com/join/23kyR7WK> |
+| Apple TV | 1.0.3 (5) — APPROVED | <https://testflight.apple.com/join/Lz5L9Tdc> |
+| Mac | 1.0.3 (6) — APPROVED | <https://testflight.apple.com/join/MaXh6Vy9> |
 
-## Architecture overview
+## Was Kabelwächter anders macht
 
-Two Apple-platform apps, one Swift package with two products, one Network
-Extension, and a WireGuard fork:
+Im Vergleich zur offiziellen WireGuard-App:
 
-| Component | Role |
+- **Apple TV — nativ.** Die offizielle WireGuard-App existiert für tvOS nicht.
+  Kabelwächter ist eine eigenständige tvOS-App mit echter
+  `NEPacketTunnelProvider`-Extension; Tunnel landen via iCloud auf dem TV,
+  Verbinden ist ein Knopfdruck.
+- **iCloud-Sync zwischen Geräten.** Tunnel, die du auf einem Gerät hinzufügst
+  (QR-Scan / Datei / Paste), erscheinen via CloudKit Private Database auf den
+  anderen Apple-Geräten desselben Accounts. Kein eigenes Cloud-Konto, kein
+  Pairing, kein QR-zwischen-Geräten.
+- **Owner-Modell — 1 Key = 1 Peer.** Jeder Tunnel gehört zur Laufzeit nur
+  einem Gerät. Auf den anderen Geräten ist er als „in Verwendung auf
+  <Geräte-Name>" sichtbar und claimbar. Verbinden ist nur am Besitzer-Gerät
+  aktiv → keine Konflikte am WireGuard-Server, sauberer Hand-Over zwischen
+  iPhone, Mac, iPad und TV.
+
+Weiteres:
+
+- Lokalisierung Deutsch (Quelle) + Englisch über `Localizable.xcstrings`-
+  Kataloge pro Target.
+- macOS-App ist Universal Binary (Apple Silicon + Intel), läuft im Hintergrund
+  weiter, sobald das Hauptfenster geschlossen wird — Statusleisten-Icon zeigt
+  Verbindungs-Zustand, Pulldown erlaubt Tunnel-Quickswitch ohne Hauptfenster.
+- iPad bringt eine eigene Sidebar-+-Detail-Aufteilung mit (`NavigationSplitView`).
+- Keine Analytics, keine Drittanbieter-SDKs, kein vom Entwickler betriebener
+  Server. Tunnel-Daten leben in deiner privaten iCloud-Datenbank; Schlüssel
+  liegen im Keychain mit `AccessibleAfterFirstUnlockThisDeviceOnly`.
+
+## Architektur-Überblick
+
+Drei App-Targets (iOS, macOS, tvOS), drei Network-Extensions, vier Swift-Package-
+Libraries, ein WireGuard-Fork:
+
+| Komponente | Rolle |
 |---|---|
-| `Kabelwaechter iOS` (iPhone) | Import (QR/file/zip/manual), edit, Connect/Disconnect — connects `phone`-target tunnels itself (decision #8 reversed, ADR-0004) |
-| `Kabelwaechter tvOS` (Apple TV app) | Hub: viz, Connect/Disconnect, Auto-Connect; shows `appleTV`-target tunnels |
-| `KabelwaechterNEiOS` / `KabelwaechterNEtvOS` (Network Extensions) | Packet Tunnel Providers — run the actual WireGuard tunnel (go-bridge via run-script phase, ADR-0005) |
-| `KabelwaechterCore` (Swift package, library 1) | Domain types (TunnelConfiguration, wg-quick parser, KeychainStore) — **no WireGuardKit dependency** |
-| `KabelwaechterPersistence` (Swift package, library 2) | SwiftData `StoredTunnel` `@Model`, `TunnelRepository`, CloudKit container factory |
-| `KabelwaechterUI` (Swift package, library 3) | Designsystem (tokens, TunnelViz, QRCodeView, button/card styles) |
-| [`JxxKal/wireguard-apple-tvos`](https://github.com/JxxKal/wireguard-apple-tvos) | Fork of `natesinnott/wireguard-apple-tvos`, `.v17` platform downgrade |
+| `Kabelwaechter iOS` | iPhone + iPad mit `NavigationSplitView` für iPad-Idiom |
+| `Kabelwaechter macOS` | Native Mac-App (eigenständig, **kein Catalyst**) inkl. `MenuBarExtra` |
+| `Kabelwaechter tvOS` | „Centered Hub"-Design mit `focusSection`-Navigation |
+| `KabelwaechterNEiOS` / `…tvOS` / `…mac` | `NEPacketTunnelProvider`-Appex-Targets, eine pro Plattform |
+| `KabelwaechterCore` (SPM-Lib) | Domain-Typen (`TunnelConfiguration`, wg-quick-Parser, `DeviceIdentity`, `KeychainStore`) — **keine WireGuardKit-Dependency** |
+| `KabelwaechterPersistence` (SPM-Lib) | SwiftData `StoredTunnel` `@Model` + `TunnelRepository`, CloudKit-Container-Factory, `InMemoryTunnelRepository` + `ScreenshotData` für Preview/Screenshots |
+| `KabelwaechterUI` (SPM-Lib) | Design-System (Tokens, `TunnelViz`, `QRCodeView`, Button/Card-Styles, `CyberBackdrop`) |
+| [`JxxKal/wireguard-apple-tvos`](https://github.com/JxxKal/wireguard-apple-tvos) | Fork von `natesinnott/wireguard-apple-tvos` mit `.iOS(.v17)`, `.tvOS(.v17)`, `.macOS(.v13)` |
 
-Tunnel data is split structurally into a shared **TunnelTemplate** (synced via
-CloudKit Private Database — server endpoint, public key, allowed IPs, DNS, MTU,
-PSK) and a per-device **TunnelInstance** (stored in a separate local-only
-`ModelContainer` — local interface address, listen port). The **private key**
-itself never enters SwiftData — it lives in the Keychain with
-`AccessibleAfterFirstUnlockThisDeviceOnly` and an App-Group access group so the
-tvOS NE can read it. Each Apple-TV / iPhone shows up to the WireGuard server as
-its own peer — see [ADR-0001](docs/adr/0001-tunnel-template-instance-split.md)
-and [CONTEXT.md](CONTEXT.md) for terminology.
+Die `go-bridge` (`libwg-go.a`) wird per Run-Script-Phase pro Target gebaut
+(macOS-Build erzeugt sie universal über `lipo`).
 
-## Requirements
+### Daten-Modell — Owner-Modell
 
-- macOS 14 (Sonoma) or newer
-- Xcode 15 or newer
-- Swift 5.9+
-- Apple Developer Program enrolment (paid €99/year — App Groups, Network
-  Extensions, iCloud Container and CloudKit are not available on free accounts)
-- Apple TV 4K (1st gen, 2017) or newer, running tvOS 17+
-- iPhone running iOS 17+
+Ein einzelnes `StoredTunnel`-Record pro Tunnel-ID in der iCloud-Privat-Datenbank
+hält Interface- + Peer-Felder inkl. Address, Endpoint, AllowedIPs, MTU, DNS,
+PSK. **Der Private Key** wird denormalisiert mit synchronisiert (siehe
+[ADR-0003](docs/adr/0003-full-tunnel-sync.md)) und beim ersten Sync auf jedem
+Gerät in die Keychain überführt.
 
-## Repository layout
+Zusätzlich pro Tunnel:
+
+- `ownerDeviceID` (`String?`) — UUID des Geräts, das den Tunnel gerade nutzt.
+- `ownerDeviceName` (`String?`) — denormalisierter Geräte-Name für die Section-
+  Überschrift („iPhone von Jan", „Wohnzimmer Apple TV").
+
+Jede App-Instanz speichert ihre Identität in `DeviceIdentity` (lokaler
+`UserDefaults`-UUID + editierbarer Name + `isNameConfirmed`-Flag — Pflicht-
+Onboarding beim ersten Start).
+
+## Repository-Layout
 
 ```
 Kabelwaechter/
-├── Kabelwaechter iOS/         Xcode project root
-│   ├── Kabelwaechter iOS/     iOS app sources (Companion-Editor)
-│   ├── Kabelwaechter tvOS/    tvOS app sources (VPN-Haupt-App)
-│   ├── KabelwaechterNEtvOS/   tvOS Network Extension (Packet Tunnel)
+├── Kabelwaechter iOS/         Xcode-Projekt-Root
+│   ├── Kabelwaechter iOS/     iOS-App-Sources (iPhone + iPad)
+│   ├── Kabelwaechter tvOS/    tvOS-App-Sources
+│   ├── Kabelwaechter macOS/   macOS-App-Sources (eigene Targets, classic group)
+│   ├── KabelwaechterNEiOS/    iOS Network Extension
+│   ├── KabelwaechterNEtvOS/   tvOS Network Extension
+│   ├── KabelwaechterNEmac/    macOS Network Extension
 │   └── Kabelwaechter.xcodeproj/
-├── KabelwaechterCore/         Swift package (two library products)
+├── KabelwaechterCore/         Swift-Package (3 Library-Produkte)
 │   ├── Sources/
-│   │   ├── KabelwaechterCore/
-│   │   └── KabelwaechterPersistence/
-│   └── Tests/
-├── Design/                    Logo SVGs, color tokens, app-icon sources
-├── docs/adr/                  Architecture Decision Records
-├── CONTEXT.md                 Domain glossary
+│   │   ├── KabelwaechterCore/         (DeviceIdentity, Konstanten, Parser)
+│   │   ├── KabelwaechterPersistence/  (SwiftData-Model, Repository, ScreenshotData)
+│   │   └── KabelwaechterUI/           (Design-Tokens, Views)
+│   └── Tests/                 41 Tests, decken Repository-Vertrag und wg-quick-Parser ab
+├── Design/                    Logo-SVGs, Color-Tokens, App-Icon-Sources, Brand-Guide HTML
+├── docs/adr/                  Architecture Decision Records (0001–0005)
+├── PRIVACY.md / DATENSCHUTZ.md  App-Store-Privacy-Policy (EN + DE)
+├── ExportOptions-AppStore.plist  altool-Distribution-Settings
+├── scripts/sync-plan-to-wiki.py   syncs `Plan.md` → internes Wiki
 └── README.md
 ```
 
-`Plan.md` is the current working plan but is `.gitignore`'d — the canonical
-plan lives in an internal wiki.
+`Plan.md` ist die aktuelle Arbeitsplanung, ist `.gitignore`'d — die kanonische
+Plan-Version lebt im internen Wiki (Page 7).
 
-## Localization
+## Voraussetzungen
 
-App UI and metadata: bilingual **German** (source) and **English**
-(`Localizable.xcstrings`).
+- macOS 15 oder neuer
+- Xcode 16 oder neuer
+- Swift 6.0+
+- Apple Developer Program (€99/Jahr — App-Groups, Network-Extensions, iCloud
+  Container + CloudKit sind ohne Paid-Account nicht verfügbar)
+- Für Apple-TV-Tests: Apple TV 4K (1. Gen, 2017) oder neuer mit tvOS 17+
+- Für iPhone/iPad-Tests: iOS / iPadOS 17+
+- Für Mac-Tests: macOS 14 (Sonoma) oder neuer
 
-## Deploy & Test on Apple TV
+## Build & Run
 
-The tvOS Simulator [cannot run actual VPN](https://developer.apple.com/documentation/networkextension)
-— Phase 3.4 validation needs real hardware.
+Aus Xcode: Scheme wählen (`Kabelwaechter`, `Kabelwaechter macOS` oder
+`Kabelwaechter tvOS`) + Ziel-Gerät + ⌘R. Die jeweilige Network-Extension wird
+automatisch mit-embedded.
 
-### One-time setup
+CLI-Beispiel für tvOS:
 
-1. **Provisioning.** In the Apple Developer Portal make sure the four App IDs
-   (`de.jankaluza.kabelwaechter.{ios,tv,tv.networkextension,ios.networkextension}`),
-   the App Group `group.de.jankaluza.kabelwaechter.shared`, and the iCloud
-   Container `iCloud.de.jankaluza.kabelwaechter.tunnels` exist with the
-   capabilities listed in Plan §2.
-2. **Sign-in on Apple TV.** Settings → Users and Accounts → Apple Account →
-   sign in with the same Apple ID that the Apple Developer team uses. iCloud
-   sync needs this; manual-import works without it.
-3. **Pair Apple TV with Xcode.** On the Mac open Xcode → Window → Devices and
-   Simulators → Apple TV row → tap *Pair* — confirm the 6-digit code on the
-   TV. Pairing survives reboots; only redo it after a factory reset.
-4. **Trust the developer.** First time a personal-team-signed build lands on
-   the TV: Settings → General → Apps → Developer Apps → trust the team.
-
-### Build & install
-
-```
+```bash
 xcodebuild -project "Kabelwaechter iOS/Kabelwaechter.xcodeproj" \
            -scheme "Kabelwaechter tvOS" \
-           -destination 'platform=tvOS,name=<Apple TV name>' \
-           -configuration Debug \
-           build
+           -destination 'platform=tvOS,name=<Apple-TV-Name>' \
+           -configuration Debug build
 ```
 
-Or, in Xcode: select the `Kabelwaechter tvOS` scheme + the paired Apple TV in
-the destination dropdown, then ⌘R. The Network Extension target
-(`KabelwaechterNEtvOS`) is embedded automatically — confirm in the build log
-that it lands at `Kabelwaechter tvOS.app/PlugIns/KabelwaechterNEtvOS.appex`.
+### Provisioning (einmalig)
 
-### Get a tunnel onto the device
+In Apple Developer Portal müssen existieren:
 
-Two paths, depending on iCloud:
+- Bundle-IDs `de.jankaluza.kabelwaechter.{ios,tv,mac,ios.networkextension,
+  tv.networkextension,mac.networkextension}` mit den jeweiligen
+  Network-Extension-/App-Group-Capabilities
+- App-Group `group.de.jankaluza.kabelwaechter.shared`
+- iCloud-Container `iCloud.de.jankaluza.kabelwaechter.tunnels`
 
-- **iCloud sync (preferred).** Set up the tunnel once on the iPhone Companion
-  (`+` button → paste wg-quick → Save). CloudKit Private Database syncs the
-  whole tunnel — including the private key — to the Apple TV within seconds
-  (see [ADR-0003](docs/adr/0003-full-tunnel-sync.md)). It appears
-  ready-to-connect, no re-entry on the TV. If the detail view briefly shows
-  "iCloud-Sync läuft…", the record hasn't fully arrived yet — wait a few
-  seconds.
-- **Manual on Apple TV (second device).** Only needed for a *second* Apple TV
-  that should be its own WireGuard peer with its own key. Open the tvOS app →
-  `+` button → paste a separate wg-quick directly (a Bluetooth keyboard paired
-  to the TV is strongly recommended; the Siri Remote on-screen keyboard is
-  painful for multi-line base64). Save.
+Erster Mac-Debug-Build muss einmal **über das Xcode-GUI** signiert werden
+(Legacy-`developerservices2`-API lässt keine programmatische Profile-
+Anlage zu); danach läuft `xcodebuild` mit dem gecachten Profile.
 
-### Connect
+### Tunnel auf das Gerät bekommen
 
-Pick the tunnel → tap **Verbinden**. The first time, tvOS prompts to add a
-VPN configuration to Settings; approve it (Settings → General → VPN appears
-afterwards as `<tunnel-name>`). Status label below the button transitions
-`Getrennt → Verbindet… → Verbunden`. The status dot in the list view turns
-mint and the chevron-shield icon on the detail button changes to the filled
-shield.
+Zwei Wege:
 
-To verify packets actually leave through the tunnel, open a browser-based IP
-check on the Apple TV (e.g. via TVOS browser app, or check
-`/var/log/system.log` of your WireGuard server for the new peer handshake).
+- **iCloud-Sync (Standard).** Tunnel einmal in der App auf einem Gerät anlegen
+  (`+` → QR-Scan / Datei / wg-quick-Paste). CloudKit syncht ihn inkl. Private
+  Key innerhalb von Sekunden auf alle anderen Apple-Geräte desselben Accounts.
+  Auf den anderen Geräten erscheint er als „frei" oder unter
+  `<Gerätename>`-Section.
+- **Manueller Import pro Gerät.** Auf jedem Gerät separat über `+` → wg-quick
+  einfügen / Aus Datei…. Sinnvoll, wenn jedes Gerät ein eigener
+  WireGuard-Peer sein soll (eigener Key, eigene Adresse).
 
-### Debugging
+### Verbinden
 
-The Network Extension logs are prefixed with `[KabelwaechterNE]`. Tail them
-live from the Mac while the Apple TV is paired:
+Tunnel anwählen → bei nicht beanspruchten Tunneln zuerst „Auf diesem Gerät
+verwenden" → „Verbinden". Beim ersten Mal pro Plattform fragt iOS/macOS/tvOS
+nach VPN-Konfigurations-Erlaubnis; bestätigen. Status wechselt
+`Getrennt → Verbindet… → Verbunden`. Live-Stats (RX/TX/Last-Handshake) erscheinen
+im Detail.
 
-```
-xcrun devicectl device process view --device <Apple TV name> KabelwaechterNEtvOS
-```
+## Debugging
 
-Or in Xcode → Window → Devices and Simulators → open Console on the TV row.
-Search for `KabelwaechterNE`. Expected log lines on a successful `Verbinden`:
+### Network-Extension-Logs
 
-```
-[KabelwaechterNE] startTunnel — Bundle-ID: de.jankaluza.kabelwaechter.tv.networkextension
-[KabelwaechterNE] Tunnel gestartet
+Logs sind mit `[KabelwaechterNE]` gepräfixt. Live-Tail vom Mac aus, während
+das Gerät angesteckt/gepairt ist:
+
+```bash
+xcrun devicectl device process view --device <Geräte-Name> KabelwaechterNEtvOS
 ```
 
-Common failures:
+oder in Xcode → Fenster → Geräte und Simulatoren → Console.
 
-| Symptom in Console | Likely cause |
+### Häufige Fehler
+
+| Symptom in Console | Wahrscheinliche Ursache |
 |---|---|
-| `kein wgQuickConfig in providerConfiguration` | App-side `TunnelManager.connect` didn't populate the dictionary — usually means the `StoredTunnel` record hasn't fully synced yet (no private key locally). |
-| `wgQuick-Parse fehlgeschlagen: invalidLine(…)` | The wg-quick that was pasted has a stray non-key/value line. Fix the source config and re-import. |
-| `Core→WireGuardKit-Mapping fehlgeschlagen: invalidPrivateKey` | The Curve25519 key isn't 32 bytes after base64 decode — config is malformed. |
-| `WireGuardAdapter.start Fehler: cannotLocateTunnelFileDescriptor` | NE booted before NEPacketTunnelFlow handed it a tunnel FD — usually a transient race; retry. If persistent, check the NE's entitlements (App Group + NetworkExtensions). |
+| `kein wgQuickConfig in providerConfiguration` | `TunnelManager.connect` hat den Provider-Config nicht befüllt — meist weil der `StoredTunnel`-Record noch nicht vollständig synct ist (kein Private Key lokal). |
+| `wgQuick-Parse fehlgeschlagen: invalidLine(…)` | Die eingefügte wg-quick enthält eine Zeile ohne Key=Value-Form. Quell-Config korrigieren, neu importieren. |
+| `Core→WireGuardKit-Mapping fehlgeschlagen: invalidPrivateKey` | Der Curve25519-Key ist nach Base64-Decode nicht 32 Byte — Config ist defekt. |
+| `WireGuardAdapter.start Fehler: cannotLocateTunnelFileDescriptor` | NE startete vor `NEPacketTunnelFlow` — meist transient, retry. Bei Persistenz: NE-Entitlements prüfen (App-Group + NetworkExtensions). |
 
-### Resetting the on-device state
+### Lokaler Zustand zurücksetzen
 
-To wipe everything tvOS-side without uninstalling the app: Settings → General
-→ VPN → tap the configuration → Remove. Then in the app: Tunnel → Detail →
-*Tunnel löschen*. Re-import to test again.
+System-Einstellungen → Netzwerk/VPN → Konfiguration entfernen → in der App
+„Vom Gerät lösen" oder „Tunnel löschen". Re-Import zum Re-Test.
 
-## License
+Der **NEVPN-Cleanup-Mechanismus** (Phase 7 / `cleanupOrphanedManagers`) räumt
+beim App-Launch automatisch System-VPN-Configs auf, die laut Repository nicht
+mehr diesem Gerät gehören (z. B. wenn ein anderes Gerät den Tunnel via iCloud
+beansprucht hat).
 
-Released under the [MIT License](LICENSE).
+## Datenschutz
+
+Volle Privacy-Policy: [PRIVACY.md](PRIVACY.md) (EN) / [DATENSCHUTZ.md](DATENSCHUTZ.md) (DE).
+
+Kurz: keine Analytics, keine Drittanbieter-SDKs, kein eigener Server. Tunnel-
+Konfigurationen leben in deiner privaten iCloud-Datenbank, Private Keys in der
+Keychain. Geräte-Identität (UUID + editierbarer Name) ebenfalls in iCloud-Privat
+für die Owner-Sections auf anderen Apple-Geräten.
+
+## Lizenz
+
+MIT.
